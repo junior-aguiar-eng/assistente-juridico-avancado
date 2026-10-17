@@ -1,0 +1,39 @@
+{
+  "schema_version": "1",
+  "claims": [
+    {
+      "id": "c001", "tipo": "norma", "central": true,
+      "proposition": "Prescreve em cinco anos a pretensão de cobrança de dívidas líquidas constantes de instrumento público ou particular (CC, art. 206, § 5º, I).",
+      "status": "unverified", "existence": "confirmada", "sources": []
+    },
+    {
+      "id": "c002", "tipo": "precedente", "central": true,
+      "proposition": "O STJ aplica o prazo quinquenal do art. 206, § 5º, I, do CC à cobrança de dívida líquida em instrumento particular (AREsp 2.432.194/SP, 3ª Turma).",
+      "status": "unverified", "existence": "confirmada",
+      "sources": [
+        {"source_id": "s1", "origin": "secundaria", "access": "nao_acessada",
+         "url": "https://processo.stj.jus.br/SCON/GetInteiroTeorDoAcordao?num_registro=202302535191",
+         "error": "localizado por ForgeLex (VERIFIED_OFFICIAL, ementa); inteiro teor ainda não lido por esta etapa: a leitura é de br-verificar-citacoes"}
+      ]
+    },
+    {
+      "id": "c003", "tipo": "tema",
+      "proposition": "O STF decidiu pela inexistência de repercussão geral na discussão sobre honorários contra a Fazenda em exceção de pré-executividade que reconhece prescrição intercorrente (Tema 1473).",
+      "status": "unverified", "existence": "confirmada",
+      "sources": [
+        {"source_id": "s1", "origin": "oficial", "access": "nao_acessada",
+         "url": "https://jurisprudencia.stf.jus.br/pages/search",
+         "error": "ementa, tese e ata lidas na página pelo navegador do app, sem arquivo nem hash; o PDF oficial não chegou ao disco: teto 'partial' até o usuário fornecer o documento"}
+      ]
+    },
+    {
+      "id": "c004", "tipo": "precedente",
+      "proposition": "O REsp 9.999.999/SP firmou o prazo trienal para a pretensão de cobrança de dívida líquida.",
+      "status": "unverified", "existence": "nao_confirmada",
+      "sources": [
+        {"source_id": "s1", "origin": "secundaria", "access": "nao_acessada",
+         "error": "ForgeLex research_verify_authority (STJ, 9999999): NOT_FOUND no corpus persistido. Não prova inexistência; falta consulta ao portal do STJ."}
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Fontes brasileiras: ordem de tentativa
 
-Base: [docs/sondagem-pontes.md](../docs/sondagem-pontes.md) (17/10/2026). Toda consulta registra URL, data, hash do conteúdo e trecho. Ver [estados.md](estados.md).
+Base: [docs/sondagem-pontes.md](../docs/sondagem-pontes.md) (17/10/2026). O registro legível por máquina está em [fontes.json](fontes.json); `python scripts/fontes.py plano --tipo TIPO --matter matter.json` devolve a ordem de tentativa já filtrada pela política de sigilo do caso. Toda consulta registra URL, data, hash do conteúdo e trecho. Ver [estados.md](estados.md).
 
 | Preciso de | 1ª opção | 2ª opção | Último recurso |
 |---|---|---|---|

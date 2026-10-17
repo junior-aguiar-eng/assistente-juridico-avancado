@@ -1,7 +1,7 @@
 """Gate final de uma entrega: checagem técnica (qc.json) e aprovação humana ligada a hashes.
 
   auditar  --facts F.json --claims C.json --extracoes E.json [--modo analise|fundamentada]
-           [--artefato ARQ ...] --saida qc.json
+           [--timeline T.json] [--artefato ARQ ...] --saida qc.json
   aprovar  qc.json --revisor NOME [--registro OAB/UF] --declaracao TEXTO [--decisao aprovada|reprovada]
            [--nota TEXTO] --saida aprovacao.json
   status   qc.json [aprovacao.json]
@@ -70,7 +70,7 @@ def _resumo_erros(r, n=8):
     return "; ".join(f"{e['codigo']} em {e['caminho']}" for e in r.erros[:n]) + (" ..." if len(r.erros) > n else "")
 
 
-def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path(".")) -> dict:
+def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."), timeline=None) -> dict:
     g = Gates()
     base = Path(base).resolve()
     idx, docs, dirs_ext = {}, [], []
@@ -232,6 +232,22 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."))
     g.add("G08_avisos_do_validador", "avisos do validador examinados pelo revisor",
           "alerta" if por_cod else "aprovado", ", ".join(f"{k} x{v}" for k, v in sorted(por_cod.items())) or "nenhum aviso")
 
+    # G09 cronologia atualizada em relação ao facts.json
+    if timeline:
+        reg(timeline, "timeline")
+        if not facts:
+            g.add("G09_cronologia_atualizada", "cronologia corresponde ao facts.json", "reprovado", "cronologia sem facts.json")
+        else:
+            import cronologia
+
+            try:
+                c = cronologia.conferir(facts, timeline)
+                g.add("G09_cronologia_atualizada", "cronologia corresponde ao facts.json",
+                      "aprovado" if c["atualizada"] else "reprovado",
+                      "atualizada" if c["atualizada"] else "desatualizada: gere a cronologia de novo a partir do facts.json atual")
+            except (OSError, ValueError, KeyError) as e:
+                g.add("G09_cronologia_atualizada", "cronologia corresponde ao facts.json", "reprovado", f"ilegível: {e}")
+
     reprovados = [i for i in g.itens if i["resultado"] == "reprovado"]
     return {
         "schema_version": SCHEMA_VERSION, "gerado_em": _agora(), "modo": modo,
@@ -341,6 +357,7 @@ def main(argv=None) -> int:
     a.add_argument("--extracoes", action="append", default=[])
     a.add_argument("--modo", choices=("analise", "fundamentada"), default="analise")
     a.add_argument("--artefato", action="append", default=[])
+    a.add_argument("--timeline", help="timeline.json gerado por cronologia.py")
     a.add_argument("--saida", required=True)
     p = sub.add_parser("aprovar")
     p.add_argument("qc")
@@ -358,7 +375,7 @@ def main(argv=None) -> int:
         if n.cmd == "auditar":
             if not (n.facts or n.claims):
                 raise ValueError("informe --facts e/ou --claims")
-            qc = auditar(n.facts, n.claims, n.extracoes, n.modo, n.artefato, Path(n.saida).resolve().parent)
+            qc = auditar(n.facts, n.claims, n.extracoes, n.modo, n.artefato, Path(n.saida).resolve().parent, n.timeline)
             Path(n.saida).write_text(json.dumps(qc, ensure_ascii=False, indent=2), encoding="utf-8")
             res, cod = qc, 0 if qc["estado_tecnico"] == "revisao_pronta" else 1
         elif n.cmd == "aprovar":

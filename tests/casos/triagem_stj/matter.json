@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "matter": {
+    "matter_id": "aresp-2432194",
+    "objective": "Verificar a tese do prazo quinquenal do art. 206, § 5º, I, do CC aplicada no AREsp 2.432.194/SP e mapear os fatos narrados no acórdão.",
+    "client_role": "interessado",
+    "jurisdiction": {"ramo": "empresarial", "tribunal": "STJ", "uf": "SP"},
+    "as_of": "2026-10-17",
+    "facts_date": "2013-11",
+    "confidentiality": {"nivel": "publico", "consultas_externas": "permitidas"},
+    "capabilities": {"ocr": false, "forgelex": true, "navegador_app": true, "fetch_oficial": true},
+    "processos": [{"numero": "1000284-67.2021.8.26.0547"}, {"numero": "20212352320228260000"}],
+    "documentos": ["fontes/stj_inteiro_teor.pdf"],
+    "lacunas_iniciais": ["Contratos de 2013 e decisão do TJSP não foram fornecidos; só constam trechos transcritos no acórdão."]
+  }
+}

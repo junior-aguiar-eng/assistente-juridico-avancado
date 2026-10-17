@@ -313,3 +313,23 @@ def test_confirmacao_nao_registra_pacote_bloqueado_nem_alterado(caso, monkeypatc
     frase = "APROVO " + auditar._sha(caso / "qc.json")[:8]
     _digitar(monkeypatch, frase + "\n")
     assert auditar.main(_args_aprovar(caso)) == 1 and not (caso / "ap.json").exists()  # bloqueado
+
+
+# ------------------------------------------------------------------ cronologia atualizada (Fase 3)
+def test_cronologia_desatualizada_bloqueia_a_entrega(caso):
+    import cronologia
+
+    cronologia.gerar(caso / "facts.json", caso / "timeline.json", caso / "cronologia.md", extracoes=[caso / "extracao.json"])
+    qc = auditar.auditar(str(caso / "facts.json"), None, [str(caso / "extracao.json")], base=caso,
+                         timeline=str(caso / "timeline.json"))
+    assert res(qc)["G09_cronologia_atualizada"] == "aprovado" and qc["estado_tecnico"] == "revisao_pronta"
+    assert any(a["tipo"] == "timeline" for a in qc["artefatos"])
+    f = json.loads((caso / "facts.json").read_text(encoding="utf-8"))
+    f["facts"].append({"id": "f099", "kind": "lacuna", "text": "Falta o contrato original."})
+    (caso / "facts.json").write_text(json.dumps(f, ensure_ascii=False), encoding="utf-8")
+    qc = auditar.auditar(str(caso / "facts.json"), None, [str(caso / "extracao.json")], base=caso,
+                         timeline=str(caso / "timeline.json"))
+    assert res(qc)["G09_cronologia_atualizada"] == "reprovado" and qc["estado_tecnico"] == "bloqueado"
+    qc = auditar.auditar(None, str(caso / "claims.json"), [str(caso / "extracao.json")], base=caso,
+                         timeline=str(caso / "timeline.json"))
+    assert res(qc)["G09_cronologia_atualizada"] == "reprovado"  # cronologia sem facts.json

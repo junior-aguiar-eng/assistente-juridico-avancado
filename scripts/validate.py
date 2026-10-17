@@ -17,6 +17,8 @@ import unicodedata
 from datetime import datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # cnj.py, mesmo com python -P
+
 SCHEMA_VERSION = "1"
 ESTADOS = ("unverified", "partial", "supported", "unsupported")
 KIND_FATO = ("documentado", "alegacao", "inferencia", "lacuna")
@@ -378,18 +380,103 @@ def _conferir_hash(r, p, s, idx):
                "o hash informado não é o do arquivo (sha256) nem o do texto extraído (text_sha256): a fonte lida não é a registrada")
 
 
+# --------------------------------------------------------------------------- matter.json
+RAMOS = ("civel", "consumidor", "empresarial", "administrativo", "familia", "outro", "nao_informado")
+PAPEIS = ("autor", "reu", "terceiro", "interessado", "nao_aplicavel", "nao_informado")
+NIVEIS = ("publico", "restrito", "sigiloso")
+CONSULTAS = ("permitidas", "somente_termos_genericos", "proibidas")
+
+
+def validar_matter(obj, idx=None) -> Resultado:
+    r = Resultado()
+    m = obj.get("matter") if isinstance(obj, dict) else None
+    if not isinstance(m, dict):
+        r.erro("estrutura", "$", "esperado objeto com 'matter'")
+        return r
+    if obj.get("schema_version") != SCHEMA_VERSION:
+        r.erro("schema_version", "$.schema_version", f"esperado '{SCHEMA_VERSION}'")
+    c = "$.matter"
+    mid = _texto(r, m, "matter_id", c)
+    if mid and not _ID.match(mid):
+        r.erro("id_invalido", f"{c}.matter_id", "use apenas letras, números, '_' e '-'")
+    _texto(r, m, "objective", c)
+    papel = _enum(r, m, "client_role", c, PAPEIS)
+    if papel == "nao_informado":
+        r.aviso("papel_nao_informado", f"{c}.client_role", "sem o papel do cliente a análise não tem posição a defender")
+    j = m.get("jurisdiction")
+    if not isinstance(j, dict):
+        r.erro("campo_obrigatorio", f"{c}.jurisdiction", "'jurisdiction' é obrigatório (objeto com 'ramo')")
+    else:
+        ramo = _enum(r, j, "ramo", f"{c}.jurisdiction", RAMOS)
+        if ramo == "nao_informado":
+            r.aviso("jurisdicao_nao_informada", f"{c}.jurisdiction.ramo",
+                    "sem jurisdição não há conclusão localizada; o inventário documental pode seguir")
+        uf = j.get("uf")
+        if uf is not None and not (isinstance(uf, str) and re.fullmatch(r"[A-Z]{2}", uf)):
+            r.erro("valor_invalido", f"{c}.jurisdiction.uf", "use a sigla com duas letras maiúsculas (ex.: AL)")
+        _texto(r, j, "tribunal", f"{c}.jurisdiction", obrigatorio=False)
+    as_of = m.get("as_of")
+    hoje = datetime.now().date().isoformat()
+    if not _data_valida(as_of) or not isinstance(as_of, str) or len(as_of) < 10:
+        r.erro("data_invalida", f"{c}.as_of", "'as_of' (data de referência) é obrigatório, em AAAA-MM-DD")
+    elif as_of[:10] > hoje:
+        r.erro("data_futura", f"{c}.as_of", "a data de referência não pode estar no futuro")
+    fd = m.get("facts_date")
+    if fd is not None:
+        if not isinstance(fd, str) or not _ISO_PARCIAL.match(fd) or (len(fd) == 7 and not 1 <= int(fd[5:]) <= 12) \
+                or (len(fd) == 10 and not _data_valida(fd)):
+            r.erro("data_invalida", f"{c}.facts_date", "use AAAA, AAAA-MM ou AAAA-MM-DD válidos; omita se for desconhecida")
+        elif isinstance(as_of, str) and fd > as_of[: len(fd)]:
+            r.erro("data_incoerente", f"{c}.facts_date", "a data dos fatos não pode ser posterior à data de referência")
+    conf = m.get("confidentiality")
+    if not isinstance(conf, dict):
+        r.erro("campo_obrigatorio", f"{c}.confidentiality", "'confidentiality' é obrigatório (nivel e consultas_externas)")
+    else:
+        nivel = _enum(r, conf, "nivel", f"{c}.confidentiality", NIVEIS)
+        consultas = _enum(r, conf, "consultas_externas", f"{c}.confidentiality", CONSULTAS)
+        if nivel in ("restrito", "sigiloso"):
+            _texto(r, conf, "politica_modelo", f"{c}.confidentiality")
+            if consultas == "permitidas":
+                r.aviso("sigilo_com_consultas_externas", f"{c}.confidentiality.consultas_externas",
+                        f"nível '{nivel}' com consultas externas permitidas: termos do caso podem sair da máquina")
+    caps = m.get("capabilities")
+    if caps is not None:
+        if not isinstance(caps, dict) or not all(isinstance(v, bool) for v in caps.values()):
+            r.erro("tipo_invalido", f"{c}.capabilities", "'capabilities' deve ser objeto de valores verdadeiro/falso")
+    procs = m.get("processos")
+    if procs is not None:
+        if not isinstance(procs, list):
+            r.erro("tipo_invalido", f"{c}.processos", "'processos' deve ser lista")
+        else:
+            import cnj
+
+            for i, p in enumerate(procs):
+                num = p.get("numero") if isinstance(p, dict) else p
+                ok, motivo = cnj.validar(num) if isinstance(num, str) else (False, "número ausente")
+                if not ok:
+                    r.erro("cnj_invalido", f"{c}.processos[{i}]", f"número '{num}' recusado: {motivo}")
+    for chave in ("documentos", "lacunas_iniciais"):
+        v = m.get(chave)
+        if v is not None and not (isinstance(v, list) and all(isinstance(x, (str, dict)) and x for x in v)):
+            r.erro("tipo_invalido", f"{c}.{chave}", f"'{chave}' deve ser lista de textos ou objetos não vazios")
+    return r
+
+
 # --------------------------------------------------------------------------- orquestração
 def validar(obj, idx=None) -> tuple[str, Resultado]:
-    if isinstance(obj, dict) and "facts" in obj and "claims" in obj:
+    chaves = [k for k in ("facts", "claims", "matter") if isinstance(obj, dict) and k in obj]
+    if len(chaves) > 1:
         r = Resultado()
-        r.erro("estrutura", "$", "o arquivo traz 'facts' e 'claims'; use um arquivo para cada formato")
+        r.erro("estrutura", "$", f"o arquivo traz {' e '.join(repr(k) for k in chaves)}; use um arquivo para cada formato")
         return "indefinido", r
-    if isinstance(obj, dict) and "facts" in obj:
+    if chaves == ["facts"]:
         return "facts", validar_facts(obj, idx)
-    if isinstance(obj, dict) and "claims" in obj:
+    if chaves == ["claims"]:
         return "claims", validar_claims(obj, idx)
+    if chaves == ["matter"]:
+        return "matter", validar_matter(obj, idx)
     r = Resultado()
-    r.erro("estrutura", "$", "não encontrei 'facts' nem 'claims' no objeto raiz")
+    r.erro("estrutura", "$", "não encontrei 'facts', 'claims' nem 'matter' no objeto raiz")
     return "indefinido", r
 
 
@@ -402,6 +489,10 @@ def resumo(tipo, obj, r) -> dict:
         return {"total": len(itens), **{k: sum(1 for c in itens if c.get("status") == k) for k in ESTADOS},
                 "centrais_pendentes": [c.get("id") for c in itens
                                        if c.get("central") is True and c.get("status") != "supported"]}
+    if tipo == "matter":
+        m = obj.get("matter", {}) if isinstance(obj.get("matter"), dict) else {}
+        return {"matter_id": m.get("matter_id"), "ramo": (m.get("jurisdiction") or {}).get("ramo"),
+                "nivel": (m.get("confidentiality") or {}).get("nivel"), "processos": len(m.get("processos") or [])}
     return {}
 
 

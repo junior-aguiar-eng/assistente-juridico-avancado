@@ -74,3 +74,10 @@ Escopo: `extract.py`, `validate.py`, `auditar.py`, `cnj.py` e as skills `br-mape
 Casos de teste adaptados: as datas dos testes de `facts.json` passaram a vir de dentro do trecho. Um teste de auditoria dependia do segundo do relógio e foi corrigido.
 
 Continuam abertos: C5 (um só tipo de documento), C6 (skills sem avaliação por modelo), A2 a A8, M1 a M10.
+
+### Efeitos da Fase 3 sobre os itens abertos
+
+- **A8 (dependências fora do repositório):** parcialmente tratado. `fontes.py` registra qual ferramenta leu o Planalto (`fetch_oficial.py`, em `~/.claude/scripts`) e recusa com mensagem clara se ela faltar; `shared/fontes.json` marca quais pontes enviam termos do caso para fora, e a triagem registra a política (`consultas_externas`) que filtra o plano. O `fetch_oficial.py` continua fora do repositório.
+- **M7 (`cnj.py` órfão):** resolvido. `triagem.py processos` o usa, e os 6 números CNJ do acórdão real do STJ têm o dígito verificador conferido.
+- **M8 (pasta do caso):** resolvido por `triagem.py init`.
+- **A4 (STF):** o limite agora está escrito no plano de pontes, na skill de pesquisa e nos claims iniciais; o problema de fundo (PDF do STF sem caminho até o disco) segue aberto.
