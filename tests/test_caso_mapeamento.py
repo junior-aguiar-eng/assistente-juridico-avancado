@@ -38,7 +38,7 @@ def test_facts_do_caso_validos_e_com_avisos_esperados(facts, idx):
     # os três fatos materiais narrados na decisão transcrita foram registrados como alegação
     assert [a["caminho"] for a in r.avisos] == [f"$.facts[{i}].source.excerpt" for i in (3, 4, 5)]
     assert set(cods(r.avisos)) == {"trecho_em_citacao"}
-    assert validate.resumo("facts", facts, r) == {"total": 8, "documentado": 2, "alegacao": 4, "inferencia": 1, "lacuna": 1}
+    assert validate.resumo("facts", facts, r) == {"total": 8, "documentado": 2, "alegacao": 4, "inferencia": 1, "lacuna": 1, "informado": 0}
 
 
 def test_fato_material_de_decisao_transcrita_nao_pode_passar_como_documentado(facts, idx):

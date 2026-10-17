@@ -79,11 +79,11 @@ def test_numero_de_processo_com_digito_errado_e_recusado(matter):
 
 def test_sigilo_exige_politica_para_o_modelo_e_avisa_sobre_consultas_externas(matter):
     m = copy.deepcopy(matter)
-    m["matter"]["confidentiality"] = {"nivel": "sigiloso", "consultas_externas": "permitidas"}
+    m["matter"]["confidentiality"] = {"nivel": "sigiloso", "consultas_externas": "permitidas", "privilegio": "triado"}
     r = validate.validar_matter(m)
     assert cods(r.erros) == ["campo_obrigatorio"] and cods(r.avisos) == ["sigilo_com_consultas_externas"]
     m["matter"]["confidentiality"] = {"nivel": "sigiloso", "consultas_externas": "proibidas",
-                                      "politica_modelo": "nenhum trecho sai da máquina"}
+                                      "politica_modelo": "nenhum trecho sai da máquina", "privilegio": "triado"}
     r = validate.validar_matter(m)
     assert r.erros == [] and r.avisos == []
 

@@ -48,7 +48,8 @@ def test_ordem_cronologica_do_caso_real_e_secao_sem_data(tmp_path):
     assert {s["fact_id"] for s in t["sem_data"]} == {"f002", "f003", "f007", "f008"}
     assert all(not e["ordem_incerta_com"] for e in t["entradas"])
     assert saida["resumo"] == {"total": 8, "com_data": 4, "sem_data": 4, "ordem_incerta": 0,
-                               "por_kind": {"documentado": 2, "alegacao": 4, "inferencia": 1, "lacuna": 1}}
+                               "por_kind": {"documentado": 2, "alegacao": 4, "inferencia": 1, "lacuna": 1, "informado": 0},
+                               "por_relevancia": {"alta": 2, "media": 3, "baixa": 1}}
     assert saida["avisos_do_validador"] == 3  # os três fatos narrados em citação
 
 

@@ -1,4 +1,4 @@
-"""Extração de texto de documentos jurídicos (PDF textual, DOCX, TXT, MD) em JSON.
+"""Extração de texto de documentos jurídicos (PDF textual, DOCX, TXT, MD, EML) em JSON.
 
 Cada trecho (bloco) traz página, seção, localizador e marca de citação.
 O stdout contém somente JSON válido; avisos de bibliotecas vão para o stderr.
@@ -31,7 +31,7 @@ from pathlib import Path
 EXTRACTOR_VERSION = "0.3.0"
 SCHEMA_VERSION = "1"
 IDIOMA = "pt-BR"  # assumido, não detectado
-EXTENSOES = {".pdf", ".docx", ".txt", ".md"}
+EXTENSOES = {".pdf", ".docx", ".txt", ".md", ".eml"}
 MAX_PAGES = 2000
 LIMIAR_PARAGRAFO = 30  # recuo de primeira linha (pt)
 LIMIAR_CITACAO = 90  # recuo de citação em bloco (pt)
@@ -431,6 +431,60 @@ def extrair_texto(path: Path) -> dict:
             "blocks": _finalizar_blocos(blocos), "warnings": avisos, "text_sha256": _hash_texto([texto])}
 
 
+# --------------------------------------------------------------------------- E-MAIL (.eml)
+def extrair_eml(path: Path) -> dict:
+    """Mensagem de e-mail: cabeçalho (de, para, data, assunto) e corpo em parágrafos; anexos são só listados."""
+    import html as _html
+    from email import policy
+    from email.parser import BytesParser
+    from email.utils import parsedate_to_datetime
+
+    msg = BytesParser(policy=policy.default).parsebytes(path.read_bytes())
+    avisos, blocos, brutos = [], [], []
+    cab = {k: _ws(str(msg.get(k, ""))) for k in ("From", "To", "Cc", "Date", "Subject")}
+    partes_cab = [f"{rot}: {cab[k]}" for rot, k in (("De", "From"), ("Para", "To"), ("Cc", "Cc"), ("Data", "Date"),
+                                                    ("Assunto", "Subject")) if cab[k]]
+    if partes_cab:
+        texto = " | ".join(partes_cab)
+        blocos.append({"page": None, "locator": "email.cabecalho", "section": "cabecalho", "texto": texto,
+                       "is_quote": False, "quote_basis": None, "tags": []})
+        brutos.append(texto)
+    data_iso = None
+    if cab["Date"]:
+        try:
+            data_iso = parsedate_to_datetime(cab["Date"]).isoformat()
+        except (TypeError, ValueError):
+            avisos.append(_aviso("data_do_cabecalho_ilegivel", cab["Date"]))
+    corpo = msg.get_body(preferencelist=("plain", "html"))
+    texto_corpo = ""
+    if corpo is not None:
+        texto_corpo = corpo.get_content()
+        if corpo.get_content_type() == "text/html":
+            texto_corpo = re.sub(r"(?is)<(script|style).*?</\1>", " ", texto_corpo)
+            texto_corpo = _html.unescape(re.sub(r"(?s)<br\s*/?>|</p>|</div>", "\n\n", texto_corpo))
+            texto_corpo = re.sub(r"<[^>]+>", " ", texto_corpo)
+            avisos.append(_aviso("corpo_html", "só havia HTML: o texto foi extraído sem formatação"))
+    else:
+        avisos.append(_aviso("sem_corpo", "a mensagem não tem corpo de texto legível"))
+    for n, par in enumerate((p for p in re.split(r"\n\s*\n", texto_corpo.replace("\r\n", "\n")) if p.strip()), 1):
+        linhas = [l for l in par.strip().split("\n") if l.strip()]
+        citado = bool(linhas) and all(l.lstrip().startswith(">") for l in linhas)
+        blocos.append({"page": None, "locator": f"email.corpo.par.{n}", "section": "corpo", "texto": par,
+                       "is_quote": citado, "quote_basis": "marcador" if citado else None, "tags": []})
+        brutos.append(par)
+    anexos = [a.get_filename() or "(sem nome)" for a in msg.iter_attachments()]
+    if anexos:
+        avisos.append(_aviso("parte_nao_extraida", f"anexos não extraídos: {', '.join(anexos)}"))
+    if corpo is not None and not texto_corpo.strip():
+        avisos.append(_aviso("corpo_vazio", "o corpo da mensagem não tem texto"))
+    parcial = bool(anexos) or corpo is None or not texto_corpo.strip()
+    status = "no_text" if not blocos else ("partial" if parcial else "ok")
+    return {"status": status, "page_count": None, "blocks": _finalizar_blocos(blocos), "warnings": avisos,
+            "email": {"from": cab["From"], "to": cab["To"], "date": cab["Date"], "date_iso": data_iso,
+                      "subject": cab["Subject"], "anexos": anexos},
+            "text_sha256": _hash_texto(brutos)}
+
+
 # --------------------------------------------------------------------------- orquestração
 def _versoes():
     v = {"extractor": EXTRACTOR_VERSION}
@@ -461,7 +515,8 @@ def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0):
     sha = hashlib.sha256(bruto).hexdigest()
     base.update({"document_id": f"doc-{sha[:12]}", "sha256": sha, "size_bytes": len(bruto),
                  "media_type": {".pdf": "application/pdf", ".txt": "text/plain", ".md": "text/markdown",
-                                ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"}[p.suffix.lower()]})
+                                ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                ".eml": "message/rfc822"}[p.suffix.lower()]})
     arq_cache = Path(cache_dir) / f"{sha[:32]}-{EXTRACTOR_VERSION}-{PARAMS_HASH}.json" if cache_dir else None
     if arq_cache and arq_cache.is_file():
         with contextlib.suppress(Exception):
@@ -471,7 +526,7 @@ def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0):
     try:
         with warnings.catch_warnings(), contextlib.redirect_stdout(sys.stderr):
             warnings.simplefilter("ignore")
-            r = {".pdf": extrair_pdf, ".docx": extrair_docx}.get(p.suffix.lower(), extrair_texto)(p)
+            r = {".pdf": extrair_pdf, ".docx": extrair_docx, ".eml": extrair_eml}.get(p.suffix.lower(), extrair_texto)(p)
     except ArquivoSuspeito as e:
         return falha("arquivo_suspeito", str(e))
     except Exception as e:  # noqa: BLE001 - arquivo corrompido ou formato inesperado

@@ -4,6 +4,8 @@
   inventario CASO [--travar]        lista os arquivos de input/ com sha256; compara com o inventário anterior;
                                     --travar marca os originais como somente leitura
   processos EXTRACAO.json [...]     acha números CNJ nos textos extraídos e confere o dígito verificador
+  privacidade EXTRACAO.json [...]   dados pessoais (CPF, CNPJ, cartão, e-mail, telefone) com valor mascarado
+  capacidades                       o que este ambiente consegue fazer (bibliotecas, fetch_oficial, git)
 
 A triagem em si (perguntas ao usuário, papel, jurisdição, sigilo) é feita pela skill br-triagem;
 os dados vão para matter.json e são validados por validate.py.
@@ -23,6 +25,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import cnj  # noqa: E402
 import extract  # noqa: E402
+import privacidade as privacidade_mod  # noqa: E402
 
 PASTAS = ("input", "derived", "outputs", "runs")
 _CNJ = re.compile(r"(?<![\d.-])\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}(?![\d-])|(?<!\d)\d{20}(?!\d)")
@@ -116,9 +119,49 @@ def processos(extracoes) -> dict:
             "observacao": "candidato inválido pode ser outro número de 20 dígitos ou erro de digitação: confira no original"}
 
 
+def privacidade(extracoes) -> dict:
+    """Dados pessoais nos textos extraídos, com localizador e valor mascarado (nunca o valor completo)."""
+    por_tipo: dict[str, dict] = {t: {"total": 0, "documentos": {}} for t in privacidade_mod.TIPOS}
+    for e in extracoes:
+        obj = json.loads(Path(e).read_text(encoding="utf-8"))
+        for d in obj.get("documents", [obj] if "blocks" in obj else []):
+            for b in d.get("blocks", []):
+                for a in privacidade_mod.detectar(b["text"]):
+                    t = por_tipo[a["tipo"]]
+                    t["total"] += 1
+                    doc = t["documentos"].setdefault(d.get("document_id"), {"path": d.get("path"), "ocorrencias": []})
+                    doc["ocorrencias"].append({"locator": b.get("locator"), "block_id": b["id"], "mascara": a["mascara"]})
+    com_dado = {t: v for t, v in por_tipo.items() if v["total"]}
+    return {"achados": com_dado, "total_geral": sum(v["total"] for v in por_tipo.values()),
+            "recomendacoes": [
+                "Revise este relatório antes de compartilhar a pasta do caso: os valores aqui estão mascarados.",
+                "extracao.json, o cache e os textos extraídos contêm os valores completos: mantenha-os só na máquina.",
+                "Em facts.json e claims.json, troque o número por [...] no trecho citado.",
+                "Se o caso exige consulta externa, use apenas termos genéricos (sem CPF, CNPJ, nomes ou número de processo)."]}
+
+
+def capacidades() -> dict:
+    """O que este ambiente consegue fazer. Ferramentas MCP e navegador do app dependem da sessão e não são detectáveis aqui."""
+    import importlib.util
+    import shutil
+
+    def lib(nome):
+        return importlib.util.find_spec(nome) is not None
+
+    fetch = Path.home() / ".claude" / "scripts" / "fetch_oficial.py"
+    return {"detectado": {"python": sys.version.split()[0], "pdfplumber": lib("pdfplumber"), "python_docx": lib("docx"),
+                          "lxml": lib("lxml"), "fetch_oficial": fetch.is_file(), "git": shutil.which("git") is not None},
+            "ocr": False, "tesseract_no_path": shutil.which("tesseract") is not None,
+            "observacao": "ocr fica falso: não há integração de OCR. Registre forgelex e navegador_app no matter.json só "
+                          "depois de confirmar que as ferramentas existem nesta sessão."}
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
+    pv = sub.add_parser("privacidade")
+    pv.add_argument("extracoes", nargs="+")
+    sub.add_parser("capacidades")
     i = sub.add_parser("init")
     i.add_argument("caso")
     i.add_argument("--id", required=True)
@@ -133,6 +176,10 @@ def main(argv=None) -> int:
             res = init(Path(n.caso), n.id)
         elif n.cmd == "inventario":
             res = inventario(Path(n.caso), n.travar)
+        elif n.cmd == "privacidade":
+            res = privacidade(n.extracoes)
+        elif n.cmd == "capacidades":
+            res = capacidades()
         else:
             res = processos(n.extracoes)
         cod = 0

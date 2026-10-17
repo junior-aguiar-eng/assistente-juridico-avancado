@@ -18,10 +18,18 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # cnj.py, mesmo com python -P
+import privacidade  # noqa: E402
 
 SCHEMA_VERSION = "1"
 ESTADOS = ("unverified", "partial", "supported", "unsupported")
-KIND_FATO = ("documentado", "alegacao", "inferencia", "lacuna")
+KIND_FATO = ("documentado", "alegacao", "inferencia", "lacuna", "informado")
+RELEVANCIA = ("alta", "media", "baixa")
+PRIV = ("ok", "flag", "review")
+SOURCE_REL = ("contradiz", "nao_trata")
+OBTIDO = ("live_source", "user_supplied_source")
+CONFLITOS = ("cleared", "pending", "not-run", "waived", "nao_aplicavel")
+PRIVILEGIO = ("triado", "misto", "nao_triado", "nao_aplicavel")
+PAPEIS_PARTE = ("autor", "reu", "terceiro", "advogado", "juizo", "perito", "testemunha", "outro")
 PRECISOES = {"dia": 10, "mes": 7, "ano": 4, "indefinida": None}
 TIPOS = ("norma", "precedente", "sumula", "tema", "doutrina", "outro")
 EXISTENCIA = ("confirmada", "nao_confirmada", "indisponivel")
@@ -127,11 +135,24 @@ def _localizador_incoerente(locator, ach):
                 return None
         achado = ", ".join(sorted({b["locator"] for b in com_pagina}))
         return f"o localizador informa '{locator}', mas o trecho está em {achado}"
-    marcadores = re.findall(r"\b(?:par\.\d+|tab\.\d+\.lin\.\d+|nota(?:fim)?\.[\w-]+)", locator or "")
-    if marcadores and not any(b.get("locator") in marcadores for b in ach):
+    marcadores = re.findall(r"\b(?:par\.\d+|tab\.\d+\.lin\.\d+|nota(?:fim)?\.[\w-]+|email\.cabecalho)", locator or "")
+
+    def casa(loc):  # 'par.2' casa com 'par.2' e com 'email.corpo.par.2'
+        return any(loc == m or str(loc).endswith("." + m) for m in marcadores)
+
+    if marcadores and not any(casa(b.get("locator")) for b in ach):
         achado = ", ".join(sorted({str(b.get("locator")) for b in ach}))
         return f"o localizador informa '{locator}', mas o trecho está em {achado}"
     return None
+
+
+def _avisar_dados_pessoais(r, caminho, excerpt):
+    """Avisa (sem repetir o valor) quando o trecho citado traz CPF, CNPJ, cartão, e-mail ou telefone."""
+    if isinstance(excerpt, str):
+        tipos = privacidade.tipos_presentes(excerpt)
+        if tipos:
+            r.aviso("dado_pessoal_no_trecho", f"{caminho}.excerpt",
+                    f"o trecho contém {', '.join(tipos)}: troque o número por [...] para não repetir o dado nos relatórios")
 
 
 def _conferir_trecho(r, caminho, ref, locator, excerpt, idx, kind=None):
@@ -205,6 +226,31 @@ def validar_facts(obj, idx=None) -> Resultado:
                     _texto(r, s, k, f"{c}.source")
                 if isinstance(s.get("excerpt"), str):
                     _conferir_trecho(r, f"{c}.source", s, s.get("locator"), s["excerpt"], idx, kind)
+                    _avisar_dados_pessoais(r, f"{c}.source", s["excerpt"])
+        if kind == "informado":
+            r.aviso("fato_informado_sem_documento", c,
+                    f"fato '{fid}' foi informado pelo usuário e não tem documento: obtenha o documento ou mantenha a marca")
+        outras = f.get("other_sources")
+        if outras is not None:
+            if not isinstance(outras, list):
+                r.erro("tipo_invalido", f"{c}.other_sources", "'other_sources' deve ser lista de fontes")
+            else:
+                for j, o in enumerate(outras):
+                    cj = f"{c}.other_sources[{j}]"
+                    if not isinstance(o, dict):
+                        r.erro("tipo_invalido", cj, "cada fonte deve ser objeto")
+                        continue
+                    for k in ("document_id", "locator", "excerpt"):
+                        _texto(r, o, k, cj)
+                    if isinstance(o.get("excerpt"), str):
+                        _conferir_trecho(r, cj, o, o.get("locator"), o["excerpt"], idx, kind)
+                        _avisar_dados_pessoais(r, cj, o["excerpt"])
+        rel = _enum(r, f, "relevancia", c, RELEVANCIA, obrigatorio=False)
+        if rel == "alta":
+            _texto(r, f, "relevancia_motivo", c)
+        if f.get("relevancia_incerta") is not None and not isinstance(f["relevancia_incerta"], bool):
+            r.erro("tipo_invalido", f"{c}.relevancia_incerta", "'relevancia_incerta' deve ser verdadeiro ou falso")
+        _enum(r, f, "priv", c, PRIV, obrigatorio=False)
         if kind in ("documentado", "alegacao") and isinstance(f.get("date"), dict) and isinstance(f.get("source"), dict):
             exc, orig = f["source"].get("excerpt"), f["date"].get("original")
             if isinstance(exc, str) and isinstance(orig, str) and orig.strip() and not _contem(exc, orig):
@@ -229,6 +275,9 @@ def validar_facts(obj, idx=None) -> Resultado:
                 r.erro("referencia_inexistente", f"{c}.conflicts_with", f"fato '{x}' não existe")
             elif fid and fid not in (por_id[x].get("conflicts_with") or []):
                 r.aviso("conflito_nao_reciproco", f"{c}.conflicts_with", f"'{x}' não aponta de volta para '{fid}'")
+    avaliados = [f for f in obj["facts"] if isinstance(f, dict) and f.get("relevancia") in RELEVANCIA]
+    if len(avaliados) >= 6 and sum(1 for f in avaliados if f["relevancia"] == "alta") / len(avaliados) > 0.5:
+        r.aviso("relevancia_excessiva", "$.facts", "mais da metade dos fatos avaliados é 'alta': se tudo é central, a marca perde o sentido")
     return r
 
 
@@ -267,6 +316,7 @@ def validar_claims(obj, idx=None) -> Resultado:
     if not obj["claims"]:
         r.aviso("lista_vazia", "$.claims", "nenhuma proposição registrada")
     vistos: set = set()
+    dependencias: list[tuple] = []
     for i, cl in enumerate(obj["claims"]):
         c = f"$.claims[{i}]"
         if not isinstance(cl, dict):
@@ -287,9 +337,27 @@ def validar_claims(obj, idx=None) -> Resultado:
         if escopo is None and tipo in ("precedente", "tema"):
             escopo = "inteiro_teor"
         quote = _enum(r, cl, "quote_status", c, QUOTE, obrigatorio=status not in (None, "unverified"))
+        rel = _enum(r, cl, "source_relation", c, SOURCE_REL, obrigatorio=False)
+        _texto(r, cl, "applicability", c, obrigatorio=False)
+        _texto(r, cl, "suggested_fix", c, obrigatorio=False)
+        _texto(r, cl, "draft_locator", c, obrigatorio=False)
+        dep = cl.get("depends_on")
+        if dep is not None:
+            if not isinstance(dep, list) or not all(isinstance(x, str) for x in dep):
+                r.erro("tipo_invalido", f"{c}.depends_on", "'depends_on' deve ser lista de ids de proposições")
+            else:
+                dependencias.append((c, cid, dep))
         fontes = _validar_fontes(r, cl, c, idx)
         if status is None:
             continue
+        if status == "unsupported" and rel is None:
+            r.aviso("relacao_nao_informada", f"{c}.source_relation",
+                    "diga se a fonte contradiz a proposição ('contradiz') ou não trata dela ('nao_trata'): muda a gravidade")
+        elif status != "unsupported" and rel is not None:
+            r.erro("relacao_incompativel", f"{c}.source_relation", "'source_relation' só se aplica ao estado 'unsupported'")
+        if status == "supported" and tipo in ("precedente", "tema") and not cl.get("applicability"):
+            r.aviso("aplicabilidade_nao_registrada", f"{c}.applicability",
+                    "registre a aplicabilidade (órgão, classe, fatos e fase) ao caso: apoio à tese não é aplicabilidade")
         lidas = [s for s in fontes if s.get("access") == "lida"]
         oficiais = [s for s in lidas if s.get("origin") == "oficial"]
         if status != "unverified" and exist is not None and exist != "confirmada":
@@ -320,6 +388,12 @@ def validar_claims(obj, idx=None) -> Resultado:
             r.aviso("tese_central_nao_verificada", f"{c}.status", f"tese central '{cid}' sem verificação")
         elif cl.get("central") is True and status in ("partial", "unsupported"):
             r.aviso("tese_central_sem_apoio_pleno", f"{c}.status", f"tese central '{cid}' está '{status}'")
+    for c, cid, dep in dependencias:
+        for x in dep:
+            if x not in vistos:
+                r.erro("referencia_inexistente", f"{c}.depends_on", f"proposição '{x}' não existe")
+            elif x == cid:
+                r.erro("referencia_circular", f"{c}.depends_on", "a proposição não pode depender de si mesma")
     return r
 
 
@@ -341,6 +415,7 @@ def _validar_fontes(r, cl, c, idx):
             r.erro("id_duplicado", f"{p}.source_id", f"source_id '{sid}' repetido")
         vistos.add(sid)
         _enum(r, s, "origin", p, ORIGENS)
+        _enum(r, s, "obtained_via", p, OBTIDO, obrigatorio=False)
         acesso = _enum(r, s, "access", p, ACESSOS)
         if acesso == "lida":
             if not (isinstance(s.get("url"), str) and s["url"].strip()) and not (
@@ -358,6 +433,7 @@ def _validar_fontes(r, cl, c, idx):
                 _texto(r, pin, "locator", f"{p}.pinpoint")
                 if _texto(r, pin, "excerpt", f"{p}.pinpoint"):
                     _conferir_trecho(r, f"{p}.pinpoint", s, pin.get("locator"), pin["excerpt"], idx)
+                    _avisar_dados_pessoais(r, f"{p}.pinpoint", pin["excerpt"])
                     _conferir_hash(r, p, s, idx)
         elif acesso is not None and s.get("pinpoint") is not None:
             r.erro("pinpoint_sem_leitura", f"{p}.pinpoint", "fonte não lida não pode trazer pinpoint")
@@ -385,6 +461,67 @@ RAMOS = ("civel", "consumidor", "empresarial", "administrativo", "familia", "out
 PAPEIS = ("autor", "reu", "terceiro", "interessado", "nao_aplicavel", "nao_informado")
 NIVEIS = ("publico", "restrito", "sigiloso")
 CONSULTAS = ("permitidas", "somente_termos_genericos", "proibidas")
+
+
+def _validar_conflitos(r, cf, c):
+    """Registro do resultado da checagem de conflito de interesses. O pacote registra; não executa a checagem."""
+    if cf is None:
+        r.aviso("conflitos_nao_registrados", c, "registre o resultado da checagem de conflito de interesses")
+        return
+    if not isinstance(cf, dict):
+        r.erro("tipo_invalido", c, "'conflicts' deve ser objeto")
+        return
+    st = _enum(r, cf, "status", c, CONFLITOS)
+    if st == "cleared":
+        for k in ("method", "cleared_by"):
+            _texto(r, cf, k, c)
+        if not _data_valida(cf.get("cleared_date")):
+            r.erro("data_invalida", f"{c}.cleared_date", "'cleared_date' é obrigatório (AAAA-MM-DD)")
+        ca = cf.get("checked_against")
+        if not (isinstance(ca, list) and ca and all(isinstance(x, str) and x.strip() for x in ca)):
+            r.erro("campo_obrigatorio", f"{c}.checked_against", "liste contra quem a checagem foi feita (partes, afiliadas, advogados)")
+    elif st == "waived":
+        _texto(r, cf, "waiver_rationale", c)
+    elif st == "nao_aplicavel":
+        _texto(r, cf, "motivo", c)
+    elif st == "pending":
+        _texto(r, cf, "owner", c)
+        r.aviso("conflitos_pendentes", c, "checagem de conflito pendente: resolva antes de entregar o trabalho ao cliente")
+    elif st == "not-run":
+        ov = cf.get("override")
+        if ov is None:
+            r.aviso("conflitos_nao_verificados", c, "a checagem de conflito não foi feita: faça, marque como pendente com responsável ou registre o bypass")
+        elif not isinstance(ov, dict) or not all(isinstance(ov.get(k), str) and ov[k].strip() for k in ("by", "date", "rationale")):
+            r.erro("campo_obrigatorio", f"{c}.override", "o bypass exige 'by', 'date' e 'rationale'")
+        else:
+            r.aviso("conflitos_com_bypass_registrado", c, "checagem de conflito dispensada por bypass registrado: visível em toda auditoria")
+
+
+def _validar_partes(r, partes, c, idx):
+    if partes is None:
+        return
+    if not isinstance(partes, list):
+        r.erro("tipo_invalido", c, "'partes' deve ser lista")
+        return
+    for i, p in enumerate(partes):
+        cp = f"{c}[{i}]"
+        if not isinstance(p, dict):
+            r.erro("tipo_invalido", cp, "cada parte deve ser objeto")
+            continue
+        _texto(r, p, "nome", cp)
+        _enum(r, p, "papel", cp, PAPEIS_PARTE)
+        _texto(r, p, "representada_por", cp, obrigatorio=False)
+        s = p.get("source")
+        if s is None:
+            r.aviso("parte_sem_fonte", cp, "parte sem fonte: aponte documento, localizador e trecho onde ela aparece")
+        elif not isinstance(s, dict):
+            r.erro("tipo_invalido", f"{cp}.source", "'source' deve ser objeto")
+        else:
+            for k in ("document_id", "locator", "excerpt"):
+                _texto(r, s, k, f"{cp}.source")
+            if isinstance(s.get("excerpt"), str):
+                _conferir_trecho(r, f"{cp}.source", s, s.get("locator"), s["excerpt"], idx)
+                _avisar_dados_pessoais(r, f"{cp}.source", s["excerpt"])
 
 
 def validar_matter(obj, idx=None) -> Resultado:
@@ -439,6 +576,22 @@ def validar_matter(obj, idx=None) -> Resultado:
             if consultas == "permitidas":
                 r.aviso("sigilo_com_consultas_externas", f"{c}.confidentiality.consultas_externas",
                         f"nível '{nivel}' com consultas externas permitidas: termos do caso podem sair da máquina")
+        priv = _enum(r, conf, "privilegio", f"{c}.confidentiality", PRIVILEGIO, obrigatorio=False)
+        if priv is None and nivel in ("restrito", "sigiloso"):
+            r.aviso("privilegio_nao_registrado", f"{c}.confidentiality.privilegio",
+                    "registre se as fontes passaram por triagem de sigilo profissional (triado, misto, nao_triado)")
+        if priv == "nao_triado":
+            r.aviso("fontes_sem_triagem_de_sigilo", f"{c}.confidentiality.privilegio",
+                    "as fontes não foram triadas quanto a sigilo: triar antes de extrair para relatórios que circulem")
+        sj = conf.get("segredo_de_justica")
+        if sj is not None and not isinstance(sj, bool):
+            r.erro("tipo_invalido", f"{c}.confidentiality.segredo_de_justica", "use verdadeiro ou falso (CPC, art. 189)")
+        elif sj is True and consultas == "permitidas":
+            r.aviso("segredo_com_consultas_externas", f"{c}.confidentiality.segredo_de_justica",
+                    "processo em segredo de justiça com consultas externas permitidas: restrinja a termos genéricos")
+    _texto(r, m, "fato_chave", c, obrigatorio=False)
+    _validar_conflitos(r, m.get("conflicts"), f"{c}.conflicts")
+    _validar_partes(r, m.get("partes"), f"{c}.partes", idx)
     caps = m.get("capabilities")
     if caps is not None:
         if not isinstance(caps, dict) or not all(isinstance(v, bool) for v in caps.values()):
@@ -488,7 +641,9 @@ def resumo(tipo, obj, r) -> dict:
         itens = [c for c in obj.get("claims", []) if isinstance(c, dict)]
         return {"total": len(itens), **{k: sum(1 for c in itens if c.get("status") == k) for k in ESTADOS},
                 "centrais_pendentes": [c.get("id") for c in itens
-                                       if c.get("central") is True and c.get("status") != "supported"]}
+                                       if c.get("central") is True and c.get("status") != "supported"],
+                "contraditas": [c.get("id") for c in itens
+                                if c.get("status") == "unsupported" and c.get("source_relation") == "contradiz"]}
     if tipo == "matter":
         m = obj.get("matter", {}) if isinstance(obj.get("matter"), dict) else {}
         return {"matter_id": m.get("matter_id"), "ramo": (m.get("jurisdiction") or {}).get("ramo"),

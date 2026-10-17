@@ -18,7 +18,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -38,7 +38,7 @@ def _sha_bytes(b: bytes) -> str:
 
 
 # --------------------------------------------------------------------------- plano
-def plano(tipo: str, matter: dict | None = None, registro_pontes: Path = REGISTRO_PONTES) -> dict:
+def plano(tipo: str, matter: dict | None = None, registro_pontes: Path = REGISTRO_PONTES, hoje: date | None = None) -> dict:
     reg = json.loads(registro_pontes.read_text(encoding="utf-8"))
     if tipo not in reg["tipos"]:
         raise ValueError(f"tipo desconhecido '{tipo}'; use: {', '.join(reg['tipos'])}")
@@ -61,9 +61,18 @@ def plano(tipo: str, matter: dict | None = None, registro_pontes: Path = REGISTR
                       "como": p["como"], "envia_termos_do_caso": p["envia_termos_do_caso"], "limites": p["limites"]})
     uteis = [s for s in saida if s["estado"] in ("disponivel", "restrita")]
     oficiais = [s for s in uteis if s["origem"] == "oficial" and s["id"] != "usuario_fornece"]
+    idade = ((hoje or date.today()) - date.fromisoformat(reg["last_verified"])).days
+    desatualizado = idade > int(reg["freshness_window_days"])
+    avisos = []
+    if not oficiais:
+        avisos.append("nenhuma ponte oficial utilizável: o teto é 'partial' até o usuário fornecer o documento oficial")
+    if desatualizado:
+        avisos.append(f"o registro de pontes foi verificado há {idade} dias (janela de {reg['freshness_window_days']}): "
+                      "refaça a sondagem (scripts/sonda_pontes.py) antes de confiar na ordem e nos limites")
     return {"tipo": tipo, "descricao": reg["tipos"][tipo], "pontes": saida,
-            "tem_ponte_oficial": bool(oficiais),
-            "aviso": None if oficiais else "nenhuma ponte oficial utilizável: o teto é 'partial' até o usuário fornecer o documento oficial"}
+            "tem_ponte_oficial": bool(oficiais), "desatualizado": desatualizado, "verificado_em": reg["last_verified"],
+            "portais_para_o_usuario": reg.get("portais_para_o_usuario", {}).get(tipo, []),
+            "aviso": " | ".join(avisos) or None}
 
 
 # --------------------------------------------------------------------------- baixar

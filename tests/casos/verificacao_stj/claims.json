@@ -24,7 +24,8 @@
           "pinpoint": {
             "locator": "p.4, ementa, item 3",
             "excerpt": "se submete ao prazo quinquenal específico do art. 206, § 5º, I, do CC/2002"
-          }
+          },
+          "obtained_via": "live_source"
         },
         {
           "source_id": "s2",
@@ -37,9 +38,12 @@
           "pinpoint": {
             "locator": "espelho do acórdão, documentId 953016",
             "excerpt": "PRAZO QUINQUENAL. ART. 206, § 5º, I, DO CC/2002"
-          }
+          },
+          "obtained_via": "live_source"
         }
-      ]
+      ],
+      "applicability": "STJ, 3ª Turma, AREsp em impugnação de crédito na recuperação judicial; o caso trata de dívida líquida em instrumento particular. Aplicável por analogia a cobranças fora da recuperação só mediante conferência do órgão, da classe e dos fatos.",
+      "draft_locator": "seção II, parágrafo 3 da minuta"
     },
     {
       "id": "c002",
@@ -66,7 +70,9 @@
             "excerpt": "ficando afastada a regra residual do art. 205 do CC/2002"
           }
         }
-      ]
+      ],
+      "source_relation": "contradiz",
+      "suggested_fix": "Remover a proposição ou invertê-la: o acórdão afasta o prazo decenal do art. 205 e aplica o quinquenal do art. 206, § 5º, I."
     },
     {
       "id": "c003",
@@ -108,7 +114,8 @@
           "pinpoint": {
             "locator": "CC, art. 206, § 5º, I (versão compilada, sem trecho tachado)",
             "excerpt": "I - a pretensão de cobrança de dívidas líquidas constantes de instrumento público ou particular"
-          }
+          },
+          "obtained_via": "live_source"
         }
       ]
     },
@@ -136,6 +143,9 @@
             "excerpt": "ATA DE REUNIÃO EQUIPARADA A INSTRUMENTO PARTICULAR. DÍVIDA LÍQUIDA. PRESCRIÇÃO QUINQUENAL"
           }
         }
+      ],
+      "depends_on": [
+        "c001"
       ]
     }
   ]

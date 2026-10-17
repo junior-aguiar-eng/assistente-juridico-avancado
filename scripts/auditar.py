@@ -1,7 +1,8 @@
 """Gate final de uma entrega: checagem técnica (qc.json) e aprovação humana ligada a hashes.
 
   auditar  --facts F.json --claims C.json --extracoes E.json [--modo analise|fundamentada]
-           [--timeline T.json] [--artefato ARQ ...] --saida qc.json
+           [--timeline T.json] [--matter M.json] [--tipo-entrega interna|cliente|peticao|contrato]
+           [--reverificar N] [--relatorio R.md ...] [--artefato ARQ ...] --saida qc.json
   aprovar  qc.json --revisor NOME [--registro OAB/UF] --declaracao TEXTO [--decisao aprovada|reprovada]
            [--nota TEXTO] --saida aprovacao.json
   status   qc.json [aprovacao.json]
@@ -70,8 +71,21 @@ def _resumo_erros(r, n=8):
     return "; ".join(f"{e['codigo']} em {e['caminho']}" for e in r.erros[:n]) + (" ..." if len(r.erros) > n else "")
 
 
-def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."), timeline=None) -> dict:
+TIPOS_ENTREGA = ("interna", "cliente", "peticao", "contrato")
+MARCA_AVISO = "não constitui parecer"
+
+
+def _baixar(url, destino):
+    import fontes
+
+    return fontes.baixar(url, destino)
+
+
+def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."), timeline=None,
+            matter=None, tipo_entrega="interna", reverificar=0, relatorios=()) -> dict:
     g = Gates()
+    externa = tipo_entrega != "interna"
+    rigor = "reprovado" if (modo == "fundamentada" or externa) else "alerta"
     base = Path(base).resolve()
     idx, docs, dirs_ext = {}, [], []
     for e in extracoes:
@@ -93,7 +107,7 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
               f"{len(docs)} documento(s) extraído(s)")
     else:
         g.add("G00_extracao_presente", "trechos e hashes conferidos contra o texto extraído",
-              "reprovado" if modo == "fundamentada" else "alerta",
+              rigor,
               "sem extração informada: nenhum trecho, localizador ou hash foi conferido contra o texto lido")
 
     objs, avisos_val = {}, []
@@ -182,7 +196,7 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
                     conf += 1
                 else:
                     div.append(f"{c.get('id')}:{s['local_file']}")
-        bloqueia_sem_local = bool(sem_local) and modo == "fundamentada"
+        bloqueia_sem_local = bool(sem_local) and rigor == "reprovado"
         detalhes = []
         if div:
             detalhes.append("hash diverge em " + ", ".join(div))
@@ -207,7 +221,7 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
             g.add("G06_teses_centrais", "teses centrais com apoio verificado", "alerta", "nenhuma proposição marcada como central")
         elif pend:
             g.add("G06_teses_centrais", "teses centrais com apoio verificado",
-                  "reprovado" if modo == "fundamentada" else "alerta",
+                  rigor,
                   f"{len(pend)} de {len(centrais)} sem 'supported': " + ", ".join(str(c.get("id")) for c in pend))
         else:
             g.add("G06_teses_centrais", "teses centrais com apoio verificado", "aprovado", f"{len(centrais)} central(is) 'supported'")
@@ -215,9 +229,27 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
             if c.get("status") in ("unverified", "partial", "unsupported") and c not in pend:
                 g.pend("proposicao", c.get("id"), f"estado {c.get('status')}")
         ref = [c for c in cl if c.get("status") == "unsupported"]
+        contraditas = [c for c in ref if c.get("source_relation") == "contradiz"]
+        por_id = {c.get("id"): c for c in cl}
+        dependentes = []  # argumentos que dependem de proposição sem apoio pleno
+        for c in cl:
+            for d in c.get("depends_on") or []:
+                alvo = por_id.get(d)
+                if alvo is not None and alvo.get("status") != "supported":
+                    dependentes.append(f"{c.get('id')} depende de {d} ({alvo.get('status')})")
+                    g.pend("dependencia", c.get("id"), f"depende de {d}, que está '{alvo.get('status')}'")
+        for c in contraditas:
+            g.pend("escalar", c.get("id"), "a fonte oficial lida contradiz a proposição: levar ao advogado antes de seguir"
+                   + (" (tese central)" if c.get("central") is True else ""))
+        detalhes = []
+        if ref:
+            detalhes.append("confirme que não entram como fundamento: " + ", ".join(str(c.get("id")) for c in ref))
+        if contraditas:
+            detalhes.append("contraditas pela fonte (escalar): " + ", ".join(str(c.get("id")) for c in contraditas))
+        if dependentes:
+            detalhes.append("dependências em risco: " + "; ".join(dependentes))
         g.add("G07_proposicoes_refutadas", "proposição refutada pela fonte não consta como fundamento",
-              "alerta" if ref else "aprovado",
-              ("confirme que não entram como fundamento: " + ", ".join(str(c.get("id")) for c in ref)) if ref else "nenhuma refutada")
+              "alerta" if (ref or dependentes) else "aprovado", " | ".join(detalhes) or "nenhuma refutada")
     else:
         g.add("G06_teses_centrais", "teses centrais com apoio verificado", "nao_aplicavel", "sem claims.json")
         g.add("G07_proposicoes_refutadas", "proposição refutada pela fonte não consta como fundamento", "nao_aplicavel", "sem claims.json")
@@ -248,13 +280,122 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
             except (OSError, ValueError, KeyError) as e:
                 g.add("G09_cronologia_atualizada", "cronologia corresponde ao facts.json", "reprovado", f"ilegível: {e}")
 
+    # G10 aviso padrão nos relatórios de entrega
+    if relatorios:
+        sem_aviso = []
+        for rel in relatorios:
+            reg(rel, "relatorio")
+            try:
+                if MARCA_AVISO not in Path(rel).read_text(encoding="utf-8").lower():
+                    sem_aviso.append(Path(rel).name)
+            except OSError:
+                sem_aviso.append(f"{Path(rel).name} (ilegível)")
+        g.add("G10_aviso_no_relatorio", "relatórios de entrega trazem o aviso padrão (shared/aviso-padrao.md)",
+              rigor if sem_aviso else "aprovado", ("sem o aviso: " + ", ".join(sem_aviso)) if sem_aviso else f"{len(relatorios)} relatório(s) com aviso")
+    else:
+        g.add("G10_aviso_no_relatorio", "relatórios de entrega trazem o aviso padrão (shared/aviso-padrao.md)", "nao_aplicavel",
+              "nenhum relatório informado (--relatorio)")
+
+    # G11 conflito de interesses e G12 sigilo, a partir do matter.json
+    mj = None
+    if matter:
+        reg(matter, "matter")
+        try:
+            mj = json.loads(Path(matter).read_text(encoding="utf-8"))
+        except (OSError, ValueError) as e:
+            g.add("G11_conflitos_de_interesse", "resultado da checagem de conflito registrado", "reprovado", f"matter.json ilegível: {e}")
+        else:
+            rm = validate.validar_matter(mj, idx if idx else None)
+            if rm.erros:
+                g.add("G11_conflitos_de_interesse", "resultado da checagem de conflito registrado", "reprovado",
+                      "matter.json inválido: " + _resumo_erros(rm))
+                mj = None
+    if mj is not None:
+        m = mj["matter"]
+        cf = m.get("conflicts") or {}
+        st = cf.get("status")
+        if st in ("cleared", "waived", "nao_aplicavel"):
+            g.add("G11_conflitos_de_interesse", "resultado da checagem de conflito registrado", "aprovado", f"status {st}")
+        elif st == "not-run" and cf.get("override"):
+            g.add("G11_conflitos_de_interesse", "resultado da checagem de conflito registrado", "alerta",
+                  "checagem dispensada por bypass registrado: " + str(cf["override"].get("rationale")))
+            g.pend("conflitos", "matter", "bypass registrado: revisar quando a checagem for feita")
+        else:
+            g.add("G11_conflitos_de_interesse", "resultado da checagem de conflito registrado", rigor,
+                  f"status {st or 'não registrado'}: faça a checagem (o pacote só registra o resultado)")
+            g.pend("conflitos", "matter", f"conflito de interesses {st or 'não registrado'}")
+        conf = m.get("confidentiality") or {}
+        posture, sj = conf.get("privilegio"), conf.get("segredo_de_justica")
+        fatos = [f for f in objs.get("facts", {}).get("facts", []) if isinstance(f, dict)]
+        nao_ok = [f.get("id") for f in fatos if f.get("priv") != "ok"]
+        if posture == "nao_triado":
+            g.add("G12_sigilo_das_fontes", "fontes triadas quanto a sigilo antes de circular", rigor,
+                  "as fontes não foram triadas: triar antes de qualquer entrega")
+            g.pend("sigilo", "matter", "fontes sem triagem de sigilo profissional")
+        elif posture == "misto" and nao_ok:
+            g.add("G12_sigilo_das_fontes", "fontes triadas quanto a sigilo antes de circular", "alerta",
+                  f"triagem mista: {len(nao_ok)} fato(s) sem 'priv: ok' (sinalizados para revisão)")
+            g.pend("sigilo", "facts", f"{len(nao_ok)} fato(s) sinalizados ou sem marca de sigilo: " + ", ".join(map(str, nao_ok[:8])))
+        elif sj is True:
+            g.add("G12_sigilo_das_fontes", "fontes triadas quanto a sigilo antes de circular", "alerta", "processo em segredo de justiça")
+            g.pend("sigilo", "matter", "segredo de justiça: confirmar que a circulação é permitida (CPC, art. 189)")
+        else:
+            g.add("G12_sigilo_das_fontes", "fontes triadas quanto a sigilo antes de circular", "aprovado", f"privilégio: {posture or 'não registrado'}")
+    elif not matter:
+        detalhe = "matter.json não informado"
+        g.add("G11_conflitos_de_interesse", "resultado da checagem de conflito registrado", rigor if externa else "nao_aplicavel",
+              detalhe + (": entrega externa exige o registro" if externa else ""))
+        g.add("G12_sigilo_das_fontes", "fontes triadas quanto a sigilo antes de circular", rigor if externa else "nao_aplicavel", detalhe)
+
+    # G13 reverificação das fontes (reler a fonte oficial e comparar o texto com o lido)
+    if reverificar:
+        import tempfile
+
+        import extract as _extract
+
+        cand = []
+        for c in cl:
+            for s in c.get("sources", []) if isinstance(c, dict) else []:
+                if (c.get("status") == "supported" and s.get("access") == "lida" and s.get("origin") == "oficial"
+                        and s.get("url") and s.get("document_id") in idx):
+                    cand.append((0 if c.get("central") is True else 1, str(c.get("id")), s))
+        cand.sort(key=lambda x: (x[0], x[1]))
+        mudou, falhou, iguais = [], [], 0
+        for _, cid, s in cand[:reverificar]:
+            with tempfile.TemporaryDirectory() as tmp:
+                r = _baixar(s["url"], Path(tmp))
+                if r.get("status") != "lida":
+                    falhou.append(f"{cid} ({r.get('motivo', 'sem resposta')})")
+                    continue
+                novo, _ = _extract.extrair(r["local_file"])
+            if novo.get("text_sha256") == idx[s["document_id"]].get("text_sha256"):
+                iguais += 1
+            else:
+                mudou.append(cid)
+                g.pend("fonte_mudou", cid, "a fonte oficial relida tem texto diferente do lido: reler antes de entregar")
+        if not cand:
+            g.add("G13_reverificacao", "fontes oficiais relidas e iguais às registradas", "alerta",
+                  "nenhuma fonte elegível (supported, oficial, com url e extração)")
+        else:
+            partes = [f"{iguais} igual(is)"]
+            if mudou:
+                partes.append("texto mudou em " + ", ".join(mudou))
+            if falhou:
+                partes.append("não foi possível reler: " + ", ".join(falhou))
+            g.add("G13_reverificacao", "fontes oficiais relidas e iguais às registradas",
+                  rigor if mudou else ("alerta" if falhou else "aprovado"), "; ".join(partes))
+
     reprovados = [i for i in g.itens if i["resultado"] == "reprovado"]
+    sem_ressalva = not any(i["resultado"] == "alerta" for i in g.itens) and not g.pendencias
+    faixa = "nao_entregar" if reprovados else ("alta" if (not externa and sem_ressalva) else "mista")
     return {
         "schema_version": SCHEMA_VERSION, "gerado_em": _agora(), "modo": modo,
         "estado_tecnico": "bloqueado" if reprovados else "revisao_pronta",
         "gates": g.itens, "pendencias": g.pendencias,
         "artefatos": sorted(({"caminho": _rel(p, base), "tipo": t, "sha256": _sha(p)} for p, t in artefatos.items()),
                             key=lambda a: a["caminho"]),
+        "tipo_entrega": tipo_entrega, "faixa": faixa,
+        "aprovacao_humana_obrigatoria": externa or faixa != "alta",
         "revisao_humana": {"estado": "pendente"},
         "aviso": "revisao_pronta não é aprovação: libera a revisão humana; assinatura e protocolo dependem do revisor.",
     }
@@ -285,7 +426,8 @@ def aprovar(qc_path, revisor, registro, declaracao, decisao="aprovada", nota=Non
         raise ValueError("o pacote mudou desde a auditoria (" + ", ".join(alt + aus) + "): rode 'auditar' de novo antes de decidir")
     return {"schema_version": SCHEMA_VERSION, "decisao": decisao,
             "revisor": {"nome": revisor.strip(), "registro": registro}, "declaracao": declaracao.strip(), "nota": nota,
-            "registrado_em": _agora(), "qc_sha256": _sha(qcp), "artefatos": qc["artefatos"]}
+            "registrado_em": _agora(), "qc_sha256": _sha(qcp), "artefatos": qc["artefatos"],
+            "faixa": qc.get("faixa"), "tipo_entrega": qc.get("tipo_entrega")}
 
 
 def _stdin_e_console() -> bool:
@@ -336,7 +478,10 @@ def _confirmar_no_terminal(qc_path, registro: dict) -> None:
 def status(qc_path, aprovacao_path=None) -> dict:
     qcp = Path(qc_path).resolve()
     qc = json.loads(qcp.read_text(encoding="utf-8"))
-    out = {"estado_tecnico": qc["estado_tecnico"], "revisao_humana": "pendente", "alterados": [], "ausentes": []}
+    obrig = qc.get("aprovacao_humana_obrigatoria", True)
+    out = {"estado_tecnico": qc["estado_tecnico"], "faixa": qc.get("faixa"), "tipo_entrega": qc.get("tipo_entrega"),
+           "aprovacao_humana_obrigatoria": obrig, "revisao_humana": "pendente", "alterados": [], "ausentes": []}
+    out["liberado_para_uso"] = qc["estado_tecnico"] == "revisao_pronta" and not obrig
     if not aprovacao_path or not Path(aprovacao_path).is_file():
         return out
     ap = json.loads(Path(aprovacao_path).read_text(encoding="utf-8"))
@@ -345,6 +490,8 @@ def status(qc_path, aprovacao_path=None) -> dict:
         alt.append(qcp.name)
     out.update(alterados=alt, ausentes=aus, revisor=ap["revisor"]["nome"], registrado_em=ap["registrado_em"])
     out["revisao_humana"] = "invalidada" if (alt or aus) else ap["decisao"]
+    out["liberado_para_uso"] = (qc["estado_tecnico"] == "revisao_pronta"
+                                and (out["revisao_humana"] == "aprovada" or not obrig))
     return out
 
 
@@ -358,6 +505,11 @@ def main(argv=None) -> int:
     a.add_argument("--modo", choices=("analise", "fundamentada"), default="analise")
     a.add_argument("--artefato", action="append", default=[])
     a.add_argument("--timeline", help="timeline.json gerado por cronologia.py")
+    a.add_argument("--matter", help="matter.json: confere conflitos de interesse e sigilo")
+    a.add_argument("--tipo-entrega", choices=TIPOS_ENTREGA, default="interna",
+                   help="cliente, peticao e contrato nunca ficam na faixa de confiança alta")
+    a.add_argument("--reverificar", type=int, default=0, metavar="N", help="relê até N fontes oficiais e compara o texto")
+    a.add_argument("--relatorio", action="append", default=[], help="relatório .md de entrega (precisa do aviso padrão)")
     a.add_argument("--saida", required=True)
     p = sub.add_parser("aprovar")
     p.add_argument("qc")
@@ -375,7 +527,8 @@ def main(argv=None) -> int:
         if n.cmd == "auditar":
             if not (n.facts or n.claims):
                 raise ValueError("informe --facts e/ou --claims")
-            qc = auditar(n.facts, n.claims, n.extracoes, n.modo, n.artefato, Path(n.saida).resolve().parent, n.timeline)
+            qc = auditar(n.facts, n.claims, n.extracoes, n.modo, n.artefato, Path(n.saida).resolve().parent, n.timeline,
+                         n.matter, n.tipo_entrega, n.reverificar, n.relatorio)
             Path(n.saida).write_text(json.dumps(qc, ensure_ascii=False, indent=2), encoding="utf-8")
             res, cod = qc, 0 if qc["estado_tecnico"] == "revisao_pronta" else 1
         elif n.cmd == "aprovar":

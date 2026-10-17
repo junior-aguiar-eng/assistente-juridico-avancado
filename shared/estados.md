@@ -16,3 +16,7 @@ Toda citação ou proposição jurídica carrega **um** destes estados. O padrã
 3. **Fonte secundária** (agregadores, informativo comentado, ForgeLex) localiza; não confirma. Teto: `partial`.
 4. **Vigência é evidência à parte.** `supported` não afirma que a norma está vigente hoje; vigência exige versão compilada lida, com data.
 5. Trecho tachado (`~~`) de página anotada nunca é fonte de regra.
+
+## `unsupported`: contradiz ou não trata
+
+`unsupported` se divide em duas situações com gravidades diferentes. Registre em `source_relation`: `contradiz` (a fonte oficial lida diz o contrário; se a proposição for central, **escale** a um advogado) ou `nao_trata` (a fonte não trata do ponto; costuma bastar trocar a citação). Não confunda com `quote_status: divergente`, que diz que a transcrição da citação não confere com o texto.

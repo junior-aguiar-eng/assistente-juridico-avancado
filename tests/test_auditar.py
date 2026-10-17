@@ -54,9 +54,12 @@ def test_caso_de_verificacao_fica_pronto_para_revisao_com_pendencias(monkeypatch
     assert res(qc) == {
         "G00_extracao_presente": "aprovado", "G01_schema_facts": "nao_aplicavel", "G02_schema_claims": "aprovado", "G03_cobertura_leitura": "aprovado",
         "G04_originais_intactos": "aprovado", "G05_fontes_lidas_conferem": "aprovado",
-        "G06_teses_centrais": "aprovado", "G07_proposicoes_refutadas": "alerta", "G08_avisos_do_validador": "aprovado"}
+        "G06_teses_centrais": "aprovado", "G07_proposicoes_refutadas": "alerta", "G08_avisos_do_validador": "aprovado",
+        "G10_aviso_no_relatorio": "nao_aplicavel", "G11_conflitos_de_interesse": "nao_aplicavel",
+        "G12_sigilo_das_fontes": "nao_aplicavel"}
     assert {(p["item"], p["motivo"]) for p in qc["pendencias"]} == {
-        ("c002", "estado unsupported"), ("c003", "estado unverified"), ("c005", "estado partial")}
+        ("c002", "estado unsupported"), ("c003", "estado unverified"), ("c005", "estado partial"),
+        ("c002", "a fonte oficial lida contradiz a proposição: levar ao advogado antes de seguir")}
     assert qc["revisao_humana"] == {"estado": "pendente"}
     assert "não é aprovação" in qc["aviso"]
 

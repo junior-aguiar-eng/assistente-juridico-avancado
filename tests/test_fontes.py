@@ -246,3 +246,25 @@ def test_cli_plano_anotacoes_e_erro(tmp_path):
     assert cod == 0 and r["anotacoes"][0]["tipo"] == "revogado"
     cod, r = cli("plano", "--tipo", "nada")
     assert cod == 1 and "tipo desconhecido" in r["erro"]
+
+
+# ------------------------------------------------------------------ atualidade do registro e portais para o usuário
+def test_registro_de_pontes_declara_atualidade_e_vence_com_o_tempo():
+    from datetime import date
+
+    reg = json.loads(fontes.REGISTRO_PONTES.read_text(encoding="utf-8"))
+    assert {"last_verified", "freshness_window_days", "freshness_category", "verified_against"} <= set(reg)
+    em_dia = fontes.plano("norma", hoje=date(2026, 12, 1))
+    assert em_dia["desatualizado"] is False and em_dia["aviso"] is None
+    velho = fontes.plano("norma", hoje=date(2027, 3, 1))
+    assert velho["desatualizado"] is True and "refaça a sondagem" in velho["aviso"] and velho["verificado_em"] == "2026-10-17"
+
+
+def test_plano_traz_portais_para_o_usuario_conferir_quando_a_ponte_falha():
+    r = fontes.plano("precedente_stj")
+    urls = [p["url"] for p in r["portais_para_o_usuario"]]
+    assert "https://scon.stj.jus.br/SCON/" in urls
+    assert any("anti-robô" in p["nota"] for p in r["portais_para_o_usuario"])
+    reg = json.loads(fontes.REGISTRO_PONTES.read_text(encoding="utf-8"))
+    assert set(reg["portais_para_o_usuario"]) <= set(reg["tipos"])
+    assert all(p["url"].startswith("https://") and p["nota"] for ps in reg["portais_para_o_usuario"].values() for p in ps)

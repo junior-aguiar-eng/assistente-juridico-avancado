@@ -1,16 +1,20 @@
 # Avisos de terceiros
 
-Este repositório não copia arquivos de outros projetos de skills jurídicas. O desenho foi informado por leitura de repositórios públicos (listados abaixo); nenhum texto ou código deles foi incorporado. Se isso mudar, cada arquivo incorporado deve entrar aqui com repositório, commit, caminho, licença e a alteração feita.
+Este repositório **não copia arquivos** de outros projetos de skills jurídicas. Os arquivos abaixo foram lidos nos commits indicados (17/10/2026) e **a estrutura ou a ideia** de cada um foi adaptada, com texto e código próprios. Se isso mudar, cada arquivo incorporado deve entrar aqui com repositório, commit, caminho, licença e a alteração feita (ver [governance/upstream-policy.md](governance/upstream-policy.md)). Comparação detalhada: [docs/comparacao-repositorios-modelo.md](docs/comparacao-repositorios-modelo.md).
 
-## Projetos que informaram o desenho (ideias, sem cópia de arquivos)
+## Projetos lidos e o que foi adaptado
 
-| Projeto | Licença observada | O que informou |
-|---|---|---|
-| anthropics/claude-for-legal | Apache-2.0 | organização por assunto; triagem e cronologia |
-| LegalQuants/lq-skills | Apache-2.0 na raiz; licenças locais por componente | separação entre acesso, existência e apoio à proposição |
-| code-lawyer/Legal-Agent-Skills | MIT | pacotes por jurisdição; gate de preenchimento |
-| chen-friedman/legal-skills | Apache-2.0 + NOTICE | inventário e mapa de casos |
-| ma-serra/lex-intelligentia-skills | MIT | estrutura de análise (FIRAC) |
+| Projeto (commit) | Licença conferida nos arquivos | Arquivos lidos | O que foi adaptado |
+|---|---|---|---|
+| anthropics/claude-for-legal (`4a6c651`) | Apache-2.0 | `litigation-legal/skills/matter-intake`, `.../chronology`, `legal-builder-hub/skills/skills-qa` | intake uniforme e registro do resultado de conflitos; relevância, exposição de fatos, filtro de privilégio, versões; os 13 parâmetros e as 3 falhas jurídicas da revisão de skills |
+| LegalQuants/lq-skills (`884cf40`) | Apache-2.0 na raiz e em `proposition-checking`; MIT em `adversarial-qc` (licença local) | `ACCESS-MODES.md`, `skills/proposition-checking`, `skills/adversarial-qc` e `references/checklist.md` | modos de acesso à fonte, `contradiz` e `nao_trata`, aplicabilidade, mapa de dependência, faixas de confiança, checklist de revisão crítica e profundidades |
+| ma-serra/lex-intelligentia-skills (`21f5496`) | MIT | `docs/METODOLOGIA-FIRAC-JB.md`, `docs/GUIA-ANTI-ALUCINACAO.md`, `skills/core/peticao-analyzer` | estrutura FIRAC-JB, checklist do CPC art. 489 § 1º, roteiro CAPPD; lista do que nunca fazer. **Rejeitado:** os níveis CONFIRMADO e PROVÁVEL, que afirmam de memória |
+| code-lawyer/Legal-Agent-Skills (`8916841`) | MIT | `legal-research/references/48-qc-gate.md`, `contract-review/references/06-output-and-severity.md`, `.../_templates/pack-template.md`, `document-fill/references/20-slot-and-fill.md` | rodapé de aviso obrigatório, limite de duas rodadas por verificação. Os demais ficam para a Fase 4 |
+| chen-friedman/legal-skills (`18863f3`) | Apache-2.0 e NOTICE (o GitHub lista `NOASSERTION`) | `skills/mapping-legal-cases/references/output-templates.md`, `scripts/extract.py` | inventário com pendências, partes, relatório de privacidade com valores mascarados, leitura de e-mail, verificação de capacidades. NOTICE: "Copyright 2026 Chen Friedman / Lawcal AI" |
+| evolsb/claude-legal-skill (`bca0d2e`) | MIT | `skill.md` | só leitura; a pré-checagem de contrato fica para a Fase 4, sem parâmetros de mercado dos EUA |
+| autodevx/legal-skills, AlissonSantos1/brasil-legal-skills | MIT | não lidos nesta rodada | o validador CNJ do autodevx foi **reescrito do zero** (o original aceita dígito verificador errado, conforme a análise anterior) |
+
+Nenhum desses projetos endossa este pacote.
 
 ## Dependências de execução (`requirements.txt`)
 
@@ -32,6 +36,11 @@ Dependências transitivas relevantes (instaladas com as acima): pypdfium2 (BSD-3
 
 PyMuPDF (AGPL-3.0) **não** é dependência e não deve ser adicionada sem decisão sobre a licença do pacote.
 
+## Ferramentas externas usadas, fora do repositório
+
+- `~/.claude/scripts/fetch_oficial.py` (conversão do Planalto em Markdown; do ambiente do usuário).
+- ForgeLex (serviço de terceiro) e o navegador integrado do app: dependem da sessão e **enviam termos de consulta para fora da máquina**; a política de sigilo do caso decide se podem ser usados.
+
 ## Documentos de teste
 
-`tests/casos/` traz o inteiro teor de um acórdão público do STJ (AREsp 2.432.194/SP) e a versão compilada do Código Civil obtida do Planalto, usados como fixtures. São atos e textos oficiais; a redistribuição não foi objeto de parecer. Os arquivos foram baixados em 17/10/2026.
+`tests/casos/` traz o inteiro teor de um acórdão público do STJ (AREsp 2.432.194/SP, duas cópias baixadas em 17/10/2026) e a versão compilada do Código Civil obtida do Planalto, usados como fixtures. São atos e textos oficiais; a redistribuição não foi objeto de parecer.

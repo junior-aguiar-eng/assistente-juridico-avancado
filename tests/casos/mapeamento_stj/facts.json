@@ -15,7 +15,10 @@
         "document_id": "doc-7e39161b0110",
         "locator": "p.16, termo de julgamento",
         "excerpt": "Brasília, 16 de março de 2026"
-      }
+      },
+      "relevancia": "media",
+      "relevancia_motivo": "Data em que o julgamento foi concluído.",
+      "priv": "ok"
     },
     {
       "id": "f002",
@@ -25,7 +28,10 @@
         "document_id": "doc-7e39161b0110",
         "locator": "p.16, termo de julgamento",
         "excerpt": "por unanimidade, conheceu parcialmente do recurso, mas lhe negou provimento"
-      }
+      },
+      "relevancia": "media",
+      "relevancia_motivo": "Resultado do julgamento na Turma.",
+      "priv": "ok"
     },
     {
       "id": "f003",
@@ -36,7 +42,9 @@
         "document_id": "doc-7e39161b0110",
         "locator": "p.5, voto",
         "excerpt": "JOSÉ alegou ofensa ao art. 205 do CC/2002"
-      }
+      },
+      "relevancia": "baixa",
+      "priv": "ok"
     },
     {
       "id": "f004",
@@ -52,7 +60,10 @@
         "document_id": "doc-7e39161b0110",
         "locator": "p.5, voto (citação)",
         "excerpt": "em novembro de 2013 firmou, com a agravada, ora em recuperação judicial, instrumentos de contrato de compra e venda de açúcar"
-      }
+      },
+      "relevancia": "alta",
+      "relevancia_motivo": "Narra a data do contrato cujo prazo prescricional é discutido.",
+      "priv": "ok"
     },
     {
       "id": "f005",
@@ -68,7 +79,10 @@
         "document_id": "doc-7e39161b0110",
         "locator": "p.5, voto (citação)",
         "excerpt": "em 28 de novembro de 2017, o ora agravante firmou contrato de cessão de crédito"
-      }
+      },
+      "relevancia": "media",
+      "relevancia_motivo": "Narra a cessão de crédito que trouxe o agravante ao caso.",
+      "priv": "ok"
     },
     {
       "id": "f006",
@@ -84,7 +98,10 @@
         "document_id": "doc-7e39161b0110",
         "locator": "p.6, voto (citação)",
         "excerpt": "a agravada ajuizou pedido de recuperação judicial em 14 de maio de 2020"
-      }
+      },
+      "relevancia": "alta",
+      "relevancia_motivo": "Narra a data do pedido de recuperação judicial, comparada pela Corte local ao prazo.",
+      "priv": "ok"
     },
     {
       "id": "f007",
@@ -94,12 +111,14 @@
         "f004",
         "f005",
         "f006"
-      ]
+      ],
+      "priv": "ok"
     },
     {
       "id": "f008",
       "kind": "lacuna",
-      "text": "Os contratos de 2013, a cessão de 2017 e a decisão do TJSP não constam dos documentos fornecidos; só aparecem trechos transcritos no voto."
+      "text": "Os contratos de 2013, a cessão de 2017 e a decisão do TJSP não constam dos documentos fornecidos; só aparecem trechos transcritos no voto.",
+      "priv": "ok"
     }
   ]
 }

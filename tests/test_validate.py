@@ -60,6 +60,7 @@ def claims(doc):
         "id": "c001", "tipo": "precedente", "central": True,
         "proposition": "O STJ aplica o prazo quinquenal do art. 206, § 5º, I, do CC à dívida líquida em instrumento particular.",
         "proposition_scope": "ementa", "status": "supported", "existence": "confirmada", "quote_status": "conferida",
+        "applicability": "STJ, 3ª Turma, AREsp em recuperação judicial; vale como indicação para cobrança de dívida líquida em instrumento particular.",
         "sources": [{"source_id": "s1", "origin": "oficial", "access": "lida",
                      "url": "https://processo.stj.jus.br/SCON/GetInteiroTeorDoAcordao?num_registro=202302535191",
                      "retrieved_at": "2026-10-17", "content_hash": doc["sha256"], "text_scope": "inteiro_teor",
@@ -87,7 +88,7 @@ def claim(**kw):
 def test_facts_validos_contra_extracao_real(facts, idx):
     r = validate.validar_facts(facts, idx)
     assert r.erros == [] and r.avisos == []
-    assert validate.resumo("facts", facts, r) == {"total": 4, "documentado": 1, "alegacao": 1, "inferencia": 1, "lacuna": 1}
+    assert validate.resumo("facts", facts, r) == {"total": 4, "documentado": 1, "alegacao": 1, "inferencia": 1, "lacuna": 1, "informado": 0}
 
 
 def test_facts_documentado_e_alegacao_exigem_fonte_e_autor(facts):
