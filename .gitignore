@@ -1,0 +1,6 @@
+# dados baixados para teste (não versionar)
+tests/casos/_download/
+__pycache__/
+.pytest_cache/
+.pytest_tmp/
+.cache/

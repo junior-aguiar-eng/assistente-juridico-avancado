@@ -1,0 +1,218 @@
+{
+  "consultado_em": "2026-10-17T03:13:15+00:00",
+  "resultados": [
+    {
+      "id": "planalto_cc",
+      "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+      "obs": null,
+      "tentativas": [
+        {
+          "http": 200,
+          "bytes": 923899,
+          "seg": 1.6,
+          "ctype": "text/html",
+          "user_agent_navegador": true,
+          "tentativa": 1,
+          "esperado_encontrado": true,
+          "sha256": "bb53a1716fd7349e"
+        }
+      ]
+    },
+    {
+      "id": "planalto_cpc",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13105.htm",
+      "obs": null,
+      "tentativas": [
+        {
+          "http": 200,
+          "bytes": 1691185,
+          "seg": 1.85,
+          "ctype": "text/html",
+          "user_agent_navegador": true,
+          "tentativa": 1,
+          "esperado_encontrado": true,
+          "sha256": "628d01da48d5dcf3"
+        }
+      ]
+    },
+    {
+      "id": "senado_lista",
+      "url": "https://legis.senado.leg.br/dadosabertos/legislacao/lista?tipo=LEI&numero=10406&ano=2002",
+      "obs": null,
+      "tentativas": [
+        {
+          "http": 200,
+          "bytes": 642,
+          "seg": 0.59,
+          "ctype": "application/json",
+          "user_agent_navegador": true,
+          "tentativa": 1,
+          "esperado_encontrado": true,
+          "sha256": "bc3e2d8881985dc9"
+        }
+      ]
+    },
+    {
+      "id": "senado_apidocs",
+      "url": "https://legis.senado.leg.br/dadosabertos/v3/api-docs",
+      "obs": null,
+      "tentativas": [
+        {
+          "http": 200,
+          "bytes": 173737,
+          "seg": 0.76,
+          "ctype": "application/json",
+          "user_agent_navegador": true,
+          "tentativa": 1,
+          "esperado_encontrado": true,
+          "sha256": "4e2aa4d1bae34d5e"
+        }
+      ]
+    },
+    {
+      "id": "stf_portal",
+      "url": "https://portal.stf.jus.br/",
+      "obs": null,
+      "tentativas": [
+        {
+          "http": 200,
+          "bytes": 76549,
+          "seg": 0.56,
+          "ctype": "text/html",
+          "user_agent_navegador": true,
+          "tentativa": 1,
+          "esperado_encontrado": true,
+          "sha256": "7c3be79c832657a0"
+        }
+      ]
+    },
+    {
+      "id": "stf_jurisprudencia",
+      "url": "https://jurisprudencia.stf.jus.br/pages/search",
+      "obs": null,
+      "tentativas": [
+        {
+          "http": 202,
+          "bytes": 0,
+          "seg": 0.44,
+          "ctype": "text/html; charset=UTF-8",
+          "user_agent_navegador": true,
+          "tentativa": 1
+        },
+        {
+          "http": 202,
+          "bytes": 0,
+          "seg": 0.21,
+          "ctype": "text/html; charset=UTF-8",
+          "user_agent_navegador": true,
+          "tentativa": 2
+        },
+        {
+          "http": 202,
+          "bytes": 0,
+          "seg": 0.2,
+          "ctype": "text/html; charset=UTF-8",
+          "user_agent_navegador": false,
+          "tentativa": 1
+        }
+      ]
+    },
+    {
+      "id": "stj_dadosabertos",
+      "url": "https://dadosabertos.web.stj.jus.br/",
+      "obs": null,
+      "tentativas": [
+        {
+          "http": 200,
+          "bytes": 40457,
+          "seg": 0.66,
+          "ctype": "text/html; charset=utf-8",
+          "user_agent_navegador": true,
+          "tentativa": 1,
+          "esperado_encontrado": true,
+          "sha256": "bfaa6d504b2cc5fd"
+        }
+      ]
+    },
+    {
+      "id": "stj_scon",
+      "url": "https://scon.stj.jus.br/SCON/",
+      "obs": null,
+      "tentativas": [
+        {
+          "http": 403,
+          "bytes": 0,
+          "seg": 0.25,
+          "erro": "HTTP 403",
+          "user_agent_navegador": true,
+          "tentativa": 1
+        },
+        {
+          "http": 403,
+          "bytes": 0,
+          "seg": 0.18,
+          "erro": "HTTP 403",
+          "user_agent_navegador": true,
+          "tentativa": 2
+        },
+        {
+          "http": 403,
+          "bytes": 0,
+          "seg": 0.18,
+          "erro": "HTTP 403",
+          "user_agent_navegador": false,
+          "tentativa": 1
+        }
+      ]
+    },
+    {
+      "id": "lexml_sru",
+      "url": "https://www.lexml.gov.br/busca/SRU?operation=searchRetrieve&version=1.1&maximumRecords=1&query=urn%20any%20%22urn%3Alex%3Abr%3Afederal%3Alei%3A2002-01-10%3B10406%22",
+      "obs": null,
+      "tentativas": [
+        {
+          "http": 200,
+          "bytes": 9048,
+          "seg": 0.62,
+          "ctype": "text/html; charset=UTF-8",
+          "user_agent_navegador": true,
+          "tentativa": 1,
+          "esperado_encontrado": false,
+          "sha256": "6dc0fb2f51454217"
+        }
+      ]
+    },
+    {
+      "id": "datajud_tjsp",
+      "url": "https://api-publica.datajud.cnj.jus.br/api_publica_tjsp/_search",
+      "obs": "sem credencial; só mede alcance (401/403 = host alcançável)",
+      "tentativas": [
+        {
+          "http": 401,
+          "bytes": 0,
+          "seg": 0.45,
+          "erro": "HTTP 401",
+          "user_agent_navegador": true,
+          "tentativa": 1
+        }
+      ]
+    },
+    {
+      "id": "camara_api",
+      "url": "https://dadosabertos.camara.leg.br/api/v2/proposicoes?siglaTipo=PL&ano=2020&itens=1",
+      "obs": null,
+      "tentativas": [
+        {
+          "http": 200,
+          "bytes": 804,
+          "seg": 1.07,
+          "ctype": "application/json",
+          "user_agent_navegador": true,
+          "tentativa": 1,
+          "esperado_encontrado": true,
+          "sha256": "aed05947b3a9a79c"
+        }
+      ]
+    }
+  ]
+}
