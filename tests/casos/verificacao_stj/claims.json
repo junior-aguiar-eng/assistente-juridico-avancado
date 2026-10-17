@@ -1,0 +1,142 @@
+{
+  "schema_version": "1",
+  "claims": [
+    {
+      "id": "c001",
+      "tipo": "precedente",
+      "central": true,
+      "proposition": "O STJ (3ª Turma, AREsp 2.432.194/SP, rel. Min. Moura Ribeiro, j. 16/03/2026) aplicou o prazo prescricional quinquenal do art. 206, § 5º, I, do CC à cobrança de dívida líquida constante de instrumento particular.",
+      "proposition_scope": "inteiro_teor",
+      "status": "supported",
+      "existence": "confirmada",
+      "quote_status": "conferida",
+      "sources": [
+        {
+          "source_id": "s1",
+          "origin": "oficial",
+          "access": "lida",
+          "url": "https://processo.stj.jus.br/SCON/GetInteiroTeorDoAcordao?num_registro=202302535191",
+          "local_file": "fontes/stj_inteiro_teor.pdf",
+          "retrieved_at": "2026-10-17",
+          "content_hash": "7e39161b01108451e6ecca6b2197b379d54ece6a75e73fa260b591bc3a898079",
+          "text_scope": "inteiro_teor",
+          "document_id": "doc-7e39161b0110",
+          "pinpoint": {
+            "locator": "p.4, ementa, item 3",
+            "excerpt": "se submete ao prazo quinquenal específico do art. 206, § 5º, I, do CC/2002"
+          }
+        },
+        {
+          "source_id": "s2",
+          "origin": "secundaria",
+          "access": "lida",
+          "url": "https://dadosabertos.web.stj.jus.br/dataset/74a99dea-a197-4d73-a169-d8c8f8f0b175/resource/10aa3294-283f-49ae-90f4-b0579f34d24f/download/20260331.json",
+          "retrieved_at": "2026-09-20T00:16:08Z",
+          "content_hash": "4c93527c88d1de0b87f92a960cdc0fa4bd18fd1df65ccb90b927b23f614de4b8",
+          "text_scope": "ementa",
+          "pinpoint": {
+            "locator": "espelho do acórdão, documentId 953016",
+            "excerpt": "PRAZO QUINQUENAL. ART. 206, § 5º, I, DO CC/2002"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c002",
+      "tipo": "precedente",
+      "proposition": "No AREsp 2.432.194/SP o STJ aplicou o prazo decenal geral do art. 205 do CC à cobrança de dívida líquida em instrumento particular.",
+      "proposition_scope": "inteiro_teor",
+      "status": "unsupported",
+      "existence": "confirmada",
+      "quote_status": "conferida",
+      "reason": "O acórdão afirma o contrário: afasta a regra residual do art. 205 e aplica o prazo quinquenal do art. 206, § 5º, I.",
+      "sources": [
+        {
+          "source_id": "s1",
+          "origin": "oficial",
+          "access": "lida",
+          "url": "https://processo.stj.jus.br/SCON/GetInteiroTeorDoAcordao?num_registro=202302535191",
+          "local_file": "fontes/stj_inteiro_teor.pdf",
+          "retrieved_at": "2026-10-17",
+          "content_hash": "7e39161b01108451e6ecca6b2197b379d54ece6a75e73fa260b591bc3a898079",
+          "text_scope": "inteiro_teor",
+          "document_id": "doc-7e39161b0110",
+          "pinpoint": {
+            "locator": "p.4, ementa, item 3",
+            "excerpt": "ficando afastada a regra residual do art. 205 do CC/2002"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c003",
+      "tipo": "precedente",
+      "proposition": "O REsp 9.999.999/SP firmou o prazo trienal para a pretensão de cobrança de dívida líquida.",
+      "status": "unverified",
+      "existence": "nao_confirmada",
+      "sources": [
+        {
+          "source_id": "s1",
+          "origin": "secundaria",
+          "access": "nao_acessada",
+          "error": "ForgeLex research_verify_authority (STJ, 9999999): NOT_FOUND no corpus persistido. Não prova inexistência; falta consulta ao portal do STJ."
+        }
+      ]
+    },
+    {
+      "id": "c004",
+      "tipo": "norma",
+      "proposition": "Prescreve em cinco anos a pretensão de cobrança de dívidas líquidas constantes de instrumento público ou particular (CC, art. 206, § 5º, I).",
+      "status": "supported",
+      "existence": "confirmada",
+      "quote_status": "conferida",
+      "sources": [
+        {
+          "source_id": "s1",
+          "origin": "oficial",
+          "access": "lida",
+          "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+          "local_file": "fontes/cc_compilado.md",
+          "retrieved_at": "2026-10-17",
+          "content_hash": "0c83b287fb1dd410ad7ddb629003e7f9a73244e61a5590ec50133d024a92532e",
+          "text_scope": "texto_legal",
+          "document_id": "doc-0c83b287fb1d",
+          "legal_time": {
+            "as_of": "2026-10-17",
+            "vigencia": "vigente"
+          },
+          "pinpoint": {
+            "locator": "CC, art. 206, § 5º, I (versão compilada, sem trecho tachado)",
+            "excerpt": "I - a pretensão de cobrança de dívidas líquidas constantes de instrumento público ou particular"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c005",
+      "tipo": "precedente",
+      "proposition": "O STJ equipara ata de reunião que fixa o valor dos serviços a instrumento particular para fins do prazo quinquenal (AREsp 2.789.755).",
+      "proposition_scope": "inteiro_teor",
+      "status": "partial",
+      "existence": "confirmada",
+      "quote_status": "nao_conferida",
+      "reason": "Só a ementa foi lida, e por fonte secundária (ForgeLex, a partir dos dados abertos do STJ).",
+      "missing": "Ler o inteiro teor no portal do STJ e localizar o fundamento do relator.",
+      "sources": [
+        {
+          "source_id": "s1",
+          "origin": "secundaria",
+          "access": "lida",
+          "url": "https://dadosabertos.web.stj.jus.br/dataset/bab65848-f287-4146-8273-e58faee39ad2/resource/5e4ec160-4550-4db2-a495-b0b70ea3b5b0/download/20260131.json",
+          "retrieved_at": "2026-09-20T00:47:03Z",
+          "content_hash": "dae435a1e55eafb6109deed3384a3fcc7d6654ce3a8684519b83051d4b5a3dee",
+          "text_scope": "ementa",
+          "pinpoint": {
+            "locator": "espelho do acórdão, documentId 942828",
+            "excerpt": "ATA DE REUNIÃO EQUIPARADA A INSTRUMENTO PARTICULAR. DÍVIDA LÍQUIDA. PRESCRIÇÃO QUINQUENAL"
+          }
+        }
+      ]
+    }
+  ]
+}

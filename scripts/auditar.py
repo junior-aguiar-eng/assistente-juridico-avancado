@@ -1,0 +1,380 @@
+"""Gate final de uma entrega: checagem técnica (qc.json) e aprovação humana ligada a hashes.
+
+  auditar  --facts F.json --claims C.json --extracoes E.json [--modo analise|fundamentada]
+           [--artefato ARQ ...] --saida qc.json
+  aprovar  qc.json --revisor NOME [--registro OAB/UF] --declaracao TEXTO [--decisao aprovada|reprovada]
+           [--nota TEXTO] --saida aprovacao.json
+  status   qc.json [aprovacao.json]
+
+`aprovar` só funciona em terminal interativo e exige que o revisor digite a frase de confirmação.
+A checagem técnica diz "revisao_pronta" ou "bloqueado". Nunca é aprovação: "aprovada" só
+existe em aprovacao.json, registrada por pessoa identificada, e vale enquanto nenhum
+artefato (incluindo as fontes lidas) mudar. Quem decide a correção jurídica é o revisor.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import validate  # noqa: E402
+
+SCHEMA_VERSION = "1"
+
+
+def _sha(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for bloco in iter(lambda: f.read(1 << 20), b""):
+            h.update(bloco)
+    return h.hexdigest()
+
+
+def _agora():
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def _rel(p: Path, base: Path) -> str:
+    try:
+        return Path(os.path.relpath(p, base)).as_posix()
+    except ValueError:  # outra unidade no Windows
+        return p.resolve().as_posix()
+
+
+def _resolver(caminho: str, *bases: Path) -> Path | None:
+    p = Path(caminho)
+    for cand in ([p] if p.is_absolute() else [b / p for b in bases] + [Path.cwd() / p]):
+        if cand.is_file():
+            return cand
+    return None
+
+
+class Gates:
+    def __init__(self):
+        self.itens: list[dict] = []
+        self.pendencias: list[dict] = []
+
+    def add(self, gid, descricao, resultado, detalhe=""):
+        self.itens.append({"id": gid, "descricao": descricao, "resultado": resultado, "detalhe": detalhe})
+
+    def pend(self, origem, item, motivo):
+        self.pendencias.append({"origem": origem, "item": item, "motivo": motivo})
+
+
+def _resumo_erros(r, n=8):
+    return "; ".join(f"{e['codigo']} em {e['caminho']}" for e in r.erros[:n]) + (" ..." if len(r.erros) > n else "")
+
+
+def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path(".")) -> dict:
+    g = Gates()
+    base = Path(base).resolve()
+    idx, docs, dirs_ext = {}, [], []
+    for e in extracoes:
+        ep = Path(e).resolve()
+        dirs_ext.append(ep.parent)
+        for d in validate.carregar_extracoes([ep]).values():
+            idx[d["document_id"]] = d
+        obj = json.loads(ep.read_text(encoding="utf-8"))
+        docs += obj.get("documents", [obj] if "blocks" in obj else [])
+    artefatos = {}
+
+    def reg(caminho, tipo):
+        p = Path(caminho).resolve()
+        artefatos[p] = tipo
+
+    # G00: sem extração nada é conferido contra o texto lido (trechos, localizadores, hashes)
+    if extracoes:
+        g.add("G00_extracao_presente", "trechos e hashes conferidos contra o texto extraído", "aprovado",
+              f"{len(docs)} documento(s) extraído(s)")
+    else:
+        g.add("G00_extracao_presente", "trechos e hashes conferidos contra o texto extraído",
+              "reprovado" if modo == "fundamentada" else "alerta",
+              "sem extração informada: nenhum trecho, localizador ou hash foi conferido contra o texto lido")
+
+    objs, avisos_val = {}, []
+    for rot, cam, fn in (("facts", facts, validate.validar_facts), ("claims", claims, validate.validar_claims)):
+        gid = "G01_schema_facts" if rot == "facts" else "G02_schema_claims"
+        if not cam:
+            g.add(gid, f"{rot}.json válido contra as regras e as fontes extraídas", "nao_aplicavel", "arquivo não informado")
+            continue
+        try:
+            objs[rot] = json.loads(Path(cam).read_text(encoding="utf-8"))
+        except (OSError, ValueError) as e:
+            g.add(gid, f"{rot}.json válido", "reprovado", f"ilegível: {e}")
+            continue
+        r = fn(objs[rot], idx if idx else None)
+        avisos_val += [(rot, a) for a in r.avisos]
+        g.add(gid, f"{rot}.json válido contra as regras e as fontes extraídas",
+              "reprovado" if r.erros else "aprovado", _resumo_erros(r) if r.erros else f"{len(r.avisos)} aviso(s)")
+        reg(cam, rot)
+    for e in extracoes:
+        reg(e, "extracao")
+    for x in extras:
+        reg(x, "artefato")
+
+    # G03 cobertura de leitura
+    lacunas = [f for f in objs.get("facts", {}).get("facts", []) if isinstance(f, dict) and f.get("kind") == "lacuna"]
+    nao_ok = [d for d in docs if d.get("status") != "ok"]
+    sem_lacuna = []
+    for d in nao_ok:
+        nome = Path(d.get("path", "")).name
+        coberto = any(nome and nome in f.get("text", "") or d.get("document_id") and d["document_id"] in f.get("text", "")
+                      for f in lacunas)
+        g.pend("cobertura", nome or "(sem nome)", f"documento {d.get('status')}: {[a['codigo'] for a in d.get('warnings', [])]}")
+        if not coberto:
+            sem_lacuna.append(d)
+    if not docs:
+        g.add("G03_cobertura_leitura", "todo documento lido ou registrado como lacuna", "alerta", "nenhuma extração informada")
+    elif not nao_ok:
+        g.add("G03_cobertura_leitura", "todo documento lido ou registrado como lacuna", "aprovado", f"{len(docs)} documento(s) com status ok")
+    elif "facts" not in objs:
+        g.add("G03_cobertura_leitura", "todo documento lido ou registrado como lacuna", "alerta",
+              f"{len(nao_ok)} documento(s) não lido(s) por inteiro e sem facts.json para registrar as lacunas")
+    elif sem_lacuna:
+        g.add("G03_cobertura_leitura", "todo documento lido ou registrado como lacuna", "reprovado",
+              "falha silenciosa: sem lacuna registrada para " + ", ".join(Path(d["path"]).name for d in sem_lacuna))
+    else:
+        g.add("G03_cobertura_leitura", "todo documento lido ou registrado como lacuna", "aprovado",
+              f"{len(nao_ok)} documento(s) não lido(s) por inteiro, todos registrados como lacuna")
+
+    # G04 originais intactos desde a extração
+    mudou, ausente = [], []
+    for d in docs:
+        if not d.get("sha256"):
+            continue
+        p = _resolver(d["path"], *dirs_ext)
+        if p is None:
+            ausente.append(d["path"])
+        else:
+            reg(p, "fonte")
+            if _sha(p) != d["sha256"]:
+                mudou.append(d["path"])
+    g.add("G04_originais_intactos", "arquivos de origem iguais aos extraídos",
+          "reprovado" if mudou else ("alerta" if ausente else "aprovado"),
+          ("alterados após a extração: " + ", ".join(mudou)) if mudou else
+          (("não localizados para conferir: " + ", ".join(ausente)) if ausente else f"{len(docs)} arquivo(s) conferido(s)"))
+
+    # G05 fontes lidas dos claims conferem com os arquivos
+    div, falt, conf, sem_local = [], [], 0, []
+    if "claims" in objs:
+        pasta = Path(claims).resolve().parent
+        for c in objs["claims"].get("claims", []):
+            fontes_c = [s for s in c.get("sources", []) if isinstance(s, dict)] if isinstance(c, dict) else []
+            oficiais = [s for s in fontes_c if s.get("access") == "lida" and s.get("origin") == "oficial"]
+            if c.get("status") == "supported" and oficiais and not any(s.get("local_file") for s in oficiais):
+                sem_local.append(str(c.get("id")))
+                g.pend("fonte_nao_reconferivel", c.get("id"), "proposição 'supported' sem local_file: a leitura não pode ser refeita")
+            for s in fontes_c:
+                if s.get("access") != "lida" or not s.get("local_file"):
+                    continue
+                p = _resolver(s["local_file"], pasta, *dirs_ext)
+                if p is None:
+                    falt.append(s["local_file"])
+                    continue
+                reg(p, "fonte")
+                texto_ok = idx.get(s.get("document_id"), {}).get("text_sha256")
+                if _sha(p) == s.get("content_hash") or (texto_ok and s.get("content_hash") == texto_ok):
+                    conf += 1
+                else:
+                    div.append(f"{c.get('id')}:{s['local_file']}")
+        bloqueia_sem_local = bool(sem_local) and modo == "fundamentada"
+        detalhes = []
+        if div:
+            detalhes.append("hash diverge em " + ", ".join(div))
+        if falt:
+            detalhes.append("arquivo ausente: " + ", ".join(falt))
+        if sem_local:
+            detalhes.append("sem local_file (não reconferível): " + ", ".join(sem_local))
+        g.add("G05_fontes_lidas_conferem", "arquivo de cada fonte lida confere com o hash registrado",
+              "reprovado" if (div or bloqueia_sem_local) else ("alerta" if (falt or sem_local) else "aprovado"),
+              "; ".join(detalhes) or f"{conf} fonte(s) conferida(s)")
+    else:
+        g.add("G05_fontes_lidas_conferem", "arquivo de cada fonte lida confere com o hash registrado", "nao_aplicavel", "sem claims.json")
+
+    # G06 teses centrais e G07 proposições refutadas
+    cl = [c for c in objs.get("claims", {}).get("claims", []) if isinstance(c, dict)]
+    if "claims" in objs:
+        centrais = [c for c in cl if c.get("central") is True]
+        pend = [c for c in centrais if c.get("status") != "supported"]
+        for c in pend:
+            g.pend("tese_central", c.get("id"), f"estado {c.get('status')}")
+        if not centrais:
+            g.add("G06_teses_centrais", "teses centrais com apoio verificado", "alerta", "nenhuma proposição marcada como central")
+        elif pend:
+            g.add("G06_teses_centrais", "teses centrais com apoio verificado",
+                  "reprovado" if modo == "fundamentada" else "alerta",
+                  f"{len(pend)} de {len(centrais)} sem 'supported': " + ", ".join(str(c.get("id")) for c in pend))
+        else:
+            g.add("G06_teses_centrais", "teses centrais com apoio verificado", "aprovado", f"{len(centrais)} central(is) 'supported'")
+        for c in cl:
+            if c.get("status") in ("unverified", "partial", "unsupported") and c not in pend:
+                g.pend("proposicao", c.get("id"), f"estado {c.get('status')}")
+        ref = [c for c in cl if c.get("status") == "unsupported"]
+        g.add("G07_proposicoes_refutadas", "proposição refutada pela fonte não consta como fundamento",
+              "alerta" if ref else "aprovado",
+              ("confirme que não entram como fundamento: " + ", ".join(str(c.get("id")) for c in ref)) if ref else "nenhuma refutada")
+    else:
+        g.add("G06_teses_centrais", "teses centrais com apoio verificado", "nao_aplicavel", "sem claims.json")
+        g.add("G07_proposicoes_refutadas", "proposição refutada pela fonte não consta como fundamento", "nao_aplicavel", "sem claims.json")
+    for f in lacunas:
+        g.pend("lacuna", f.get("id"), f.get("text", "")[:140])
+
+    # G08 avisos do validador
+    por_cod: dict[str, int] = {}
+    for rot, a in avisos_val:
+        por_cod[a["codigo"]] = por_cod.get(a["codigo"], 0) + 1
+        g.pend("aviso", f"{rot}:{a['caminho']}", a["codigo"])
+    g.add("G08_avisos_do_validador", "avisos do validador examinados pelo revisor",
+          "alerta" if por_cod else "aprovado", ", ".join(f"{k} x{v}" for k, v in sorted(por_cod.items())) or "nenhum aviso")
+
+    reprovados = [i for i in g.itens if i["resultado"] == "reprovado"]
+    return {
+        "schema_version": SCHEMA_VERSION, "gerado_em": _agora(), "modo": modo,
+        "estado_tecnico": "bloqueado" if reprovados else "revisao_pronta",
+        "gates": g.itens, "pendencias": g.pendencias,
+        "artefatos": sorted(({"caminho": _rel(p, base), "tipo": t, "sha256": _sha(p)} for p, t in artefatos.items()),
+                            key=lambda a: a["caminho"]),
+        "revisao_humana": {"estado": "pendente"},
+        "aviso": "revisao_pronta não é aprovação: libera a revisão humana; assinatura e protocolo dependem do revisor.",
+    }
+
+
+def _recalcular(qc: dict, base: Path):
+    alterados, ausentes = [], []
+    for a in qc["artefatos"]:
+        p = (base / a["caminho"]) if not Path(a["caminho"]).is_absolute() else Path(a["caminho"])
+        if not p.is_file():
+            ausentes.append(a["caminho"])
+        elif _sha(p) != a["sha256"]:
+            alterados.append(a["caminho"])
+    return alterados, ausentes
+
+
+def aprovar(qc_path, revisor, registro, declaracao, decisao="aprovada", nota=None) -> dict:
+    qcp = Path(qc_path).resolve()
+    qc = json.loads(qcp.read_text(encoding="utf-8"))
+    if not revisor or not revisor.strip():
+        raise ValueError("revisor identificado é obrigatório")
+    if not declaracao or not declaracao.strip():
+        raise ValueError("a declaração do revisor é obrigatória")
+    if decisao == "aprovada" and qc["estado_tecnico"] != "revisao_pronta":
+        raise ValueError("o pacote está bloqueado na checagem técnica: não pode ser aprovado")
+    alt, aus = _recalcular(qc, qcp.parent)
+    if alt or aus:
+        raise ValueError("o pacote mudou desde a auditoria (" + ", ".join(alt + aus) + "): rode 'auditar' de novo antes de decidir")
+    return {"schema_version": SCHEMA_VERSION, "decisao": decisao,
+            "revisor": {"nome": revisor.strip(), "registro": registro}, "declaracao": declaracao.strip(), "nota": nota,
+            "registrado_em": _agora(), "qc_sha256": _sha(qcp), "artefatos": qc["artefatos"]}
+
+
+def _stdin_e_console() -> bool:
+    """True só se o stdin é um terminal interativo de verdade.
+
+    No Windows, `isatty()` devolve True para o dispositivo NUL (stdin nulo), então a checagem
+    também pergunta ao sistema se o handle é um console (GetConsoleMode)."""
+    if sys.stdin is None or not sys.stdin.isatty():
+        return False
+    if os.name == "nt":
+        import ctypes
+        import msvcrt
+
+        try:
+            modo = ctypes.c_uint32()
+            h = ctypes.c_void_p(msvcrt.get_osfhandle(sys.stdin.fileno()))
+            return bool(ctypes.windll.kernel32.GetConsoleMode(h, ctypes.byref(modo)))
+        except (OSError, ValueError, AttributeError):
+            return False
+    return True
+
+
+def _exigir_terminal():
+    if not _stdin_e_console():
+        raise ValueError("a aprovação exige terminal interativo: a confirmação deve ser digitada pelo próprio revisor, "
+                         "no painel de terminal. Agentes e scripts não podem registrá-la")
+
+
+def _confirmar_no_terminal(qc_path, registro: dict) -> None:
+    """Mostra o que será registrado e exige que a pessoa digite a frase de confirmação."""
+    qc = json.loads(Path(qc_path).read_text(encoding="utf-8"))
+    frase = ("APROVO " if registro["decisao"] == "aprovada" else "REPROVO ") + _sha(Path(qc_path))[:8]
+    linhas = [
+        f"Decisão:          {registro['decisao']}",
+        f"Revisor:          {registro['revisor']['nome']} ({registro['revisor']['registro'] or 'sem registro informado'})",
+        f"Declaração:       {registro['declaracao']}",
+        f"Estado técnico:   {qc['estado_tecnico']}  |  pendências: {len(qc.get('pendencias', []))}",
+        f"Artefatos ligados: {len(registro['artefatos'])} (qualquer mudança invalida esta decisão)",
+        f"Para registrar, digite exatamente: {frase}",
+        "> ",
+    ]
+    sys.stderr.write("\n".join(linhas))
+    sys.stderr.flush()
+    if sys.stdin.readline().strip() != frase:
+        raise ValueError("a confirmação digitada não confere: nada foi registrado")
+
+
+def status(qc_path, aprovacao_path=None) -> dict:
+    qcp = Path(qc_path).resolve()
+    qc = json.loads(qcp.read_text(encoding="utf-8"))
+    out = {"estado_tecnico": qc["estado_tecnico"], "revisao_humana": "pendente", "alterados": [], "ausentes": []}
+    if not aprovacao_path or not Path(aprovacao_path).is_file():
+        return out
+    ap = json.loads(Path(aprovacao_path).read_text(encoding="utf-8"))
+    alt, aus = _recalcular({"artefatos": ap["artefatos"]}, qcp.parent)
+    if _sha(qcp) != ap["qc_sha256"]:
+        alt.append(qcp.name)
+    out.update(alterados=alt, ausentes=aus, revisor=ap["revisor"]["nome"], registrado_em=ap["registrado_em"])
+    out["revisao_humana"] = "invalidada" if (alt or aus) else ap["decisao"]
+    return out
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    a = sub.add_parser("auditar")
+    a.add_argument("--facts")
+    a.add_argument("--claims")
+    a.add_argument("--extracoes", action="append", default=[])
+    a.add_argument("--modo", choices=("analise", "fundamentada"), default="analise")
+    a.add_argument("--artefato", action="append", default=[])
+    a.add_argument("--saida", required=True)
+    p = sub.add_parser("aprovar")
+    p.add_argument("qc")
+    p.add_argument("--revisor", required=True)
+    p.add_argument("--registro")
+    p.add_argument("--declaracao", required=True)
+    p.add_argument("--decisao", choices=("aprovada", "reprovada"), default="aprovada")
+    p.add_argument("--nota")
+    p.add_argument("--saida", required=True)
+    s = sub.add_parser("status")
+    s.add_argument("qc")
+    s.add_argument("aprovacao", nargs="?")
+    n = ap.parse_args(argv)
+    try:
+        if n.cmd == "auditar":
+            if not (n.facts or n.claims):
+                raise ValueError("informe --facts e/ou --claims")
+            qc = auditar(n.facts, n.claims, n.extracoes, n.modo, n.artefato, Path(n.saida).resolve().parent)
+            Path(n.saida).write_text(json.dumps(qc, ensure_ascii=False, indent=2), encoding="utf-8")
+            res, cod = qc, 0 if qc["estado_tecnico"] == "revisao_pronta" else 1
+        elif n.cmd == "aprovar":
+            _exigir_terminal()
+            res = aprovar(n.qc, n.revisor, n.registro, n.declaracao, n.decisao, n.nota)
+            _confirmar_no_terminal(n.qc, res)
+            Path(n.saida).write_text(json.dumps(res, ensure_ascii=False, indent=2), encoding="utf-8")
+            cod = 0
+        else:
+            res = status(n.qc, n.aprovacao)
+            cod = 0 if res["revisao_humana"] in ("aprovada", "pendente") else 1
+    except (ValueError, OSError) as e:
+        res, cod = {"erro": f"{type(e).__name__}: {e}"}, 1
+    sys.stdout.buffer.write((json.dumps(res, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
+    return cod
+
+
+if __name__ == "__main__":
+    sys.exit(main())
