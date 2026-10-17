@@ -1,0 +1,2 @@
+# Fixtures de teste: sem conversão de fim de linha, para que os hashes registrados nos casos não mudem no checkout
+tests/casos/** -text
