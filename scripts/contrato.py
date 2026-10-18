@@ -1,7 +1,7 @@
 """Apoio mecânico à revisão de contrato: pré-checagem do texto extraído e validação do issues.json.
 
   precheck EXTRACAO.json [--documento ID]      campos em branco, anexos ausentes, remissões quebradas, assinatura, marca de minuta
-  validar-issues ISSUES.json [--extracoes E.json] [--regras rules/br --pacote servicos_saas] [--permitir-rascunho]
+  validar-issues ISSUES.json [--extracoes E.json] [--regras rules/br --pacote servicos_saas,lgpd] [--permitir-rascunho]
 
 A pré-checagem só aponta o que o texto mostra, com localizador: não conclui nada jurídico. O issues.json é o produto do
 revisor (pessoa ou modelo); aqui só se confere se cada apontamento tem texto completo da cláusula, severidade nos dois
@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from datetime import date
 import re
 import sys
 from pathlib import Path
@@ -24,6 +25,8 @@ _ANEXO_REF = re.compile(r"\bAnexo\s+([IVXLC]+|[A-Z]|\d+)\b")
 _ANEXO_TITULO = re.compile(r"^\s*ANEXO\s+([IVXLC]+|[A-Z]|\d+)\b", re.I)
 _CLAUSULA_DEF = re.compile(r"^\s*(?:cl[áa]usula\s+)?(\d+(?:\.\d+)*)\s*[.\-)–:]?\s+\S", re.I)
 _REMISSAO = re.compile(r"\b(?:cl[áa]usulas?|subcl[áa]usulas?|ite(?:m|ns))\s+(\d+(?:\.\d+)*)", re.I)
+_LINHA_ASSINATURA = re.compile(r"_{3,}.*(contratante|contratada|contratado|testemunha|outorgante|outorgado|divulgadora|receptora|parte)"
+                               r"|[A-Za-zÀ-ú .]+,\s*_{2,}\s*de\s*_{2,}(\s*de\s*_{2,})?", re.I)
 _ASSINATURA = re.compile(r"assinatura|assinam|assinado|firmam|testemunha|local e data|em \d{1,2} de \w+ de \d{4}", re.I)
 _MINUTA = re.compile(r"\b(minuta|rascunho|draft|vers[ãa]o para discuss[ãa]o|confidencial para negocia[çc][ãa]o)\b", re.I)
 SEV_JUR = ("baixa", "media", "alta", "critica")
@@ -64,7 +67,7 @@ def precheck(extracao: dict, documento: str | None = None) -> dict:
             if t:
                 titulos_anexo.add(t.group(1).upper())
         for b in blocos:
-            for m in _BRANCO.finditer(b["text"]):
+            for m in ([] if _LINHA_ASSINATURA.search(b["text"]) else _BRANCO.finditer(b["text"])):  # linha de assinatura não é campo esquecido
                 add("campo_em_branco", b, b["text"][max(0, m.start() - 40):m.end() + 20], "campo aparentemente não preenchido")
             if not _ANEXO_TITULO.match(b["text"]):
                 for m in _ANEXO_REF.finditer(b["text"]):
@@ -79,7 +82,7 @@ def precheck(extracao: dict, documento: str | None = None) -> dict:
                 add("marca_de_minuta", b, b["text"], "o texto se apresenta como minuta ou rascunho")
         if blocos:
             cauda = blocos[int(len(blocos) * 0.8):]
-            if not any(_ASSINATURA.search(b["text"]) for b in cauda):
+            if not any(_ASSINATURA.search(b["text"]) or _LINHA_ASSINATURA.search(b["text"]) for b in cauda):
                 achados.append({"tipo": "assinatura_nao_identificada", "block_id": None, "locator": None, "page": None,
                                 "trecho": "", "mensagem": "não há bloco de assinatura, testemunhas ou local e data no final do documento"})
         for w in d.get("warnings", []):
@@ -99,6 +102,7 @@ def precheck(extracao: dict, documento: str | None = None) -> dict:
 def validar_issues(obj: dict, extracoes: dict | None = None, regras_dir: Path | None = None, pacote: str | None = None,
                    permitir_rascunho: bool = False) -> dict:
     erros, avisos = [], []
+    rascunho_usado = False
 
     def e(cod, onde, msg):
         erros.append({"codigo": cod, "onde": onde, "mensagem": msg})
@@ -114,8 +118,9 @@ def validar_issues(obj: dict, extracoes: dict | None = None, regras_dir: Path | 
         e("posicao_ausente", "posicao_da_parte", "diga qual parte o revisor representa: a severidade depende dela")
     regras = {}
     if regras_dir is not None and pacote:
-        carregado = regras_mod.carregar(Path(regras_dir), pacote, incluir_inativas=True)
-        regras = {r["id"]: r for r in carregado["regras"]}
+        for nome in [x.strip() for x in str(pacote).split(",") if x.strip()]:  # vários pacotes: "servicos_saas,lgpd"
+            carregado = regras_mod.carregar(Path(regras_dir), nome, incluir_inativas=True)
+            regras.update({r["id"]: r for r in carregado["regras"]})
     blocos = {}
     if extracoes is not None:
         for d in _docs(extracoes):
@@ -157,12 +162,20 @@ def validar_issues(obj: dict, extracoes: dict | None = None, regras_dir: Path | 
                 elif r.get("uso") != "revisada":
                     (a if permitir_rascunho else e)("regra_nao_revisada" if not permitir_rascunho else "regra_rascunho", wb,
                                                     "a regra é rascunho sem revisão jurídica: não sustenta apontamento")
-                    juridica += 1 if permitir_rascunho else 0
+                    rascunho_usado = True  # nunca conta como base jurídica, nem com --permitir-rascunho
                 else:
                     juridica += 1
             elif tipo == "fonte":
-                if not b.get("source_id"):
-                    e("fonte_sem_id", wb, "base do tipo fonte exige source_id")
+                faltam = [k for k in ("source_id", "retrieved_at", "locator") if not str(b.get(k) or "").strip()]
+                if not (b.get("local_file") or b.get("url")):
+                    faltam.append("local_file ou url")
+                try:
+                    date.fromisoformat(str(b.get("retrieved_at")))
+                except ValueError:
+                    if "retrieved_at" not in faltam:
+                        faltam.append("retrieved_at (AAAA-MM-DD)")
+                if faltam:
+                    e("fonte_incompleta", wb, "base do tipo fonte exige uma fonte realmente lida: falta " + ", ".join(faltam))
                 else:
                     juridica += 1
             elif tipo == "pratica_do_cliente" and not str(b.get("nota") or "").strip():
@@ -188,7 +201,8 @@ def validar_issues(obj: dict, extracoes: dict | None = None, regras_dir: Path | 
             a("trecho_nao_conferido", w, "sem --extracoes: o texto da cláusula não foi conferido com o documento")
         if it.get("sugestao") and _ns(it["sugestao"]) == _ns(it.get("clause_text", "")):
             e("sugestao_igual_ao_original", w, "a sugestão repete a cláusula")
-    return {"erros": erros, "avisos": avisos, "issues": len(lista)}
+    return {"erros": erros, "avisos": avisos, "issues": len(lista), "rascunho": rascunho_usado,
+            "entregavel": not erros and not rascunho_usado}
 
 
 def main(argv=None) -> int:
@@ -201,7 +215,7 @@ def main(argv=None) -> int:
     v.add_argument("issues")
     v.add_argument("--extracoes")
     v.add_argument("--regras")
-    v.add_argument("--pacote", default="servicos_saas")
+    v.add_argument("--pacote", default="servicos_saas", help="um ou mais pacotes separados por vírgula, ex.: servicos_saas,lgpd")
     v.add_argument("--permitir-rascunho", action="store_true")
     n = ap.parse_args(argv)
     try:

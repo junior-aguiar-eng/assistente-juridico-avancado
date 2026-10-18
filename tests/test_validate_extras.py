@@ -235,7 +235,12 @@ def test_triagem_privacidade_so_com_valores_mascarados(tmp_path):
     assert any("[...]" in r for r in res["recomendacoes"])
 
 
-def test_triagem_capacidades_ocr_sempre_falso_e_detecta_bibliotecas():
+def test_triagem_capacidades_detecta_bibliotecas_e_ocr_conforme_o_ambiente(monkeypatch):
+    import ocr
+
     c = triagem.capacidades()
-    assert c["ocr"] is False and c["detectado"]["pdfplumber"] is True and c["detectado"]["python_docx"] is True
-    assert "forgelex" in c["observacao"]
+    assert c["detectado"]["pdfplumber"] is True and c["detectado"]["python_docx"] is True and "forgelex" in c["observacao"]
+    assert c["ocr"] is bool(c["ocr_idioma"]) and (c["ocr"] or c["ocr_aviso"])
+    monkeypatch.setattr(ocr, "localizar_tesseract", lambda: None)
+    sem = triagem.capacidades()
+    assert sem["ocr"] is False and sem["ocr_idioma"] is None and "não encontrado" in sem["ocr_aviso"]

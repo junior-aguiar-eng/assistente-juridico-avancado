@@ -1,0 +1,261 @@
+{
+  "schema_version": "1",
+  "pacote": "lgpd",
+  "jurisdicao": "BR",
+  "regras": [
+    {
+      "id": "lgpd-7",
+      "topico": "base legal do tratamento",
+      "pergunta_de_revisao": "Cada tratamento de dado pessoal previsto no contrato tem uma hipótese do art. 7 que o sustente?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lgpd",
+        "norma": "Lei nº 13.709/2018 (LGPD)",
+        "artigo": "7",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm",
+        "arquivo_sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
+        "lido_em": "2026-10-18",
+        "versao": "compilada",
+        "texto_literal": "Art. 7º O tratamento de dados pessoais somente poderá ser realizado nas seguintes hipóteses:\nI - mediante o fornecimento de consentimento pelo titular;\nII - para o cumprimento de obrigação legal ou regulatória pelo controlador;\nIII - pela administração pública, para o tratamento e uso compartilhado de dados necessários à execução de políticas públicas previstas em leis e regulamentos ou respaldadas em contratos, convênios ou instrumentos congêneres, observadas as disposições do Capítulo IV desta Lei;\nIV - para a realização de estudos por órgão de pesquisa, garantida, sempre que possível, a anonimização dos dados pessoais;\nV - quando necessário para a execução de contrato ou de procedimentos preliminares relacionados a contrato do qual seja parte o titular, a pedido do titular dos dados;\nVI - para o exercício regular de direitos em processo judicial, administrativo ou arbitral, esse último nos termos da [Lei nº 9.307, de 23 de setembro de 1996 (Lei de Arbitragem)](../../../LEIS/L9307.htm) ;\nVII - para a proteção da vida ou da incolumidade física do titular ou de terceiro;\nVIII - para a tutela da saúde, exclusivamente, em procedimento realizado por profissionais de saúde, serviços de saúde ou autoridade sanitária;\nIX - quando necessário para atender aos interesses legítimos do controlador ou de terceiro, exceto no caso de prevalecerem direitos e liberdades fundamentais do titular que exijam a proteção dos dados pessoais; ou\nX - para a proteção do crédito, inclusive quanto ao disposto na legislação pertinente.\n§ 3º O tratamento de dados pessoais cujo acesso é público deve considerar a finalidade, a boa-fé e o interesse público que justificaram sua disponibilização.\n§ 4º É dispensada a exigência do consentimento previsto no\ncaput\ndeste artigo para os dados tornados manifestamente públicos pelo titular, resguardados os direitos do titular e os princípios previstos nesta Lei.\n§ 5º O controlador que obteve o consentimento referido no inciso I do\ncaput\ndeste artigo que necessitar comunicar ou compartilhar dados pessoais com outros controladores deverá obter consentimento específico do titular para esse fim, ressalvadas as hipóteses de dispensa do consentimento previstas nesta Lei.\n§ 6º A eventual dispensa da exigência do consentimento não desobriga os agentes de tratamento das demais obrigações previstas nesta Lei, especialmente da observância dos princípios gerais e da garantia dos direitos do titular.\n§ 7º O tratamento posterior dos dados pessoais a que se referem os §§ 3º e 4º deste artigo poderá ser realizado para novas finalidades, desde que observados os propósitos legítimos e específicos para o novo tratamento e a preservação dos direitos do titular, assim como os fundamentos e os princípios previstos nesta Lei.",
+        "redacao": [
+          "Redação dada pela Lei nº 13.853, de 2019",
+          "Incluído pela Lei nº 13.853, de 2019"
+        ],
+        "dispositivos_revogados": [
+          "§ 1º",
+          "§ 2º"
+        ]
+      }
+    },
+    {
+      "id": "lgpd-11",
+      "topico": "dado sensível",
+      "pergunta_de_revisao": "O contrato trata dado pessoal sensível? Em caso positivo, a hipótese do art. 11 está identificada?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lgpd",
+        "norma": "Lei nº 13.709/2018 (LGPD)",
+        "artigo": "11",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm",
+        "arquivo_sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
+        "lido_em": "2026-10-18",
+        "versao": "compilada",
+        "texto_literal": "Art. 11. O tratamento de dados pessoais sensíveis somente poderá ocorrer nas seguintes hipóteses:\nI - quando o titular ou seu responsável legal consentir, de forma específica e destacada, para finalidades específicas;\nII - sem fornecimento de consentimento do titular, nas hipóteses em que for indispensável para:\na) cumprimento de obrigação legal ou regulatória pelo controlador;\nb) tratamento compartilhado de dados necessários à execução, pela administração pública, de políticas públicas previstas em leis ou regulamentos;\nc) realização de estudos por órgão de pesquisa, garantida, sempre que possível, a anonimização dos dados pessoais sensíveis;\nd) exercício regular de direitos, inclusive em contrato e em processo judicial, administrativo e arbitral, este último nos termos da [Lei nº 9.307, de 23 de setembro de 1996 (Lei de Arbitragem)](../../../LEIS/L9307.htm) ;\ne) proteção da vida ou da incolumidade física do titular ou de terceiro;\nf) tutela da saúde, exclusivamente, em procedimento realizado por profissionais de saúde, serviços de saúde ou autoridade sanitária; ou\ng) garantia da prevenção à fraude e à segurança do titular, nos processos de identificação e autenticação de cadastro em sistemas eletrônicos, resguardados os direitos mencionados no art. 9º desta Lei e exceto no caso de prevalecerem direitos e liberdades fundamentais do titular que exijam a proteção dos dados pessoais.\n§ 1º Aplica-se o disposto neste artigo a qualquer tratamento de dados pessoais que revele dados pessoais sensíveis e que possa causar dano ao titular, ressalvado o disposto em legislação específica.\n§ 2º Nos casos de aplicação do disposto nas alíneas “a” e “b” do inciso II do\ncaput\ndeste artigo pelos órgãos e pelas entidades públicas, será dada publicidade à referida dispensa de consentimento, nos termos do inciso I do\ncaput\ndo art. 23 desta Lei.\n§ 3º A comunicação ou o uso compartilhado de dados pessoais sensíveis entre controladores com objetivo de obter vantagem econômica poderá ser objeto de vedação ou de regulamentação por parte da autoridade nacional, ouvidos os órgãos setoriais do Poder Público, no âmbito de suas competências.\n§ 4º É vedada a comunicação ou o uso compartilhado entre controladores de dados pessoais sensíveis referentes à saúde com objetivo de obter vantagem econômica, exceto nas hipóteses relativas a prestação de serviços de saúde, de assistência farmacêutica e de assistência à saúde, desde que observado o § 5º deste artigo, incluídos os serviços auxiliares de diagnose e terapia, em benefício dos interesses dos titulares de dados, e para permitir:\nI - a portabilidade de dados quando solicitada pelo titular; ou\nII - as transações financeiras e administrativas resultantes do uso e da prestação dos serviços de que trata este parágrafo.\n§ 5º É vedado às operadoras de planos privados de assistência à saúde o tratamento de dados de saúde para a prática de seleção de riscos na contratação de qualquer modalidade, assim como na contratação e exclusão de beneficiários.",
+        "redacao": [
+          "Redação dada pela Lei nº 13.853, de 2019",
+          "Incluído pela Lei nº 13.853, de 2019"
+        ],
+        "dispositivos_revogados": []
+      }
+    },
+    {
+      "id": "lgpd-18",
+      "topico": "direitos do titular",
+      "pergunta_de_revisao": "O contrato permite que o controlador atenda os pedidos do titular (acesso, correção, eliminação, portabilidade) dentro do prazo?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lgpd",
+        "norma": "Lei nº 13.709/2018 (LGPD)",
+        "artigo": "18",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm",
+        "arquivo_sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
+        "lido_em": "2026-10-18",
+        "versao": "compilada",
+        "texto_literal": "Art. 18. O titular dos dados pessoais tem direito a obter do controlador, em relação aos dados do titular por ele tratados, a qualquer momento e mediante requisição:\nI - confirmação da existência de tratamento;\nII - acesso aos dados;\nIII - correção de dados incompletos, inexatos ou desatualizados;\nIV - anonimização, bloqueio ou eliminação de dados desnecessários, excessivos ou tratados em desconformidade com o disposto nesta Lei;\nV - portabilidade dos dados a outro fornecedor de serviço ou produto, mediante requisição expressa, de acordo com a regulamentação da autoridade nacional, observados os segredos comercial e industrial;\nVI - eliminação dos dados pessoais tratados com o consentimento do titular, exceto nas hipóteses previstas no art. 16 desta Lei;\nVII - informação das entidades públicas e privadas com as quais o controlador realizou uso compartilhado de dados;\nVIII - informação sobre a possibilidade de não fornecer consentimento e sobre as consequências da negativa;\nIX - revogação do consentimento, nos termos do § 5º do art. 8º desta Lei.\n§ 1º O titular dos dados pessoais tem o direito de peticionar em relação aos seus dados contra o controlador perante a autoridade nacional.\n§ 2º O titular pode opor-se a tratamento realizado com fundamento em uma das hipóteses de dispensa de consentimento, em caso de descumprimento ao disposto nesta Lei.\n§ 3º Os direitos previstos neste artigo serão exercidos mediante requerimento expresso do titular ou de representante legalmente constituído, a agente de tratamento.\n§ 4º Em caso de impossibilidade de adoção imediata da providência de que trata o § 3º deste artigo, o controlador enviará ao titular resposta em que poderá:\nI - comunicar que não é agente de tratamento dos dados e indicar, sempre que possível, o agente; ou\nII - indicar as razões de fato ou de direito que impedem a adoção imediata da providência.\n§ 5º O requerimento referido no § 3º deste artigo será atendido sem custos para o titular, nos prazos e nos termos previstos em regulamento.\n§ 6º\nO responsável deverá informar, de maneira imediata, aos agentes de tratamento com os quais tenha realizado uso compartilhado de dados a correção, a eliminação, a anonimização ou o bloqueio dos dados, para que repitam idêntico procedimento, exceto nos casos em que esta comunicação seja comprovadamente impossível ou implique esforço desproporcional.\n§ 7º A portabilidade dos dados pessoais a que se refere o inciso V do\ncaput\ndeste artigo não inclui dados que já tenham sido anonimizados pelo controlador.\n§ 8º O direito a que se refere o § 1º deste artigo também poderá ser exercido perante os organismos de defesa do consumidor.",
+        "redacao": [
+          "Redação dada pela Lei nº 13.853, de 2019"
+        ],
+        "dispositivos_revogados": []
+      }
+    },
+    {
+      "id": "lgpd-33",
+      "topico": "transferência internacional",
+      "pergunta_de_revisao": "Há armazenamento, suporte ou subprocessador fora do Brasil? A hipótese do art. 33 está identificada?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lgpd",
+        "norma": "Lei nº 13.709/2018 (LGPD)",
+        "artigo": "33",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm",
+        "arquivo_sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
+        "lido_em": "2026-10-18",
+        "versao": "compilada",
+        "texto_literal": "Art. 33. A transferência internacional de dados pessoais somente é permitida nos seguintes casos:\nI - para países ou organismos internacionais que proporcionem grau de proteção de dados pessoais adequado ao previsto nesta Lei;\nII - quando o controlador oferecer e comprovar garantias de cumprimento dos princípios, dos direitos do titular e do regime de proteção de dados previstos nesta Lei, na forma de:\na) cláusulas contratuais específicas para determinada transferência;\nb) cláusulas-padrão contratuais;\nc) normas corporativas globais;\nd) selos, certificados e códigos de conduta regularmente emitidos;\nIII - quando a transferência for necessária para a cooperação jurídica internacional entre órgãos públicos de inteligência, de investigação e de persecução, de acordo com os instrumentos de direito internacional;\nIV - quando a transferência for necessária para a proteção da vida ou da incolumidade física do titular ou de terceiro;\nV - quando a autoridade nacional autorizar a transferência;\nVI - quando a transferência resultar em compromisso assumido em acordo de cooperação internacional;\nVII - quando a transferência for necessária para a execução de política pública ou atribuição legal do serviço público, sendo dada publicidade nos termos do inciso I do\ncaput\ndo art. 23 desta Lei;\nVIII - quando o titular tiver fornecido o seu consentimento específico e em destaque para a transferência, com informação prévia sobre o caráter internacional da operação, distinguindo claramente esta de outras finalidades; ou\nIX - quando necessário para atender as hipóteses previstas nos incisos II, V e VI do art. 7º desta Lei.\nParágrafo único. Para os fins do inciso I deste artigo, as pessoas jurídicas de direito público referidas no parágrafo único do [art. 1º da Lei nº 12.527, de 18 de novembro de 2011 (Lei de Acesso à Informação)](../../../_Ato2011-2014/2011/Lei/L12527.htm#art1) , no âmbito de suas competências legais, e responsáveis, no âmbito de suas atividades, poderão requerer à autoridade nacional a avaliação do nível de proteção a dados pessoais conferido por país ou organismo internacional.",
+        "redacao": [],
+        "dispositivos_revogados": []
+      }
+    },
+    {
+      "id": "lgpd-37",
+      "topico": "registro das operações",
+      "pergunta_de_revisao": "O contrato prevê o registro das operações de tratamento por controlador e operador?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lgpd",
+        "norma": "Lei nº 13.709/2018 (LGPD)",
+        "artigo": "37",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm",
+        "arquivo_sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
+        "lido_em": "2026-10-18",
+        "versao": "compilada",
+        "texto_literal": "Art. 37. O controlador e o operador devem manter registro das operações de tratamento de dados pessoais que realizarem, especialmente quando baseado no legítimo interesse.",
+        "redacao": [],
+        "dispositivos_revogados": []
+      }
+    },
+    {
+      "id": "lgpd-39",
+      "topico": "operador e instruções",
+      "pergunta_de_revisao": "O contrato define quem é controlador e quem é operador, e obriga o operador a seguir as instruções do controlador?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lgpd",
+        "norma": "Lei nº 13.709/2018 (LGPD)",
+        "artigo": "39",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm",
+        "arquivo_sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
+        "lido_em": "2026-10-18",
+        "versao": "compilada",
+        "texto_literal": "Art. 39. O operador deverá realizar o tratamento segundo as instruções fornecidas pelo controlador, que verificará a observância das próprias instruções e das normas sobre a matéria.",
+        "redacao": [],
+        "dispositivos_revogados": []
+      }
+    },
+    {
+      "id": "lgpd-41",
+      "topico": "encarregado",
+      "pergunta_de_revisao": "O contrato identifica o encarregado (ou o canal) de cada parte?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lgpd",
+        "norma": "Lei nº 13.709/2018 (LGPD)",
+        "artigo": "41",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm",
+        "arquivo_sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
+        "lido_em": "2026-10-18",
+        "versao": "compilada",
+        "texto_literal": "Art. 41. O controlador deverá indicar encarregado pelo tratamento de dados pessoais.\n§ 1º A identidade e as informações de contato do encarregado deverão ser divulgadas publicamente, de forma clara e objetiva, preferencialmente no sítio eletrônico do controlador.\n§ 2º As atividades do encarregado consistem em:\nI - aceitar reclamações e comunicações dos titulares, prestar esclarecimentos e adotar providências;\nII - receber comunicações da autoridade nacional e adotar providências;\nIII - orientar os funcionários e os contratados da entidade a respeito das práticas a serem tomadas em relação à proteção de dados pessoais; e\nIV - executar as demais atribuições determinadas pelo controlador ou estabelecidas em normas complementares.\n§ 3º A autoridade nacional poderá estabelecer normas complementares sobre a definição e as atribuições do encarregado, inclusive hipóteses de dispensa da necessidade de sua indicação, conforme a natureza e o porte da entidade ou o volume de operações de tratamento de dados.",
+        "redacao": [],
+        "dispositivos_revogados": [
+          "§ 4º"
+        ]
+      }
+    },
+    {
+      "id": "lgpd-42",
+      "topico": "responsabilidade e ressarcimento",
+      "pergunta_de_revisao": "A limitação de responsabilidade do contrato afasta ou restringe a reparação por dano de tratamento irregular de dados?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lgpd",
+        "norma": "Lei nº 13.709/2018 (LGPD)",
+        "artigo": "42",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm",
+        "arquivo_sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
+        "lido_em": "2026-10-18",
+        "versao": "compilada",
+        "texto_literal": "Art. 42. O controlador ou o operador que, em razão do exercício de atividade de tratamento de dados pessoais, causar a outrem dano patrimonial, moral, individual ou coletivo, em violação à legislação de proteção de dados pessoais, é obrigado a repará-lo.\n§ 1º A fim de assegurar a efetiva indenização ao titular dos dados:\nI - o operador responde solidariamente pelos danos causados pelo tratamento quando descumprir as obrigações da legislação de proteção de dados ou quando não tiver seguido as instruções lícitas do controlador, hipótese em que o operador equipara-se ao controlador, salvo nos casos de exclusão previstos no art. 43 desta Lei;\nII - os controladores que estiverem diretamente envolvidos no tratamento do qual decorreram danos ao titular dos dados respondem solidariamente, salvo nos casos de exclusão previstos no art. 43 desta Lei.\n§ 2º O juiz, no processo civil, poderá inverter o ônus da prova a favor do titular dos dados quando, a seu juízo, for verossímil a alegação, houver hipossuficiência para fins de produção de prova ou quando a produção de prova pelo titular resultar-lhe excessivamente onerosa.\n§ 3º As ações de reparação por danos coletivos que tenham por objeto a responsabilização nos termos do\ncaput\ndeste artigo podem ser exercidas coletivamente em juízo, observado o disposto na legislação pertinente.\n§ 4º Aquele que reparar o dano ao titular tem direito de regresso contra os demais responsáveis, na medida de sua participação no evento danoso.",
+        "redacao": [],
+        "dispositivos_revogados": []
+      }
+    },
+    {
+      "id": "lgpd-46",
+      "topico": "segurança",
+      "pergunta_de_revisao": "O contrato fixa medidas de segurança técnicas e administrativas compatíveis com o risco dos dados tratados?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lgpd",
+        "norma": "Lei nº 13.709/2018 (LGPD)",
+        "artigo": "46",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm",
+        "arquivo_sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
+        "lido_em": "2026-10-18",
+        "versao": "compilada",
+        "texto_literal": "Art. 46. Os agentes de tratamento devem adotar medidas de segurança, técnicas e administrativas aptas a proteger os dados pessoais de acessos não autorizados e de situações acidentais ou ilícitas de destruição, perda, alteração, comunicação ou qualquer forma de tratamento inadequado ou ilícito.\n§ 1º A autoridade nacional poderá dispor sobre padrões técnicos mínimos para tornar aplicável o disposto no\ncaput\ndeste artigo, considerados a natureza das informações tratadas, as características específicas do tratamento e o estado atual da tecnologia, especialmente no caso de dados pessoais sensíveis, assim como os princípios previstos no\ncaput\ndo art. 6º desta Lei.\n§ 2º As medidas de que trata o\ncaput\ndeste artigo deverão ser observadas desde a fase de concepção do produto ou do serviço até a sua execução.",
+        "redacao": [],
+        "dispositivos_revogados": []
+      }
+    },
+    {
+      "id": "lgpd-48",
+      "topico": "incidente de segurança",
+      "pergunta_de_revisao": "O contrato fixa prazo e forma para comunicar incidente de segurança à outra parte, de modo a permitir a comunicação à ANPD e ao titular?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lgpd",
+        "norma": "Lei nº 13.709/2018 (LGPD)",
+        "artigo": "48",
+        "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm",
+        "arquivo_sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
+        "lido_em": "2026-10-18",
+        "versao": "compilada",
+        "texto_literal": "Art. 48. O controlador deverá comunicar à autoridade nacional e ao titular a ocorrência de incidente de segurança que possa acarretar risco ou dano relevante aos titulares.\n§ 1º A comunicação será feita em prazo razoável, conforme definido pela autoridade nacional, e deverá mencionar, no mínimo:\nI - a descrição da natureza dos dados pessoais afetados;\nII - as informações sobre os titulares envolvidos;\nIII - a indicação das medidas técnicas e de segurança utilizadas para a proteção dos dados, observados os segredos comercial e industrial;\nIV - os riscos relacionados ao incidente;\nV - os motivos da demora, no caso de a comunicação não ter sido imediata; e\nVI - as medidas que foram ou que serão adotadas para reverter ou mitigar os efeitos do prejuízo.\n§ 2º A autoridade nacional verificará a gravidade do incidente e poderá, caso necessário para a salvaguarda dos direitos dos titulares, determinar ao controlador a adoção de providências, tais como:\nI - ampla divulgação do fato em meios de comunicação; e\nII - medidas para reverter ou mitigar os efeitos do incidente.\n§ 3º No juízo de gravidade do incidente, será avaliada eventual comprovação de que foram adotadas medidas técnicas adequadas que tornem os dados pessoais afetados ininteligíveis, no âmbito e nos limites técnicos de seus serviços, para terceiros não autorizados a acessá-los.",
+        "redacao": [],
+        "dispositivos_revogados": []
+      }
+    }
+  ],
+  "pendencias_de_fonte": []
+}

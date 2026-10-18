@@ -200,6 +200,12 @@ def main(argv=None) -> int:
     ap.add_argument("skills", nargs="+")
     ap.add_argument("--hoje")
     a = ap.parse_args(argv)
+    import glob
+
+    caminhos = []
+    for s in a.skills:  # o PowerShell e o cmd não expandem curingas: expande aqui
+        caminhos += sorted(glob.glob(s)) if any(c in s for c in "*?[") else [s]
+    a.skills = caminhos or a.skills
     r = revisar_todas(a.skills, date.fromisoformat(a.hoje) if a.hoje else None)
     sys.stdout.buffer.write((json.dumps(r, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
     return 1 if r["resumo"]["PREOCUPACAO_MATERIAL"] else 0

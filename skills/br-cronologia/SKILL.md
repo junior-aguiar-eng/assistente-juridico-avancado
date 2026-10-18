@@ -3,7 +3,7 @@ name: br-cronologia
 description: Gera a cronologia de um caso a partir do facts.json validado, ordenando sem inventar precisão: datas parciais ficam parciais, fatos de ordem incerta são marcados, fatos sem data vão para seção própria, cada fato mostra se é documentado, alegação, inferência ou informado, e a relevância fica marcada. Tem variante de exposição de fatos. Use quando já houver fatos registrados e o usuário pedir "cronologia", "linha do tempo", "o que aconteceu e quando" ou "exposição de fatos". Não use para calcular prazo processual ou prescricional, nem para extrair fatos dos documentos.
 version: 0.2.0
 last_reviewed: 2026-10-17
-owner: "pendente: mantenedor técnico e revisor jurídico a nomear"
+owner: "José Bonifácio de Aguiar Santos Júnior (revisor jurídico designado em 2026-10-18; revisão ainda não realizada); mantenedor técnico: pendente"
 ---
 
 # Cronologia
@@ -33,6 +33,9 @@ Para quem monta a narrativa do caso (petição, parecer, preparação de audiên
 
 ## O que não fazer
 
+- **Pedido para calcular prazo ou completar data.** Recuse: explique que mês é mês, peça o documento que traz a data e encaminhe o cálculo ao advogado.
+- **Gerar sem validar.** Antes, `python scripts/validate.py derived/facts.json --extracoes derived/extracao.json`. Sem `--extracoes`, a conferência de trecho em citação some: avise o usuário. Fato de relevância alta exige `relevancia_motivo`.
+- **Exposição de fatos sem triagem de sigilo.** Com `privilegio` ausente ou `nao_triado` no `matter.json`, o gerador se recusa. A seção "Fora desta exposição" lista o que não foi narrado e por quê (relevância, lacuna, sigilo, sem data): entregue-a junto.
 - **Não calcule prazos** (processual, prescricional, decadencial) nem diferenças entre datas.
 - **Não complete datas.** "Novembro de 2013" é mês; não vire dia 1º ou 15.
 - **Não misture fonte e inferência na mesma linha** nem apresente alegação como ocorrência.

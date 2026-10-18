@@ -26,7 +26,9 @@ REGISTRO_PONTES = RAIZ / "shared" / "fontes.json"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
       "Chrome/124.0 Safari/537.36")
 SUFIXOS_OFICIAIS = ("planalto.gov.br", "senado.leg.br", "camara.leg.br", "cnj.jus.br", ".jus.br", ".gov.br")
-FETCH_OFICIAL = Path.home() / ".claude" / "scripts" / "fetch_oficial.py"
+_REPO_FETCH = Path(__file__).resolve().parent / "fetch_oficial.py"
+_HOME_FETCH = Path.home() / ".claude" / "scripts" / "fetch_oficial.py"
+FETCH_OFICIAL = _REPO_FETCH if _REPO_FETCH.is_file() else _HOME_FETCH  # a cópia do repositório vale primeiro
 
 
 def _agora():
@@ -64,6 +66,14 @@ def plano(tipo: str, matter: dict | None = None, registro_pontes: Path = REGISTR
     idade = ((hoje or date.today()) - date.fromisoformat(reg["last_verified"])).days
     desatualizado = idade > int(reg["freshness_window_days"])
     avisos = []
+    if matter is None:
+        avisos.append("sem matter.json: nenhuma política de confidencialidade foi aplicada a este plano")
+    elif consultas is None:
+        avisos.append("política de consultas externas (matter.confidentiality.consultas_externas) não definida: pare e pergunte ao "
+                      "advogado antes de usar qualquer ponte que envie termos do caso; busca aberta na web também é consulta externa")
+    elif consultas in ("proibidas", "somente_termos_genericos"):
+        avisos.append(f"consultas externas '{consultas}': vale também para busca aberta na web e para pedido do usuário; "
+                      "só muda por decisão registrada do advogado no matter.json")
     if not oficiais:
         avisos.append("nenhuma ponte oficial utilizável: o teto é 'partial' até o usuário fornecer o documento oficial")
     if desatualizado:
@@ -216,6 +226,22 @@ _RE_ROTULO = re.compile(r"^(?:(?P<art>Art\. \d+(?:-[A-Z])?)\b|§ (?P<par>\d+)|(?
 _RE_ANOTACAO = re.compile(r"\[\((?P<texto>[^\]]*?)\)\]\((?P<url>[^)]*)\)")
 
 
+def registrar(arquivo: Path, registro: Path, origem: str, url: str | None = None) -> dict:
+    """Registra um arquivo que o usuário forneceu (hash, origem declarada). Não lê nem verifica o conteúdo."""
+    arquivo = Path(arquivo)
+    if origem not in ("oficial", "secundaria"):
+        raise ValueError("origem deve ser 'oficial' ou 'secundaria'")
+    if not arquivo.is_file():
+        raise ValueError(f"arquivo inexistente: {arquivo}")
+    dados = arquivo.read_bytes()
+    sha = _sha_bytes(dados)
+    e = {"url": url, "origem": origem, "retrieved_at": _agora(), "avisos": [], "status": "lida", "obtained_via": "user_supplied_source",
+         "source_id": "src-" + sha[:12], "local_file": str(arquivo), "bytes": len(dados), "sha256": sha,
+         "nota": "origem declarada pelo usuário; o conteúdo ainda não foi lido nem verificado (use extract.py e br-verificar-citacoes)"}
+    _registrar(registro, e)
+    return e
+
+
 def _tipo_anotacao(t: str) -> str:
     t = t.lower()
     for chave, nome in (("revogad", "revogado"), ("redação", "redacao"), ("incluíd", "incluido"),
@@ -308,6 +334,11 @@ def main(argv=None) -> int:
     b.add_argument("--registro")
     b.add_argument("--nome")
     b.add_argument("--exigir", choices=["pdf"], help="recusa a resposta se não for desse tipo")
+    r = sub.add_parser("registrar")
+    r.add_argument("arquivo")
+    r.add_argument("--registro", required=True)
+    r.add_argument("--origem", required=True, choices=["oficial", "secundaria"])
+    r.add_argument("--url")
     a = sub.add_parser("anotacoes")
     a.add_argument("fonte")
     a.add_argument("--artigo", required=True)
@@ -322,6 +353,8 @@ def main(argv=None) -> int:
         elif n.cmd == "baixar":
             res = baixar(n.url, Path(n.destino), Path(n.registro) if n.registro else None, n.nome, exigir=n.exigir)
             cod = 0 if res["status"] == "lida" else 1
+        elif n.cmd == "registrar":
+            res, cod = registrar(Path(n.arquivo), Path(n.registro), n.origem, n.url), 0
         else:
             res, cod = anotacoes(Path(n.fonte), n.artigo, n.paragrafo, n.inciso, n.data_fatos), 0
     except (ValueError, OSError) as e:

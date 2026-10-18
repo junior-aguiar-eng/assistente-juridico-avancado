@@ -230,3 +230,32 @@ def test_chave_do_cache_depende_da_versao_das_bibliotecas(tmp_path, monkeypatch)
     depois = sorted(p.name for p in cache.glob("*.json"))
     assert len(antes) == 1 and len(depois) == 2 and extract.EXTRACTOR_VERSION in antes[0]
     assert set(extract._versoes_das_bibliotecas()) == {"pdfplumber", "pdfminer.six", "python-docx", "lxml"}
+
+
+# ------------------------------------------------------------------ data derivada do texto, nunca deduzida
+@pytest.mark.parametrize("original, iso, prec, cod", [
+    ("março", "2022-03-15", "dia", "data_inventada"),          # ano e dia vieram do nada
+    ("março", "2022-03", "mes", "data_inventada"),             # ano veio do nada
+    ("em março de 2022", "2022-03-15", "dia", "data_inventada"),  # dia veio do nada
+    ("15 de março de 2021", "2022-03-15", "dia", "data_inventada"),  # ano diferente do texto
+    ("15 de abril de 2022", "2022-03-15", "dia", "data_inventada"),  # mês diferente do texto
+])
+def test_data_com_componente_ausente_do_texto_e_data_inventada(original, iso, prec, cod):
+    import validate
+
+    r = validate.Resultado()
+    validate._validar_data(r, {"original": original, "iso": iso, "precision": prec}, "$.date")
+    assert [e["codigo"] for e in r.erros] == [cod]
+
+
+@pytest.mark.parametrize("original, iso, prec", [
+    ("15 de março de 2022", "2022-03-15", "dia"), ("1º de março de 2022", "2022-03-01", "dia"), ("15/03/2022", "2022-03-15", "dia"),
+    ("15/03/22", "2022-03-15", "dia"), ("março de 2022", "2022-03", "mes"), ("03/2022", "2022-03", "mes"), ("2022", "2022", "ano"),
+    ("dia 15 de março de 2022", "2022-03-15", "dia"),
+])
+def test_data_presente_no_texto_nao_e_barrada(original, iso, prec):
+    import validate
+
+    r = validate.Resultado()
+    validate._validar_data(r, {"original": original, "iso": iso, "precision": prec}, "$.date")
+    assert r.erros == []

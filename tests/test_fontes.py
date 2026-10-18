@@ -43,7 +43,7 @@ def test_plano_sem_matter_lista_na_ordem_com_oficial_antes_do_secundario():
     r = fontes.plano("norma")
     assert ids(r) == ["planalto_compilado", "consultar_artigo", "usuario_fornece"]
     assert r["pontes"][0]["origem"] == "oficial" and r["pontes"][1]["origem"] == "secundaria"
-    assert r["tem_ponte_oficial"] and r["aviso"] is None
+    assert r["tem_ponte_oficial"] and r["aviso"] == "sem matter.json: nenhuma política de confidencialidade foi aplicada a este plano"
     s = fontes.plano("precedente_stj")
     assert ids(s) == ["forgelex_stj", "stj_inteiro_teor", "stj_dados_abertos", "usuario_fornece"]
     assert s["pontes"][0]["origem"] == "secundaria"  # localiza; a leitura oficial vem depois
@@ -281,7 +281,7 @@ def test_registro_de_pontes_declara_atualidade_e_vence_com_o_tempo():
     reg = json.loads(fontes.REGISTRO_PONTES.read_text(encoding="utf-8"))
     assert {"last_verified", "freshness_window_days", "freshness_category", "verified_against"} <= set(reg)
     em_dia = fontes.plano("norma", hoje=date(2026, 12, 1))
-    assert em_dia["desatualizado"] is False and em_dia["aviso"] is None
+    assert em_dia["desatualizado"] is False and "desatualiz" not in (em_dia["aviso"] or "") and "verificado há" not in (em_dia["aviso"] or "")
     velho = fontes.plano("norma", hoje=date(2027, 3, 1))
     assert velho["desatualizado"] is True and "refaça a sondagem" in velho["aviso"] and velho["verificado_em"] == "2026-10-17"
 
@@ -294,3 +294,25 @@ def test_plano_traz_portais_para_o_usuario_conferir_quando_a_ponte_falha():
     reg = json.loads(fontes.REGISTRO_PONTES.read_text(encoding="utf-8"))
     assert set(reg["portais_para_o_usuario"]) <= set(reg["tipos"])
     assert all(p["url"].startswith("https://") and p["nota"] for ps in reg["portais_para_o_usuario"].values() for p in ps)
+
+
+def test_registrar_arquivo_do_usuario_guarda_hash_e_origem_sem_ler_o_conteudo(tmp_path):
+    arq = tmp_path / "cc.md"
+    arq.write_bytes(b"Art. 206. Prescreve.")
+    reg = tmp_path / "r.json"
+    e = fontes.registrar(arq, reg, "oficial", "https://www.planalto.gov.br/x")
+    assert e["obtained_via"] == "user_supplied_source" and e["sha256"] == fontes._sha_bytes(b"Art. 206. Prescreve.")
+    assert e["source_id"] == "src-" + e["sha256"][:12] and "ainda não foi lido" in e["nota"]
+    assert json.loads(reg.read_text(encoding="utf-8"))["fontes"][0]["local_file"] == str(arq)
+    with pytest.raises(ValueError, match="origem"):
+        fontes.registrar(arq, reg, "qualquer")
+    with pytest.raises(ValueError, match="inexistente"):
+        fontes.registrar(tmp_path / "nao.md", reg, "oficial")
+
+
+def test_plano_avisa_quando_a_politica_de_consultas_nao_foi_definida_ou_e_restritiva():
+    sem = fontes.plano("precedente_stj", {"matter": {"confidentiality": {}}})
+    assert "não definida" in sem["aviso"] and "busca aberta" in sem["aviso"]
+    proib = fontes.plano("precedente_stj", {"matter": {"confidentiality": {"consultas_externas": "proibidas"}}})
+    assert "busca aberta na web" in proib["aviso"] and "decisão registrada" in proib["aviso"]
+    assert "sem matter.json" in fontes.plano("norma")["aviso"]

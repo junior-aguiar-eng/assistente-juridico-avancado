@@ -17,7 +17,7 @@ Produzido pela `br-triagem`. Estrutura `{"schema_version": "1", "matter": {...}}
 | Campo | Regra |
 |---|---|
 | `matter_id`, `objective` | obrigatórios |
-| `client_role` | `autor`, `reu`, `terceiro`, `interessado`, `nao_aplicavel`, `nao_informado` (este gera aviso) |
+| `client_role` | posição que o cliente defende: `autor`, `reu`, `recorrente`, `recorrido`, `terceiro`, `interessado` (processo); `contratante`, `contratada`, `divulgadora`, `receptora` (contrato); `nao_aplicavel`; `nao_informado` (gera aviso). Use a posição real: papel invertido muda toda a análise |
 | `jurisdiction` | objeto: `ramo` (`civel`, `consumidor`, `empresarial`, `administrativo`, `familia`, `outro`, `nao_informado`), opcionais `tribunal` e `uf` (duas letras maiúsculas) |
 | `as_of` | data de referência, AAAA-MM-DD, não futura. `facts_date` opcional (AAAA, AAAA-MM ou AAAA-MM-DD), não posterior a `as_of` |
 | `fato_chave` | opcional: o fato que a tese precisa provar; orienta a relevância |

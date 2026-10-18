@@ -3,7 +3,7 @@ name: br-preencher-minuta
 description: Preenche um modelo DOCX com marcadores {{campo}} usando valores de procedência explícita: extraído de documento (o valor tem de aparecer literalmente no trecho citado), informado pelo usuário ou inferido. Campo sem prova fica marcado e destacado no documento, nunca preenchido de memória. Use quando o usuário pedir "preencher o modelo", "gerar a minuta a partir deste modelo e destes documentos" ou "completar a procuração com os dados do cliente". Não use para revisar contrato pronto (br-revisar-contrato), para redigir cláusulas novas nem para conferir citações.
 version: 0.1.0
 last_reviewed: 2026-10-17
-owner: "pendente: mantenedor técnico e revisor jurídico a nomear"
+owner: "José Bonifácio de Aguiar Santos Júnior (revisor jurídico designado em 2026-10-18; revisão ainda não realizada); mantenedor técnico: pendente"
 ---
 
 # Preenchimento de minuta
@@ -48,8 +48,11 @@ Para quem monta minutas a partir de modelos do escritório. A skill **transporta
 
 ## Quando escalar
 
+- **"Não deixe nada em branco" / "ponha o mais provável":** recuse. Sem prova, o campo fica `pendente` e destacado. `informado` exige a fala literal do usuário com o valor; pedido genérico não é informação do campo.
+- **O relatório traz `escalar`:** mais de um terço dos campos sem prova ou campo sensível (poderes, capacidade, representação) sem prova: pare e leve ao advogado. `inferido` é proibido nesses campos.
+- **Dois documentos com valores diferentes** para o mesmo dado (o lint avisa `possivel_conflito` para CPF/CNPJ): registre `conflito` com os candidatos; não escolha.
 Além de [escalacao.md](../../shared/escalacao.md): modelo com marcador sem equivalente em nenhum documento; mais de um terço dos campos pendentes; dado do cliente que muda a natureza do instrumento (capacidade, representação, poderes); modelo com alteração rastreada ou comentário.
 
 ## Limites
 
-Substitui só marcadores em texto simples de parágrafo (corpo e tabelas); marcador dentro de hiperlink, campo, caixa de texto, cabeçalho ou rodapé não é tratado e deve aparecer no relatório do lint como marcador sem campo, se estiver no corpo. Não faz cálculo, extenso de valor, nem concordância de gênero ou número. Sem OCR. Caso de referência: [tests/test_docx_edicao.py](../../tests/test_docx_edicao.py) (modelo com marcador dividido em runs e os seis estados).
+Substitui só marcadores em texto simples de parágrafo (corpo e tabelas); marcador dentro de hiperlink, campo, caixa de texto, cabeçalho ou rodapé não é tratado e deve aparecer no relatório do lint como marcador sem campo, se estiver no corpo. Não faz cálculo, extenso de valor, nem concordância de gênero ou número. Não lê documento digitalizado sem OCR conferido. Caso de referência: [tests/test_docx_edicao.py](../../tests/test_docx_edicao.py) (modelo com marcador dividido em runs e os seis estados).

@@ -1,0 +1,4 @@
+Documentos reais entregues pelo titular para os casos R06, R07 e R10 do manifesto.
+
+Use apenas documento público ou seu. Nada de dado de cliente: este repositório pode ser compartilhado.
+Nomes esperados: R06_stf_inteiro_teor.pdf, R07_tj_decisao.pdf, R10_escaneado_real.pdf.

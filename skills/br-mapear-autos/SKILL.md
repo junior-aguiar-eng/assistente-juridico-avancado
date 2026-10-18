@@ -3,7 +3,7 @@ name: br-mapear-autos
 description: Mapeia os documentos de um caso brasileiro (autos, petições, decisões, contratos em PDF, DOCX, TXT, MD ou e-mail) em inventário com cobertura de leitura e matriz de fatos com fonte, separando fato documentado, alegação, inferência, fato informado pelo usuário e lacuna, com marca de relevância e de sigilo. Use quando o usuário entregar uma pasta ou arquivos e pedir para "mapear o caso", "organizar os fatos e provas", "extrair os fatos dos documentos" ou "o que os autos dizem". Não use para ordenar fatos no tempo (br-cronologia), pesquisar a lei (br-pesquisa-juridica) nem conferir citações (br-verificar-citacoes).
 version: 0.2.0
 last_reviewed: 2026-10-17
-owner: "pendente: mantenedor técnico e revisor jurídico a nomear"
+owner: "José Bonifácio de Aguiar Santos Júnior (revisor jurídico designado em 2026-10-18; revisão ainda não realizada); mantenedor técnico: pendente"
 last_verified: 2026-10-17
 freshness_window_days: 180
 freshness_category: rule_text
@@ -26,7 +26,7 @@ Para o advogado ou assistente que precisa saber, com fonte, o que os documentos 
 ## Roteiro
 
 1. **Extraia todos os arquivos de uma vez:** `python scripts/extract.py input/* --saida derived/extracao.json`. O inventário lista cada arquivo com `status` (`ok`, `partial`, `no_text`, `failed`), páginas e avisos. Arquivo recusado aparece como `failed`: não some.
-2. **Relate a cobertura antes de analisar.** Todo arquivo `no_text`, `partial` ou `failed` vira fato `lacuna` que nomeia o arquivo, e o usuário é avisado. PDF escaneado fica pendente (sem OCR); `pagina_possivelmente_digitalizada` conta como página não lida. Em DOCX, `partial` indica alteração rastreada (texto lido = versão com alterações aceitas; tag `inserido`) ou parte não extraída (cabeçalho, rodapé, comentários, caixas de texto). E-mail `partial`: anexos não extraídos, que são listados.
+2. **Relate a cobertura antes de analisar.** Todo arquivo `no_text`, `partial` ou `failed` vira fato `lacuna` que nomeia o arquivo, e o usuário é avisado. PDF escaneado fica pendente; se o ambiente tiver Tesseract (`triagem.py capacidades`), `extract.py --ocr` lê as páginas sem texto, mas o resultado sai `partial`, os blocos levam a tag `ocr` e o validador avisa (`trecho_de_ocr`): fato `documentado` por OCR exige conferência no original; `pagina_possivelmente_digitalizada` conta como página não lida. Em DOCX, `partial` indica alteração rastreada (texto lido = versão com alterações aceitas; tag `inserido`) ou parte não extraída (cabeçalho, rodapé, comentários, caixas de texto). E-mail `partial`: anexos não extraídos, que são listados.
 3. **Identifique cada documento** (petição, decisão, contrato, e-mail...) e **quem fala** nele. Para peças processuais use o roteiro de [pecas-cappd.md](references/pecas-cappd.md) (causas, argumentos, pedidos, provas, defesas; fato não impugnado).
 4. **Registre os fatos** com `kind` pela tabela abaixo, `source` com `document_id`, `locator` e `excerpt` literal, e `date` com a precisão real. O `locator` precisa coincidir com onde o trecho foi achado e `date.original` precisa estar dentro do `excerpt`. Mesmo fato em outro documento entra em `other_sources`, sem duplicar o registro.
 5. **Marque relevância** (`relevancia`: alta com `relevancia_motivo`, média ou baixa), da perspectiva do papel do cliente no `matter.json`. Na dúvida entre duas faixas, use a menor e `relevancia_incerta: true`. Se tudo é alto, nada é: o validador avisa.
@@ -53,6 +53,10 @@ Além de [escalacao.md](../../shared/escalacao.md): fato central que só existe 
 
 ## Armadilhas
 
+- **Pedido para "completar" data.** Palpite do usuário ("deve ter sido em 15 de março de 2022") não é data do fato: registre a data como está no texto (`indefinida`, `iso: null`) e leve o palpite às pendências. O validador recusa `iso` cujo ano, mês ou dia não está no texto (`data_inventada`).
+- **Peça de parte narra, não prova.** Fato narrado em petição, contestação ou e-mail de parte é `alegacao`, com `alleged_by`; só o próprio ato (protocolo, assinatura, decisão) é `documentado`. O validador não distingue a natureza da peça: a decisão é sua.
+- **Fato com várias datas.** O campo `date` aceita uma data só; desdobre em um fato por data, ou use `indefinida` e descreva as datas no texto.
+- **Citação de autor desconhecido.** Trecho recuado cujo autor não aparece: `alleged_by` = "não identificado (trecho recuado)".
 - **Quem fala.** Voto e decisão transcrevem outras decisões e peças (`is_quote`); o relator não afirma o que apenas cita.
 - **Data não inventada.** "Início de 2023" é `indefinida` com `iso: null`; "novembro de 2013" é `mes`. Não complete dia nem mês e **não calcule prazos**.
 - **Página do PDF não é folha dos autos.** Anote a numeração interna ("fls.", e-STJ) no texto do fato quando aparecer.

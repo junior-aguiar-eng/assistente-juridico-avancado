@@ -203,6 +203,18 @@ def markdown(t: dict, mudancas=None, n_avisos=0, formato="trabalho", incluir_sin
         if ocultos:
             L.append(f"\n{ocultos} entrada(s) relevante(s) ficaram de fora por sinalização de sigilo; use `--incluir-sinalizados` "
                      "só com a confirmação do advogado.")
+        fora = []
+        for e in t["entradas"]:
+            if e["relevancia"] not in ("alta", "media"):
+                fora.append(f"{e['fact_id']} (relevância {e['relevancia'] or 'não avaliada'})")
+            elif e["kind"] == "lacuna":
+                fora.append(f"{e['fact_id']} (lacuna)")
+            elif _sinalizado(e, posture) and not incluir_sinalizados:
+                fora.append(f"{e['fact_id']} (sigilo)")
+        fora += [f"{s['fact_id']} (sem data)" for s in t["sem_data"]]
+        if fora:
+            L += ["", "## Fora desta exposição", "",
+                  "Registrados no `facts.json`, mas não narrados acima: " + "; ".join(fora) + "."]
     else:
         mista = posture == "misto"
         L += ["", "## Em ordem", "", "| # | Data | Precisão | Tipo | Relevância | " + ("Sigilo | " if mista else "") + "Fato | Fonte |",
@@ -256,8 +268,9 @@ def gerar(facts_path, saida_json, saida_md, anterior=None, extracoes=(), matter=
         rm = validate.validar_matter(m, idx)
         if rm.erros:
             raise ValueError("matter.json inválido: " + "; ".join(f"{e['codigo']} em {e['caminho']}" for e in rm.erros[:6]))
-        if formato == "fatos" and (m["matter"].get("confidentiality") or {}).get("privilegio") == "nao_triado":
-            raise ValueError("as fontes não passaram por triagem de sigilo (privilegio=nao_triado): triar antes de gerar a exposição de fatos")
+        if formato == "fatos" and (m["matter"].get("confidentiality") or {}).get("privilegio") in (None, "nao_triado"):
+            raise ValueError("as fontes não passaram por triagem de sigilo (privilegio ausente ou nao_triado): triar antes de "
+                             "gerar a exposição de fatos")
     if formato == "fatos" and m is None:
         raise ValueError("a exposição de fatos exige --matter (papel, sigilo e privilégio entram no cabeçalho e no filtro)")
     t = construir(obj, _sha(fp), m, janela_meses)
@@ -279,9 +292,9 @@ def conferir(facts_path, timeline_path) -> dict:
     t = json.loads(Path(timeline_path).read_text(encoding="utf-8"))
     novo = construir(json.loads(fp.read_text(encoding="utf-8")), _sha(fp))
     igual_arquivo = t.get("facts_sha256") == novo["facts_sha256"]
-    igual_conteudo = t.get("entradas") == novo["entradas"] and t.get("sem_data") == novo["sem_data"]
-    return {"atualizada": igual_arquivo and igual_conteudo,
-            "facts_json_mudou": not igual_arquivo, "conteudo_diverge": not igual_conteudo}
+    igual_conteudo = all(t.get(k) == novo[k] for k in ("entradas", "sem_data", "lacunas", "conflitos"))
+    # vale o conteúdo, não os bytes: reformatar o JSON sem mudar nenhum fato não invalida a cronologia
+    return {"atualizada": igual_conteudo, "facts_json_mudou": not igual_arquivo, "conteudo_diverge": not igual_conteudo}
 
 
 def main(argv=None) -> int:

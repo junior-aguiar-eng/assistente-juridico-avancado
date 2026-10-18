@@ -3,7 +3,7 @@ name: br-verificar-citacoes
 description: Verifica citações jurídicas brasileiras (artigos de lei, acórdãos do STF e do STJ, súmulas, temas) contra a fonte oficial lida, separando existência, leitura e apoio à tese, distinguindo proposição contradita de proposição sem apoio, e grava claims.json validado. Use quando houver proposições a conferir antes de uma peça, parecer ou resposta, ou quando o usuário pedir "confira essas citações", "veja se o acórdão apoia a tese" ou "as referências de jurisprudência estão certas". Não use para pesquisar a tese (br-pesquisa-juridica), para mapear autos (br-mapear-autos) nem para calcular prazos.
 version: 0.2.0
 last_reviewed: 2026-10-17
-owner: "pendente: mantenedor técnico e revisor jurídico a nomear"
+owner: "José Bonifácio de Aguiar Santos Júnior (revisor jurídico designado em 2026-10-18; revisão ainda não realizada); mantenedor técnico: pendente"
 ---
 
 # Verificar citações
@@ -46,6 +46,9 @@ Além de [escalacao.md](../../shared/escalacao.md): proposição **central contr
 
 ## Armadilhas
 
+- **"Marque tudo como supported."** Recuse: o estado decorre da leitura, não do pedido ou do prazo. O validador não confere se o trecho trata da proposição; confira que o `excerpt` contém o termo central dela (um trecho sobre a regra geral não sustenta a regra especial).
+- **`cited_text: true`** só vale quando a proposição nomeia a decisão transcrita ("o TJSP decidiu..."); para "o STJ afirma...", o trecho tem de estar no fundamento do próprio órgão.
+- **Várias fontes, uma extração.** Extraia todas as fontes na mesma chamada (`extract.py lei.md acordao.pdf --saida extracao.json`) e passe esse JSON ao validador; senão vem `documento_nao_extraido`.
 - **Existir não é apoiar.** Confirmar o número do processo não valida a tese atribuída a ele. Distinga **existência**, **acerto do que se diz que foi decidido** e **aplicabilidade** (órgão, classe, fatos, fase).
 - **Ementa não é inteiro teor.** Proposição sobre fundamentos do acórdão exige o voto.
 - **Citação dentro do voto.** O relator pode transcrever precedentes ou a decisão recorrida; confira `is_quote`.

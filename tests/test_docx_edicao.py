@@ -120,7 +120,7 @@ def campos_base():
         {"nome": "contratante", "estado": "extraido", "valor": "Alfa Serviços Ltda.",
          "fonte": {"document_id": "doc-1", "locator": "par.2", "trecho": "A contratante é Alfa Serviços Ltda., com sede em Maceió."}},
         {"nome": "cnpj", "estado": "pendente", "motivo": "o CNPJ não consta dos documentos"},
-        {"nome": "prazo", "estado": "informado", "valor": "24 meses", "informado_em": "2026-10-17"},
+        {"nome": "prazo", "estado": "informado", "valor": "24 meses", "informado_em": "2026-10-17", "fala": "O prazo será de 24 meses."},
         {"nome": "foro", "estado": "inferido", "valor": "Maceió", "razao": "sede da contratante"},
         {"nome": "multa", "estado": "conflito", "candidatos": [{"valor": "2%"}, {"valor": "10%"}]},
         {"nome": "reajuste", "estado": "nao_se_aplica", "motivo": "contrato de prazo certo sem reajuste"},
@@ -150,7 +150,7 @@ def test_inferido_so_entra_com_aceite_explicito_e_marcado(modelo, tmp_path):
 
 
 def test_completo_so_quando_nada_ficou_marcado(modelo, tmp_path):
-    todos = {"campos": [{"nome": n, "estado": "informado", "valor": f"valor {n}", "informado_em": "2026-10-17"}
+    todos = {"campos": [{"nome": n, "estado": "informado", "valor": f"valor {n}", "informado_em": "2026-10-17", "fala": f"o campo é valor {n}"}
                         for n in ("contratante", "cnpj", "prazo", "foro", "multa", "reajuste", "garantia")]}
     r = preencher.gerar(todos, modelo, tmp_path / "o.docx")
     assert r["gerado"] and r["completo"] is True and r["marcados_no_documento"] == {}
@@ -164,6 +164,9 @@ def test_completo_so_quando_nada_ficou_marcado(modelo, tmp_path):
     (lambda c: c[1].update(valor="12.345.678/0001-90"), "valor_em_estado_sem_valor"),
     (lambda c: c[1].pop("motivo"), "motivo_ausente"),
     (lambda c: c[2].pop("informado_em"), "informado_em_invalido"),
+    (lambda c: c[2].pop("fala"), "informado_sem_fala"),
+    (lambda c: c[2].update(fala="Ponha o mais provável."), "valor_fora_da_fala"),
+    (lambda c: c.append({"nome": "poderes", "estado": "inferido", "valor": "amplos", "razao": "mais provável"}), "inferido_em_campo_sensivel"),
     (lambda c: c[3].pop("razao"), "razao_ausente"),
     (lambda c: c[4].update(candidatos=[{"valor": "2%"}, {"valor": "2%"}]), "candidatos_insuficientes"),
     (lambda c: c[0].update(estado="certeza"), "estado_invalido"),
@@ -206,3 +209,23 @@ def test_gerar_recusa_quando_o_lint_tem_erro(modelo, tmp_path):
     c["campos"][0]["fonte"]["trecho"] = "nada a ver"
     r = preencher.gerar(c, modelo, tmp_path / "o.docx")
     assert r["gerado"] is False and not (tmp_path / "o.docx").exists()
+
+
+def test_trecho_que_e_so_o_valor_gera_aviso_e_o_relatorio_manda_escalar_poderes(modelo, tmp_path):
+    c = campos_base()
+    c["campos"][0]["fonte"]["trecho"] = "Alfa Serviços Ltda."
+    avisos = [a["codigo"] for a in preencher.lint(c)["avisos"]]
+    assert "trecho_minimo" in avisos
+    d = {"campos": [{"nome": n, "estado": "pendente", "motivo": "sem dado"} for n in ("contratante", "cnpj", "prazo", "foro", "multa", "reajuste", "garantia")]}
+    r = preencher.gerar(d, modelo, tmp_path / "o.docx")
+    assert r["escalar"] and "terço" in r["escalar"][0]
+
+
+def test_cpf_diferente_nos_documentos_gera_possivel_conflito():
+    ext = {"documents": [
+        {"document_id": "doc-1", "blocks": [{"id": "b1", "locator": "docx.par.1", "text": "Outorgante: Maria, CPF 111.444.777-35, residente em Maceió."}]},
+        {"document_id": "doc-2", "blocks": [{"id": "b1", "locator": "eml.corpo.par.1", "text": "Meu CPF é 222.555.888-46, favor usar."}]}]}
+    c = {"campos": [{"nome": "cpf", "estado": "extraido", "valor": "111.444.777-35",
+                     "fonte": {"document_id": "doc-1", "locator": "par.1", "trecho": "Outorgante: Maria, CPF 111.444.777-35, residente em Maceió."}}]}
+    r = preencher.lint(c, extracoes=ext)
+    assert r["erros"] == [] and "possivel_conflito" in [a["codigo"] for a in r["avisos"]]

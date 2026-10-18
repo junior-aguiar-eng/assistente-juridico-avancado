@@ -1,7 +1,7 @@
 """Pacotes de regras de revisão contratual: rascunhos com o texto literal da lei, sempre INATIVOS até revisão jurídica.
 
-  gerar  --fonte CC.md --url URL --saida-dir rules/br [--lido-em AAAA-MM-DD]   escreve os pacotes-rascunho
-  validar [--dir rules/br] [--fonte CC.md]                                      confere estrutura, ativação e texto literal
+  gerar  --fonte-cc CC.md --fonte-lgpd LGPD.md --saida-dir rules/br [--lido-em AAAA-MM-DD]   escreve os pacotes-rascunho
+  validar [--dir rules/br] [--fonte-cc CC.md] [--fonte-lgpd LGPD.md]            confere estrutura, ativação e texto literal
   listar [--dir rules/br] [--incluir-inativas]                                  regras que podem ser usadas
 
 Uma regra só é usada se `status` for "ativa" **e** houver `revisao.revisor` e `revisao.data`. Este script nunca ativa
@@ -18,27 +18,43 @@ import sys
 from datetime import date
 from pathlib import Path
 
-NORMA = "Lei nº 10.406/2002 (Código Civil)"
+NORMAS = {
+    "cc": {"nome": "Lei nº 10.406/2002 (Código Civil)", "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm"},
+    "lgpd": {"nome": "Lei nº 13.709/2018 (LGPD)",
+             "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm"},
+}
 RASCUNHO = "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito."
 
-# (id, pacote, artigo, tópico, pergunta de revisão)
+# (id, pacote, artigo, tópico, pergunta de revisão, norma)
 CODIGO_CIVIL = [
-    ("civ-412", "servicos_saas", "412", "cláusula penal: teto", "A cláusula penal ou multa ultrapassa o valor da obrigação principal?"),
-    ("civ-413", "servicos_saas", "413", "cláusula penal: redução", "O valor da multa é manifestamente excessivo para a natureza e a finalidade do negócio, ou há cumprimento parcial?"),
-    ("civ-421a", "servicos_saas", "421-A", "paridade e alocação de riscos", "A alocação de riscos e as regras de revisão foram previstas e respeitadas, ou há elemento concreto que afasta a presunção de paridade?"),
-    ("civ-422", "servicos_saas", "422", "boa-fé", "Alguma cláusula impede a conduta de boa-fé na conclusão ou na execução do contrato?"),
-    ("civ-423", "servicos_saas", "423", "adesão: ambiguidade", "O contrato é de adesão e tem cláusula ambígua ou contraditória a interpretar a favor do aderente?"),
-    ("civ-424", "servicos_saas", "424", "adesão: renúncia antecipada", "O contrato é de adesão e a cláusula renuncia antecipadamente a direito resultante da natureza do negócio?"),
-    ("civ-473", "servicos_saas", "473", "resilição unilateral", "A denúncia unilateral respeita o aviso e o investimento considerável feito pela outra parte?"),
-    ("civ-478", "servicos_saas", "478", "onerosidade excessiva", "Em contrato de execução continuada, há cláusula que afasta a resolução por onerosidade excessiva?"),
-    ("civ-598", "servicos_saas", "598", "prestação de serviço: prazo máximo", "O prazo de prestação de serviço regido pelo Código Civil passa de quatro anos?"),
+    ("civ-412", "servicos_saas", "412", "cláusula penal: teto", "A cláusula penal ou multa ultrapassa o valor da obrigação principal?", "cc"),
+    ("civ-413", "servicos_saas", "413", "cláusula penal: redução", "O valor da multa é manifestamente excessivo para a natureza e a finalidade do negócio, ou há cumprimento parcial?", "cc"),
+    ("civ-421a", "servicos_saas", "421-A", "paridade e alocação de riscos", "A alocação de riscos e as regras de revisão foram previstas e respeitadas, ou há elemento concreto que afasta a presunção de paridade?", "cc"),
+    ("civ-422", "servicos_saas", "422", "boa-fé", "Alguma cláusula impede a conduta de boa-fé na conclusão ou na execução do contrato?", "cc"),
+    ("civ-423", "servicos_saas", "423", "adesão: ambiguidade", "O contrato é de adesão e tem cláusula ambígua ou contraditória a interpretar a favor do aderente?", "cc"),
+    ("civ-424", "servicos_saas", "424", "adesão: renúncia antecipada", "O contrato é de adesão e a cláusula renuncia antecipadamente a direito resultante da natureza do negócio?", "cc"),
+    ("civ-473", "servicos_saas", "473", "resilição unilateral", "A denúncia unilateral respeita o aviso e o investimento considerável feito pela outra parte?", "cc"),
+    ("civ-478", "servicos_saas", "478", "onerosidade excessiva", "Em contrato de execução continuada, há cláusula que afasta a resolução por onerosidade excessiva?", "cc"),
+    ("civ-598", "servicos_saas", "598", "prestação de serviço: prazo máximo", "O prazo de prestação de serviço regido pelo Código Civil passa de quatro anos?", "cc"),
+]
+LGPD = [
+    ("lgpd-7", "lgpd", "7", "base legal do tratamento", "Cada tratamento de dado pessoal previsto no contrato tem uma hipótese do art. 7 que o sustente?", "lgpd"),
+    ("lgpd-11", "lgpd", "11", "dado sensível", "O contrato trata dado pessoal sensível? Em caso positivo, a hipótese do art. 11 está identificada?", "lgpd"),
+    ("lgpd-18", "lgpd", "18", "direitos do titular", "O contrato permite que o controlador atenda os pedidos do titular (acesso, correção, eliminação, portabilidade) dentro do prazo?", "lgpd"),
+    ("lgpd-33", "lgpd", "33", "transferência internacional", "Há armazenamento, suporte ou subprocessador fora do Brasil? A hipótese do art. 33 está identificada?", "lgpd"),
+    ("lgpd-37", "lgpd", "37", "registro das operações", "O contrato prevê o registro das operações de tratamento por controlador e operador?", "lgpd"),
+    ("lgpd-39", "lgpd", "39", "operador e instruções", "O contrato define quem é controlador e quem é operador, e obriga o operador a seguir as instruções do controlador?", "lgpd"),
+    ("lgpd-41", "lgpd", "41", "encarregado", "O contrato identifica o encarregado (ou o canal) de cada parte?", "lgpd"),
+    ("lgpd-42", "lgpd", "42", "responsabilidade e ressarcimento", "A limitação de responsabilidade do contrato afasta ou restringe a reparação por dano de tratamento irregular de dados?", "lgpd"),
+    ("lgpd-46", "lgpd", "46", "segurança", "O contrato fixa medidas de segurança técnicas e administrativas compatíveis com o risco dos dados tratados?", "lgpd"),
+    ("lgpd-48", "lgpd", "48", "incidente de segurança", "O contrato fixa prazo e forma para comunicar incidente de segurança à outra parte, de modo a permitir a comunicação à ANPD e ao titular?", "lgpd"),
 ]
 PENDENCIAS_NDA = [
     "Lei nº 9.279/1996, art. 195, XI e XII (concorrência desleal e segredo de empresa): texto compilado ainda não lido",
-    "Lei nº 13.709/2018 (LGPD), no que o NDA trata de dado pessoal: texto compilado ainda não lido",
     "Prazo de vigência do dever de sigilo e foro: sem regra legal específica; decisão do revisor jurídico",
 ]
 _CABECALHO = re.compile(r"^(Art\.\s*\d|LIVRO|T[ÍI]TULO|CAP[ÍI]TULO|Se[cç][aã]o|Subse[cç][aã]o|\*\*)")
+_DISP_REVOGADO = re.compile(r"^((?:§\s*\d+[º°o]?|[IVXLC]+|[a-z]\)|Parágrafo único)[^()]{0,12})\((?:Revogad[oa]|VETAD[OA])[^)]*\)\.?$", re.I)
 _REDACAO = re.compile(r"\[\((?P<n>[^\]]*?)\)\]\([^)]*\)", re.S)
 
 
@@ -60,28 +76,49 @@ def extrair_artigo(texto: str, numero: str) -> dict:
     fim = ini + 1
     while fim < len(linhas) and not _CABECALHO.match(linhas[fim]):
         fim += 1
-    bruto = "\n".join(linhas[ini:fim])
-    if "~~" in bruto or re.search(r"\(Revogad", bruto):
-        raise ValueError(f"art. {numero} tachado ou revogado: não é fonte de regra")
+    junto = "\n".join(linhas[ini:fim])
+    # "§ 4º" numa linha e "[(VETADO)](link)" na seguinte: junta para o dispositivo ser reconhecido como um só
+    junto = re.sub(r"((?:§\s*\d+[º°o]?|[IVXLC]+\s*[-–]?))\s*\n\s*\[\((VETADO|Revogad[oa])[^\]]*\)\]\([^)]*\)", r"\1 (\2)", junto)
+    junto = re.sub(r"\[Vig[êe]ncia\]\([^)]*\)", "", junto)
+    bloco = junto.splitlines()
+    if re.search(r"\((?:Revogad|VETAD)", bloco[0], re.I):
+        raise ValueError(f"art. {numero} revogado ou vetado: não é fonte de regra")
+    revogados, mantidas, pular = [], [], False
+    for l in bloco:
+        if pular:  # notas de redação que pertencem ao dispositivo revogado/vetado vão junto com ele
+            pular = bool(l.strip())
+            if pular:
+                continue
+        m = _DISP_REVOGADO.match(l.strip())
+        if m:
+            revogados.append(_ns(m.group(1)))  # dispositivo isolado revogado ou vetado: sai do texto e fica registrado
+            pular = True
+        else:
+            mantidas.append(l)
+    bruto = "\n".join(mantidas)
+    if "~~" in bruto or re.search(r"\((?:Revogad|VETAD)", bruto, re.I):
+        raise ValueError(f"art. {numero} tem trecho tachado ou revogado fora de um dispositivo isolado: não é fonte de regra")
     redacao = list(dict.fromkeys(_ns(m.group("n")) for m in _REDACAO.finditer(bruto)))
     limpo = _REDACAO.sub("", bruto)
     paragrafos = [_ns(p) for p in re.split(r"\n\s*\n", limpo) if _ns(p)]
-    return {"texto_literal": "\n".join(paragrafos), "redacao": redacao}
+    return {"texto_literal": "\n".join(paragrafos), "redacao": redacao, "dispositivos_revogados": revogados}
 
 
-def gerar(fonte: Path, url: str, saida_dir: Path, lido_em: str | None = None) -> dict:
-    bruto = Path(fonte).read_bytes()
-    texto = bruto.decode("utf-8")
+def gerar(fontes: dict[str, Path], saida_dir: Path, lido_em: str | None = None) -> dict:
+    """fontes: {'cc': caminho do Markdown compilado, 'lgpd': ...}. Cada regra guarda o hash do arquivo de onde foi lida."""
     lido_em = lido_em or date.today().isoformat()
     date.fromisoformat(lido_em)
+    brutos = {k: Path(v).read_bytes() for k, v in fontes.items()}
     pacotes: dict[str, list] = {}
-    for rid, pacote, art, topico, pergunta in CODIGO_CIVIL:
-        art_ = extrair_artigo(texto, art)
+    for rid, pacote, art, topico, pergunta, norma in CODIGO_CIVIL + LGPD:
+        if norma not in brutos:
+            continue
+        art_ = extrair_artigo(brutos[norma].decode("utf-8"), art)
         pacotes.setdefault(pacote, []).append({
             "id": rid, "topico": topico, "pergunta_de_revisao": pergunta, "status": "inativa",
             "revisao": {"revisor": None, "data": None, "observacao": None}, "nota": RASCUNHO,
-            "fonte": {"norma": NORMA, "artigo": art, "url": url, "arquivo_sha256": _sha(bruto), "lido_em": lido_em,
-                      "versao": "compilada", **art_}})
+            "fonte": {"norma_id": norma, "norma": NORMAS[norma]["nome"], "artigo": art, "url": NORMAS[norma]["url"],
+                      "arquivo_sha256": _sha(brutos[norma]), "lido_em": lido_em, "versao": "compilada", **art_}})
     pacotes.setdefault("nda", [])
     saida_dir = Path(saida_dir)
     saida_dir.mkdir(parents=True, exist_ok=True)
@@ -99,9 +136,12 @@ def _ativa(r: dict) -> bool:
     return r.get("status") == "ativa" and bool(rev.get("revisor")) and bool(rev.get("data"))
 
 
-def validar(dir_: Path, fonte: Path | None = None) -> dict:
+def validar(dir_: Path, fonte: Path | None = None, fontes: dict[str, Path] | None = None) -> dict:
+    """`fonte` (compat.) é o Código Civil; `fontes` mapeia norma_id -> arquivo. Só regras com fonte fornecida têm o texto conferido."""
     erros, avisos = [], []
-    texto = Path(fonte).read_text(encoding="utf-8") if fonte else None
+    textos = {k: Path(v).read_text(encoding="utf-8") for k, v in (fontes or {}).items()}
+    if fonte:
+        textos.setdefault("cc", Path(fonte).read_text(encoding="utf-8"))
     ids = set()
     for arq in sorted(Path(dir_).glob("*.json")):
         obj = json.loads(arq.read_text(encoding="utf-8"))
@@ -118,7 +158,7 @@ def validar(dir_: Path, fonte: Path | None = None) -> dict:
             f = r.get("fonte") or {}
             if not (f.get("norma") and f.get("artigo") and f.get("texto_literal") and f.get("url") and f.get("lido_em")):
                 erros.append({"codigo": "fonte_incompleta", "onde": w})
-            elif texto is not None:
+            elif (texto := textos.get(f.get("norma_id", "cc"))) is not None:
                 try:
                     atual = extrair_artigo(texto, f["artigo"])["texto_literal"]
                     if atual != f["texto_literal"]:
@@ -150,13 +190,14 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     g = sub.add_parser("gerar")
-    g.add_argument("--fonte", required=True)
-    g.add_argument("--url", required=True)
+    g.add_argument("--fonte-cc")
+    g.add_argument("--fonte-lgpd")
     g.add_argument("--saida-dir", required=True)
     g.add_argument("--lido-em")
     v = sub.add_parser("validar")
     v.add_argument("--dir", default="rules/br")
-    v.add_argument("--fonte")
+    v.add_argument("--fonte-cc")
+    v.add_argument("--fonte-lgpd")
     l = sub.add_parser("listar")
     l.add_argument("--dir", default="rules/br")
     l.add_argument("--pacote", default="servicos_saas")
@@ -164,9 +205,12 @@ def main(argv=None) -> int:
     n = ap.parse_args(argv)
     try:
         if n.cmd == "gerar":
-            res, cod = gerar(Path(n.fonte), n.url, Path(n.saida_dir), n.lido_em), 0
+            fs = {k: Path(v) for k, v in (("cc", n.fonte_cc), ("lgpd", n.fonte_lgpd)) if v}
+            if not fs:
+                raise ValueError("informe --fonte-cc e/ou --fonte-lgpd")
+            res, cod = gerar(fs, Path(n.saida_dir), n.lido_em), 0
         elif n.cmd == "validar":
-            res = validar(Path(n.dir), Path(n.fonte) if n.fonte else None)
+            res = validar(Path(n.dir), fontes={k: Path(v) for k, v in (("cc", n.fonte_cc), ("lgpd", n.fonte_lgpd)) if v})
             cod = 1 if res["erros"] else 0
         else:
             res, cod = carregar(Path(n.dir), n.pacote, n.incluir_inativas), 0

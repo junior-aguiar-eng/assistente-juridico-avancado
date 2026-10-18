@@ -30,6 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # injecao.py, mesmo com python -P
 import injecao  # noqa: E402
+import ocr  # noqa: E402
 
 EXTRACTOR_VERSION = "0.3.0"
 SCHEMA_VERSION = "1"
@@ -299,6 +300,41 @@ def _montar_blocos_pdf(paginas):
     return _finalizar_blocos(blocos)
 
 
+_OCR = False
+
+
+def _aplicar_ocr(path: Path, paginas: list, alvo: list[int], avisos: list) -> set[int]:
+    """OCR das páginas sem corpo de texto. Devolve as páginas lidas; falhas viram aviso, nunca silêncio."""
+    exe = ocr.localizar_tesseract()
+    if not exe:
+        avisos.append(_aviso("ocr_indisponivel", "OCR pedido, mas o Tesseract não foi encontrado (PATH, JURIS_TESSERACT ou pasta padrão)"))
+        return set()
+    lang, aviso_lang = ocr.escolher_idioma(exe)
+    if not lang:
+        avisos.append(_aviso("ocr_indisponivel", aviso_lang))
+        return set()
+    if aviso_lang:
+        avisos.append(_aviso("ocr_idioma_degradado", aviso_lang))
+    try:
+        lidas = ocr.ler_paginas(exe, path, alvo, lang)
+    except Exception as e:  # noqa: BLE001 - OCR é auxiliar; a falha é relatada
+        avisos.append(_aviso("ocr_indisponivel", f"{type(e).__name__}: {e}"))
+        return set()
+    feitas = set()
+    for n, r in lidas.items():
+        if not r["linhas"]:
+            avisos.append(_aviso("ocr_sem_texto", "o OCR não reconheceu texto na página", n))
+            continue
+        w, h, existentes = paginas[n - 1]
+        paginas[n - 1] = (w, h, sorted(r["linhas"] + existentes, key=lambda l: (round(l["top"] / 4), l["x0"])))
+        feitas.add(n)
+        avisos.append(_aviso("ocr_aplicado", f"texto reconhecido por OCR (idioma {lang}, confiança média {r['confianca']}): "
+                                              "confira dígitos, acentos e nomes no original", n))
+        if r["confianca"] < 60:
+            avisos.append(_aviso("ocr_baixa_confianca", f"confiança média {r['confianca']} (< 60): o texto desta página não é confiável", n))
+    return feitas
+
+
 def extrair_pdf(path: Path) -> dict:
     paginas, avisos, total, cobertura, estrutura = _ler_pdf(path)
     texto_bruto = _hash_texto(ln["text"] for _, _, ls in paginas for ln in ls)
@@ -325,7 +361,16 @@ def extrair_pdf(path: Path) -> dict:
             avisos.append(_aviso("pagina_possivelmente_digitalizada",
                                  f"imagem cobre {cob:.0%} da página e há só {chars_pag} caracteres de texto; "
                                  "o corpo provavelmente é imagem (OCR indisponível)", i))
+    ocr_paginas: set[int] = set()
+    sem_corpo_antes = set(sem_texto) | set(digitalizadas)
+    if _OCR and sem_corpo_antes:
+        ocr_paginas = _aplicar_ocr(path, paginas, sorted(sem_corpo_antes), avisos)
+        if ocr_paginas:
+            texto_bruto = _hash_texto(ln["text"] for _, _, ls in paginas for ln in ls)
     blocos = _montar_blocos_pdf(paginas)
+    for b in blocos:
+        if ocr_paginas and b["page"] in ocr_paginas and (b.get("page_end") or b["page"]) in ocr_paginas:
+            b["tags"] = sorted(set(b.get("tags", [])) | {"ocr"})
     chars = sum(len(b["text"]) for b in blocos)
     if chars and sum(b["text"].count("�") for b in blocos) / chars > 0.01:
         avisos.append(_aviso("codificacao_suspeita", "muitos caracteres de substituição (U+FFFD)"))
@@ -334,8 +379,9 @@ def extrair_pdf(path: Path) -> dict:
         blocos.append({"id": f"b{len(blocos) + 1:04d}", "locator": f"p.{pg[0]}" if pg[0] == pg[-1] else f"p.{pg[0]}-{pg[-1]}",
                        "text": _ws(d["texto"]), "tags": ["repetido"], "page": pg[0], "page_end": pg[-1], "section": "rodape",
                        "is_quote": False, "quote_basis": None})
-    sem_corpo = set(sem_texto) | set(digitalizadas)
-    codigos_parciais = ("truncado", "pagina_ilegivel", "codificacao_suspeita", "tempo_excedido", "layout_em_colunas_ou_tabela")
+    sem_corpo = (set(sem_texto) | set(digitalizadas)) - ocr_paginas
+    codigos_parciais = ("truncado", "pagina_ilegivel", "codificacao_suspeita", "tempo_excedido", "layout_em_colunas_ou_tabela",
+                        "ocr_aplicado")
     if len(sem_corpo) == len(paginas):
         status = "no_text"
     elif sem_corpo or any(a["codigo"] in codigos_parciais for a in avisos):
@@ -781,8 +827,12 @@ def _versoes():
     return v
 
 
-def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0):
-    """Retorna (documento, cache_hit). Nunca levanta exceção por conteúdo do arquivo."""
+def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0, ocr: bool = False):
+    """Retorna (documento, cache_hit). Nunca levanta exceção por conteúdo do arquivo.
+
+    ocr=True tenta o OCR (Tesseract) nas páginas de PDF sem texto ou cobertas por imagem."""
+    global _OCR
+    _OCR = bool(ocr)
     p = Path(caminho)
     base = {"path": str(caminho), "idioma_assumido": IDIOMA}
 
@@ -806,7 +856,7 @@ def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0):
                                 ".eml": "message/rfc822", ".html": "text/html", ".htm": "text/html", ".csv": "text/csv",
                                 ".tsv": "text/tab-separated-values",
                                 ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}[p.suffix.lower()]})
-    arq_cache = Path(cache_dir) / f"{sha[:32]}-{EXTRACTOR_VERSION}-{PARAMS_HASH}.json" if cache_dir else None
+    arq_cache = Path(cache_dir) / f"{sha[:32]}-{EXTRACTOR_VERSION}-{PARAMS_HASH}{'-ocr' if ocr else ''}.json" if cache_dir else None
     if arq_cache and arq_cache.is_file():
         with contextlib.suppress(Exception):
             doc = json.loads(arq_cache.read_text(encoding="utf-8"))
@@ -875,11 +925,12 @@ def main(argv=None) -> int:
     ap.add_argument("--cache-dir", default=".cache/extract")
     ap.add_argument("--no-cache", action="store_true")
     ap.add_argument("--max-mb", type=float, default=60.0)
+    ap.add_argument("--ocr", action="store_true", help="OCR (Tesseract) nas páginas de PDF sem texto; blocos ficam com a tag 'ocr'")
     a = ap.parse_args(argv)
     logging.getLogger("pdfminer").setLevel(logging.ERROR)
     docs, hits = [], 0
     for arq in a.arquivos:
-        d, hit = extrair(arq, None if a.no_cache else a.cache_dir, a.max_mb)
+        d, hit = extrair(arq, None if a.no_cache else a.cache_dir, a.max_mb, a.ocr)
         docs.append(d)
         hits += hit
     saida = {"schema_version": SCHEMA_VERSION, "run": {"extractor_version": EXTRACTOR_VERSION,

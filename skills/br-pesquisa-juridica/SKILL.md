@@ -3,7 +3,7 @@ name: br-pesquisa-juridica
 description: Pesquisa fundamentos jurídicos brasileiros (leis, acórdãos do STJ e do STF, súmulas, temas) por pontes de fontes oficiais pré-definidas, respeitando a política de sigilo do caso e a data dos fatos, e entrega proposições candidatas (claims.json, todas unverified), registro de fontes com hash, fila de verificação e a organização do raciocínio em fatos, questões e regras. Use quando o usuário pedir "pesquise a tese", "ache o precedente", "qual a lei aplicável ao caso", "quais normas se aplicam" ou "qual a base legal". Não conclui a tese, não declara que "não existe precedente" e não substitui a leitura da fonte (br-verificar-citacoes).
 version: 0.2.0
 last_reviewed: 2026-10-17
-owner: "pendente: mantenedor técnico e revisor jurídico a nomear"
+owner: "José Bonifácio de Aguiar Santos Júnior (revisor jurídico designado em 2026-10-18; revisão ainda não realizada); mantenedor técnico: pendente"
 last_verified: 2026-10-17
 freshness_window_days: 180
 freshness_category: rule_text
@@ -46,6 +46,9 @@ Além de [escalacao.md](../../shared/escalacao.md): política de sigilo `proibid
 
 ## Armadilhas
 
+- **Busca aberta na web é consulta externa.** Com `consultas_externas` = `proibidas` ou `somente_termos_genericos`, nenhuma busca aberta com nome de parte, número de processo ou fatos do caso, ainda que o usuário peça. Recuse e ofereça mudar a política por decisão registrada do advogado no `matter.json`.
+- **Política ausente.** Se `consultas_externas` não está no `matter.json`, pare e pergunte antes de qualquer ponte que envie termos do caso.
+- **Arquivo que o usuário já forneceu.** Registre com `python scripts/fontes.py registrar ARQUIVO --registro fontes/registro.json --origem oficial|secundaria` (hash, `obtained_via: user_supplied_source`). A claim segue `unverified` até a `br-verificar-citacoes`; diga ao usuário "lido, pendente de verificação" e não responda o mérito como fato confirmado.
 - **Busca vazia não é inexistência.** `NOT_FOUND` só diz que o corpus daquela ponte não tem. Escreva "não localizado nas pontes consultadas (liste)".
 - **Memória não é fonte.** Nada de número de processo, relator, data ou súmula "de cabeça": sem fonte lida, é `unverified`.
 - **Ementa não é inteiro teor**, e agregador não é fonte. Tese sobre fundamentos exige o voto.

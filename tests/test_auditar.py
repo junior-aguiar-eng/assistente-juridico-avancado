@@ -163,11 +163,11 @@ def test_aprovacao_vale_enquanto_nada_muda_e_cai_quando_algo_muda(caso):
     st = auditar.status(caso / "qc.json", caso / "aprovacao.json")
     assert st["revisao_humana"] == "aprovada" and st["alterados"] == []
     # muda um byte do claims.json
-    texto = (caso / "claims.json").read_text(encoding="utf-8")
-    (caso / "claims.json").write_text(texto + "\n", encoding="utf-8")
+    texto = (caso / "claims.json").read_bytes()  # bytes: a conversão de fim de linha mudaria o hash no Linux
+    (caso / "claims.json").write_bytes(texto + b"\n")
     st = auditar.status(caso / "qc.json", caso / "aprovacao.json")
     assert st["revisao_humana"] == "invalidada" and st["alterados"] == ["claims.json"]
-    (caso / "claims.json").write_text(texto, encoding="utf-8")  # volta ao original
+    (caso / "claims.json").write_bytes(texto)  # volta ao original
     assert auditar.status(caso / "qc.json", caso / "aprovacao.json")["revisao_humana"] == "aprovada"
     # muda a fonte lida
     with open(caso / "fontes" / "cc_compilado.md", "ab") as f:
@@ -217,7 +217,7 @@ def test_aprovacao_exige_pessoa_e_declaracao(caso, campo, valor):
 # ------------------------------------------------------------------ CLI
 def test_cli_fluxo_completo_e_codigos_de_saida(caso, monkeypatch):
     args = ["auditar", "--facts", "facts.json", "--claims", "claims.json", "--extracoes", "extracao.json",
-            "--saida", "qc.json"]
+            "--tipo-entrega", "interna", "--saida", "qc.json"]
     cod, qc = _cli("auditar.py", *args, cwd=caso)
     assert cod == 0 and qc["estado_tecnico"] == "revisao_pronta"
     # por processo sem terminal (como um agente ou script chamaria), a aprovação é recusada
@@ -236,7 +236,7 @@ def test_cli_fluxo_completo_e_codigos_de_saida(caso, monkeypatch):
     (caso / "facts.json").write_text((caso / "facts.json").read_text(encoding="utf-8") + " ", encoding="utf-8")
     cod, st = _cli("auditar.py", "status", "qc.json", "aprovacao.json", cwd=caso)
     assert cod == 1 and st["revisao_humana"] == "invalidada"
-    cod, qc = _cli("auditar.py", "auditar", "--saida", "x.json", cwd=caso)
+    cod, qc = _cli("auditar.py", "auditar", "--tipo-entrega", "interna", "--saida", "x.json", cwd=caso)
     assert cod == 1 and "informe --facts" in qc["erro"]
     with open(caso / "fontes" / "cc_compilado.md", "ab") as f:
         f.write(b"\n")
@@ -343,3 +343,19 @@ def test_cronologia_desatualizada_bloqueia_a_entrega(caso):
     qc = auditar.auditar(None, str(caso / "claims.json"), [str(caso / "extracao.json")], base=caso,
                          timeline=str(caso / "timeline.json"))
     assert res(qc)["G09_cronologia_atualizada"] == "reprovado"  # cronologia sem facts.json
+
+
+def test_status_sem_aprovacao_tambem_detecta_artefato_alterado(tmp_path):
+    caso = tmp_path / "c"
+    shutil.copytree(RAIZ / "tests" / "casos" / "verificacao_stj", caso)
+    qc = auditar.auditar(None, str(caso / "claims.json"), [str(caso / "extracao.json")], base=caso)
+    (caso / "qc.json").write_text(json.dumps(qc), encoding="utf-8")
+    assert auditar.status(caso / "qc.json")["alterados"] == []
+    (caso / "claims.json").write_bytes((caso / "claims.json").read_bytes() + b" ")
+    st = auditar.status(caso / "qc.json")
+    assert st["alterados"] == ["claims.json"] and st["liberado_para_uso"] is False
+
+
+def test_cli_exige_tipo_de_entrega(tmp_path):
+    with pytest.raises(SystemExit):
+        auditar.main(["auditar", "--claims", "c.json", "--saida", "x.json"])

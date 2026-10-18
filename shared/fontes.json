@@ -11,7 +11,8 @@
     "precedente_stj": "acórdão ou decisão do STJ",
     "precedente_stf": "acórdão, tema ou decisão do STF",
     "sumula": "súmula ou tese vinculante",
-    "tema": "tema repetitivo ou de repercussão geral"
+    "tema": "tema repetitivo ou de repercussão geral",
+    "processo_metadados": "existência e dados de identificação de um processo (classe, órgão, assuntos, movimentos); não é inteiro teor"
   },
   "pontes": [
     {
@@ -117,7 +118,8 @@
         "precedente_stj",
         "precedente_stf",
         "sumula",
-        "tema"
+        "tema",
+        "processo_metadados"
       ],
       "ordem": 99,
       "origem": "oficial",
@@ -125,6 +127,18 @@
       "requer": [],
       "envia_termos_do_caso": false,
       "limites": "Último recurso: serve quando as demais pontes falham ou estão proibidas pela política de sigilo."
+    },
+    {
+      "id": "datajud_metadados",
+      "tipos": [
+        "processo_metadados"
+      ],
+      "ordem": 1,
+      "origem": "oficial",
+      "como": "python scripts/datajud.py consultar NUMERO_CNJ",
+      "requer": [],
+      "envia_termos_do_caso": true,
+      "limites": "Metadados da API Pública do CNJ (chave pública na wiki, validada em 2026-10-18). Cobre justiça estadual, federal, do trabalho e STJ; o STF e a justiça eleitoral/militar não estão mapeados. Ausência no DataJud não prova inexistência. Envia o número do processo ao CNJ: respeita a política de consultas externas."
     }
   ],
   "portais_para_o_usuario": {
@@ -178,6 +192,13 @@
         "nome": "Senado, dados abertos de legislação",
         "url": "https://legis.senado.leg.br/dadosabertos/legislacao/lista",
         "nota": "testado em 17/10/2026"
+      }
+    ],
+    "processo_metadados": [
+      {
+        "nome": "Consulta processual do tribunal de origem",
+        "url": "https://www.cnj.jus.br/sistemas/datajud/",
+        "nota": "o usuário consulta e fornece a tela ou o PDF"
       }
     ]
   }

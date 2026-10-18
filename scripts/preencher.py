@@ -6,7 +6,8 @@
 Estados de cada campo:
   extraido        valor copiado de um documento: exige fonte {document_id, locator, trecho}; o valor tem de aparecer,
                   literalmente, dentro do trecho (e o trecho, no bloco extraído, quando há extracao.json)
-  informado       dito pelo usuário: exige informado_em (data)
+  informado       dito pelo usuário: exige informado_em (data) e fala (a mensagem do usuário, literal), que contém o valor;
+                  pedido genérico ("ponha o mais provável") não é informação do campo
   inferido        deduzido: exige razao; só entra no documento com --aceitar-inferidos, sempre marcado
   pendente        sem prova: o marcador fica no documento, destacado
   conflito        duas ou mais fontes divergem (candidatos): o marcador fica, destacado
@@ -61,6 +62,28 @@ def _bloco(extracoes, document_id, locator):
     return None
 
 
+_SENSIVEL = re.compile(r"poder|capacidade|represent|assin", re.I)
+_CPF = re.compile(r"(?<!\d)\d{3}\.?\d{3}\.?\d{3}-?\d{2}(?!\d)")
+_CNPJ = re.compile(r"(?<!\d)\d{2}\.?\d{3}\.?\d{3}/?\d{4}-?\d{2}(?!\d)")
+
+
+def _checar_identificadores(extracoes, valor, fonte, onde, avisar):
+    """CPF/CNPJ extraído: avisa se os documentos trazem outro identificador do mesmo tipo (pode ser outra pessoa, ou conflito)."""
+    for rx, nome in ((_CNPJ, "CNPJ"), (_CPF, "CPF")):
+        if rx.fullmatch(_ns(valor)):
+            digitos = re.sub(r"\D", "", valor)
+            outros = {}
+            for d in extracoes.get("documents", [extracoes] if "blocks" in extracoes else []):
+                for b in d["blocks"]:
+                    for m in rx.finditer(b["text"]):
+                        if re.sub(r"\D", "", m.group()) != digitos:
+                            outros.setdefault(re.sub(r"\D", "", m.group()), []).append(f"{d.get('document_id')}:{b.get('locator')}")
+            if outros:
+                avisar("possivel_conflito", onde, f"os documentos trazem {len(outros)} outro(s) {nome} além deste "
+                       f"(ex.: {next(iter(outros.values()))[0]}): confirme de quem é cada um; se for o mesmo campo, use 'conflito'")
+            return
+
+
 def lint(campos: dict, modelo: Path | None = None, extracoes: dict | None = None) -> dict:
     erros, avisos = [], []
 
@@ -107,14 +130,25 @@ def lint(campos: dict, modelo: Path | None = None, extracoes: dict | None = None
                     e("localizador_inexistente", w, f"localizador {f['locator']} não existe no documento")
                 elif _ns(f["trecho"]) not in _ns(b["text"]):
                     e("trecho_fora_do_bloco", w, "o trecho não está no bloco indicado da extração")
+                else:
+                    _checar_identificadores(extracoes, valor, f, w, a)
+            if isinstance(valor, str) and len(_ns(f.get("trecho", ""))) < len(_ns(valor)) + 12:
+                a("trecho_minimo", w, "o trecho é praticamente só o valor: cite a frase que mostra de quem ou do que é o dado")
         elif est == "informado":
             try:
                 date.fromisoformat(str(c.get("informado_em")))
             except ValueError:
                 e("informado_em_invalido", w, "informado exige 'informado_em' (data AAAA-MM-DD)")
+            fala = c.get("fala")
+            if not isinstance(fala, str) or not fala.strip():
+                e("informado_sem_fala", w, "informado exige 'fala': a mensagem do usuário, literal, que traz o valor")
+            elif isinstance(valor, str) and _ns(valor) not in _ns(fala):
+                e("valor_fora_da_fala", w, "o valor não aparece na fala do usuário citada: dado que o usuário não deu não é 'informado'")
         elif est == "inferido":
             if not str(c.get("razao") or "").strip():
                 e("razao_ausente", w, "inferido exige 'razao'")
+            if _SENSIVEL.search(nome):
+                e("inferido_em_campo_sensivel", w, "poderes, capacidade e representação não se inferem: peça o dado ou deixe pendente")
             a("campo_inferido", w, "valor deduzido: só entra no documento com --aceitar-inferidos e sempre marcado")
         elif est in ("pendente", "nao_se_aplica"):
             if not str(c.get("motivo") or "").strip():
@@ -184,9 +218,15 @@ def gerar(campos: dict, modelo: Path, saida: Path, extracoes: dict | None = None
     doc.save(str(saida))
     if _sha(modelo) != antes:
         raise RuntimeError("o modelo foi alterado: abortado")
+    n_campos = len(campos["campos"])
+    sem_prova = [c["nome"] for c in campos["campos"] if c["estado"] in ("pendente", "conflito", "inferido")]
+    escalar = []
+    if n_campos and len(sem_prova) / n_campos > 1 / 3:
+        escalar.append(f"mais de um terço dos campos sem prova ({len(sem_prova)} de {n_campos})")
+    escalar += [f"campo sensível sem prova: {n}" for n in sem_prova if _SENSIVEL.search(n)]
     return {"gerado": True, "saida": str(saida), "saida_sha256": _sha(saida), "modelo_sha256": antes,
             "preenchidos": {n: k for n, k in contagem.items() if n not in pend}, "marcados_no_documento": pend,
-            "completo": not pend, "avisos": l["avisos"],
+            "completo": not pend, "escalar": escalar, "avisos": l["avisos"],
             "aviso": "Campos em amarelo precisam de decisão. Valor 'extraido' vale só enquanto o documento de origem for o mesmo."}
 
 

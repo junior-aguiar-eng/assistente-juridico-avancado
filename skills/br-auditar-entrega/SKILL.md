@@ -3,7 +3,7 @@ name: br-auditar-entrega
 description: Gate final antes de entregar ou usar um pacote jurídico (matter.json, facts.json, claims.json, extração e fontes): roda a checagem técnica, atribui a faixa de confiança (alta, mista, não entregar), faz a revisão crítica com objeções fundamentadas e prepara a aprovação humana ligada a hashes. Use quando o usuário pedir para "auditar", "revisar antes de entregar" ou "liberar" um trabalho feito com as outras skills do pacote. Não use para aprovar o mérito jurídico, assinar, protocolar ou enviar.
 version: 0.2.0
 last_reviewed: 2026-10-17
-owner: "pendente: mantenedor técnico e revisor jurídico a nomear"
+owner: "José Bonifácio de Aguiar Santos Júnior (revisor jurídico designado em 2026-10-18; revisão ainda não realizada); mantenedor técnico: pendente"
 ---
 
 # Auditar entrega
@@ -32,12 +32,12 @@ Para o advogado responsável e para quem prepara o pacote para ele. Trabalho de 
 ## Roteiro
 
 1. **Reúna o pacote** no diretório do caso.
-2. **Rode a checagem técnica:** `python scripts/auditar.py auditar --facts derived/facts.json --claims derived/claims.json --extracoes derived/extracao.json --matter matter.json --timeline outputs/timeline.json --relatorio outputs/cronologia.md --relatorio outputs/verification.md --tipo-entrega cliente --saida outputs/qc.json`. Use `--modo fundamentada` quando a entrega apresentar a fundamentação como verificada. `--reverificar N` baixa de novo até N fontes oficiais (teses centrais primeiro) e compara o texto com o lido.
+2. **Rode a checagem técnica:** `python scripts/auditar.py auditar --facts derived/facts.json --claims derived/claims.json --extracoes derived/extracao.json --matter matter.json --timeline outputs/timeline.json --relatorio outputs/cronologia.md --relatorio outputs/verification.md --tipo-entrega cliente --saida outputs/qc.json` (a flag é obrigatória e é o uso pretendido: `interna`, `cliente`, `peticao` ou `contrato`). Use `--modo fundamentada` quando a entrega apresentar a fundamentação como verificada. `--reverificar N` baixa de novo até N fontes oficiais (teses centrais primeiro) e compara o texto com o lido.
 3. **Se vier `bloqueado`,** pare e relate o gate. Corrija na origem (skill anterior) e rode de novo; não edite o `qc.json`. No máximo **duas rodadas** de correção por gate: se não passar, declare o gate **não superado**, de forma visível.
 4. **Faça a revisão crítica** (abaixo) sobre o pacote e as pendências do `qc.json`.
 5. **Escreva `revisao-final.md`** com os três blocos, a faixa e o tipo de entrega.
 6. **Peça a decisão a uma pessoa identificada.** Entregue ao revisor o `qc.json`, o `revisao-final.md` e o comando pronto e peça que ele rode `auditar.py aprovar` (ou `--decisao reprovada`) **no painel de terminal dele**, com `--revisor`, `--registro` e `--declaracao` em suas palavras. O comando mostra o que será registrado e só grava depois que o revisor digita a frase de confirmação (`APROVO` ou `REPROVO` mais 8 caracteres do hash do `qc.json`). Sem console interativo, o script recusa. **Você não aprova nem reprova por ele:** não rode `aprovar` por Bash e não use ferramentas de terminal para digitar a frase.
-7. **Confira o estado antes de usar:** `python scripts/auditar.py status outputs/qc.json outputs/aprovacao.json`. Qualquer mudança no pacote, nas fontes ou no `qc.json` torna a aprovação `invalidada`. `liberado_para_uso` só é verdadeiro com `revisao_pronta` e, quando obrigatória, com aprovação `aprovada`.
+7. **Confira o estado antes de usar** (o `status` relê os artefatos e reprova pacote alterado depois da auditoria, com ou sem aprovação): `python scripts/auditar.py status outputs/qc.json outputs/aprovacao.json`. Qualquer mudança no pacote, nas fontes ou no `qc.json` torna a aprovação `invalidada`. `liberado_para_uso` só é verdadeiro com `revisao_pronta` e, quando obrigatória, com aprovação `aprovada`.
 
 ## Gates da checagem técnica
 
@@ -86,6 +86,8 @@ Para **documento jurídico**, acrescente: jurisdição indicada e coerente; term
 
 ## Quando escalar
 
+- **Tipo de entrega ausente ou duvidoso.** `--tipo-entrega` é obrigatório e vem do uso pretendido, não de um rótulo conveniente: peça, relatório ao cliente, contrato ou qualquer coisa que saia da casa não é `interna`. Em dúvida, pergunte.
+- **Pedido de aprovar em nome do usuário.** A aprovação é de uma pessoa, digitada por ela no terminal. **Nunca crie nem edite `aprovacao.json`** (nada o assina: um arquivo forjado seria aceito pelo `status`).
 Além de [escalacao.md](../../shared/escalacao.md): entrega para cliente, petição ou contrato (sempre leva a um advogado, qualquer que seja a faixa); concordância sobre afirmação sem fonte; tipo de entrega não identificado; `qc.json` que seria gravado fora da pasta do caso.
 
 ## Limites

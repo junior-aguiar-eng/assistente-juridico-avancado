@@ -38,9 +38,11 @@ PyMuPDF (AGPL-3.0) **não** é dependência e não deve ser adicionada sem decis
 
 ## Ferramentas externas usadas, fora do repositório
 
-- `~/.claude/scripts/fetch_oficial.py` (conversão do Planalto em Markdown; do ambiente do usuário).
+- `scripts/fetch_oficial.py` (conversão do Planalto em Markdown; arquivo do titular do projeto, incluído no repositório em 2026-10-18). Usa `requests` (Apache-2.0), `beautifulsoup4` (MIT) e `markdownify` (MIT).
+- Tesseract OCR (Apache-2.0), instalado à parte e chamado como programa externo por `scripts/ocr.py`; o idioma `por` (tessdata) precisa ser instalado pelo usuário. Nada dele é redistribuído aqui.
+- API Pública do DataJud (CNJ): chave pública publicada na wiki do CNJ, lida na hora da consulta e nunca gravada no repositório.
 - ForgeLex (serviço de terceiro) e o navegador integrado do app: dependem da sessão e **enviam termos de consulta para fora da máquina**; a política de sigilo do caso decide se podem ser usados.
 
 ## Documentos de teste
 
-`tests/casos/` traz o inteiro teor de um acórdão público do STJ (AREsp 2.432.194/SP, duas cópias baixadas em 17/10/2026) e a versão compilada do Código Civil obtida do Planalto, usados como fixtures. São atos e textos oficiais; a redistribuição não foi objeto de parecer.
+`tests/casos/` traz o inteiro teor de acórdãos públicos do STJ (AREsp 2.432.194/SP e três do corpus em `stj_corpus`, baixados em 17/10/2026), as ementas dos conjuntos de dados abertos do STJ usadas como gabarito, e as versões compiladas do Código Civil e da Lei 13.709/2018 (LGPD) obtidas do Planalto, usados como fixtures. São atos e textos oficiais; a redistribuição não foi objeto de parecer.

@@ -7,14 +7,14 @@
 *Toda afirmação aponta para uma fonte efetivamente lida, ou aparece marcada como não verificada.*
 
 ![Python](https://img.shields.io/badge/python-3.12%2B-3776AB?logo=python&logoColor=white)
-![Testes](https://img.shields.io/badge/testes-390%20passam%20%C2%B7%201%20de%20rede%20opcional-2e7d32)
-![Revisão jurídica](https://img.shields.io/badge/revis%C3%A3o%20jur%C3%ADdica-pendente-c62828)
+![Testes](https://img.shields.io/badge/testes-460%20passam%20%C2%B7%205%20opcionais-2e7d32)
+![Revisão jurídica](https://img.shields.io/badge/revis%C3%A3o%20jur%C3%ADdica-revisor%20designado%2C%20n%C3%A3o%20realizada-f9a825)
 ![Situação](https://img.shields.io/badge/situa%C3%A7%C3%A3o-pr%C3%A9--lan%C3%A7amento-f9a825)
 
 </div>
 
 > [!WARNING]
-> **Este pacote não substitui advogado.** Nenhum revisor jurídico foi nomeado, as skills (prompts) ainda não foram avaliadas com um modelo, e as regras de revisão contratual estão **inativas**. Use como apoio de organização e conferência; a decisão e a responsabilidade são de quem assina.
+> **Este pacote não substitui advogado.** O revisor jurídico foi designado ([governança](governance/revisor-juridico.md)), mas ainda não revisou nada; as skills foram avaliadas com um modelo numa única rodada ([resultado](docs/avaliacao-skills-2026-10-18.md)), e as regras de revisão contratual estão **inativas**. Use como apoio de organização e conferência; a decisão e a responsabilidade são de quem assina.
 
 ---
 
@@ -90,15 +90,16 @@ python scripts/auditar.py auditar --help
 | Comando | Para quê |
 |---|---|
 | `triagem.py init\|inventario\|processos\|privacidade\|capacidades` | pasta do caso, hash dos originais (`--travar`), números CNJ com dígito conferido, dados pessoais mascarados; links simbólicos nunca são lidos |
-| `extract.py ARQ... --saida extracao.json` | PDF, DOCX, TXT, MD, `.eml`, HTML salvo, CSV/TSV e XLSX em blocos com página, seção, localizador e marca de citação; sem OCR |
+| `extract.py ARQ... --saida extracao.json` | PDF, DOCX, TXT, MD, `.eml`, HTML salvo, CSV/TSV e XLSX em blocos com página, seção, localizador e marca de citação; OCR opcional com `--ocr` (Tesseract; resultado sempre `partial`, blocos com tag `ocr`) |
 | `validate.py ARQ.json --extracoes extracao.json` | valida `matter.json`, `facts.json` e `claims.json` ([formatos](shared/dados.md)) |
 | `cronologia.py gerar\|conferir` | linha do tempo e exposição de fatos, com versões |
+| `datajud.py consultar NUMERO_CNJ` | metadados do processo na API Pública do DataJud (chave pública lida da wiki do CNJ; estadual, federal, trabalho e STJ); não é inteiro teor |
 | `fontes.py plano\|baixar\|anotacoes` | pontes por política do caso; download com hash e registro; recusa página genérica no lugar de PDF |
 | `auditar.py auditar\|aprovar\|status` | gate final; a aprovação exige terminal interativo e a frase digitada |
 | `contrato.py precheck\|validar-issues` | campo em branco, anexo ausente, remissão quebrada, assinatura; valida `issues.json` |
 | `redline_docx.py ORIG.docx EDICOES.json SAIDA.docx` | alterações rastreadas; o original não muda |
 | `preencher.py lint\|gerar` | preenche `{{campo}}` com seis estados de procedência |
-| `regras.py gerar\|validar\|listar` | pacotes `rules/br` com texto literal do Código Civil, todos inativos |
+| `regras.py gerar\|validar\|listar` | pacotes `rules/br` (serviços/SaaS e LGPD, com texto literal do Planalto), todos inativos |
 | `revisar_skill.py skills/*/SKILL.md` | estrutura, atualidade e superfície de confiança das skills |
 
 </details>
@@ -113,11 +114,11 @@ Documento é dado, nunca instrução. A extração recusa zip com razão de comp
 |---|---|---|
 | 0 a 3 | base, extração, validação, auditoria, triagem, cronologia, pesquisa | ✅ concluídas e revisadas criticamente |
 | 4 | contrato e minuta | 🟡 parte mecânica pronta; **aguarda revisor jurídico** para ativar as regras |
-| 5 | liberação com 12 casos de regressão (outros tribunais, escaneados) | ⏳ não iniciada |
+| 5 | liberação com 12 casos de regressão ([manifesto](tests/casos/regressao/manifesto.json)) | 🟡 9 rodando; 3 aguardam documento real (STF, TJ, escaneado real) em `tests/casos/regressao/pendentes/` |
 
 **O que foi testado com material real:** quatro acórdãos do STJ (Corte Especial e Sexta Turma, com a ementa dos dados abertos como gabarito objetivo) e o Código Civil compilado do Planalto. Contratos, petições e planilhas só têm casos sintéticos. O arquivo de CI (`.github/workflows/ci.yml`) existe mas ainda não foi executado; o desenvolvimento e os testes foram feitos em Windows com Python 3.14.
 
-**Depende de pessoas:** nomear o revisor jurídico, fornecer documentos reais com gabarito, definir a política de confidencialidade por caso, credenciais (DataJud), avaliação das skills com modelo.
+**Depende de pessoas:** a revisão do revisor jurídico designado (ativar regras, ler as skills), fornecer documentos reais com gabarito, definir a política de confidencialidade por caso, credenciais (DataJud), avaliação das skills com modelo.
 
 ## Estrutura
 
@@ -135,8 +136,8 @@ tests/         testes e casos (tests/casos)
 
 [Garantias](shared/garantias.md) · [Estados](shared/estados.md) · [Formatos de dados](shared/dados.md) · [Fontes BR](shared/fontes-br.md) · [Falhas jurídicas](shared/falhas-juridicas.md) · [Escalação](shared/escalacao.md) · [Aviso padrão](shared/aviso-padrao.md)
 
-[Planejamento v2](docs/planejamento-juris-skills-br-v2.md) · [Revisão crítica da Fase 2](docs/revisao-critica-fase2.md) · [Comparação com os repositórios de referência](docs/comparacao-repositorios-modelo.md) · [Sondagem das fontes](docs/sondagem-pontes.md) · [Governança](governance/skill-review-checklist.md) · [Avisos de terceiros](THIRD_PARTY_NOTICES.md)
+[Planejamento v2](docs/planejamento-juris-skills-br-v2.md) · [Revisão crítica da Fase 2](docs/revisao-critica-fase2.md) · [Comparação com os repositórios de referência](docs/comparacao-repositorios-modelo.md) · [Sondagem das fontes](docs/sondagem-pontes.md) · [Avaliação das skills com modelo](docs/avaliacao-skills-2026-10-18.md) · [Governança](governance/skill-review-checklist.md) · [Avisos de terceiros](THIRD_PARTY_NOTICES.md)
 
 ## Licença
 
-Ainda não definida: sem licença explícita, ninguém além do autor tem permissão de uso ou redistribuição. Os acórdãos e textos legais em `tests/casos` são documentos públicos usados como fixtures; a decisão sobre sua redistribuição está pendente.
+**Proprietária, todos os direitos reservados** ([LICENSE](LICENSE)): não é permitido copiar, modificar ou distribuir sem autorização escrita do titular. O repositório é privado. Os documentos públicos em `tests/casos` mantêm o regime de origem; dependências seguem [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

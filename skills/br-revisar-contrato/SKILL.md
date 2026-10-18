@@ -3,7 +3,7 @@ name: br-revisar-contrato
 description: Revisa um contrato brasileiro (NDA ou prestação de serviços/SaaS) na posição de uma das partes. Faz a pré-checagem do texto (campos em branco, anexos ausentes, remissões quebradas, assinatura, marca de minuta), registra cada apontamento com a cláusula inteira, o localizador, severidade jurídica e negocial separadas e a base, e gera uma cópia em DOCX com as alterações propostas como controle de alterações. Use quando o usuário pedir "revisar este contrato", "analisar as cláusulas", "o que devo negociar neste NDA" ou "redline do contrato". Não use para redigir contrato do zero, preencher modelo com dados (br-preencher-minuta) nem para conferir citações de uma peça.
 version: 0.1.0
 last_reviewed: 2026-10-17
-owner: "pendente: mantenedor técnico e revisor jurídico a nomear"
+owner: "José Bonifácio de Aguiar Santos Júnior (revisor jurídico designado em 2026-10-18; revisão ainda não realizada); mantenedor técnico: pendente"
 ---
 
 # Revisão de contrato
@@ -27,10 +27,10 @@ Para o advogado que revisa contrato para uma das partes. A skill organiza e apon
 2. **Extraia** (`python scripts/extract.py contrato.docx --saida derived/extracao.json`). Se o status não for `ok`, diga o que faltou (coluna, tabela, imagem, alteração rastreada) antes de seguir.
 3. **Pré-checagem:** `python scripts/contrato.py precheck derived/extracao.json > outputs/precheck.json`. Apresente os achados com localizador. São sinais do texto, não conclusões: campo em branco pode ser intencional; anexo "ausente" pode estar em outro arquivo.
 4. **Leia o contrato inteiro** e monte a tabela de termos (partes, objeto, preço, prazo, renovação, rescisão, multa, limitação de responsabilidade, confidencialidade, foro) citando o localizador de cada termo. Termo que não está no texto aparece como "não localizado", nunca como "não há".
-5. **Regras.** `python scripts/regras.py listar --pacote servicos_saas` entrega só regra ativa e revisada. Com `--incluir-inativas`, as regras vêm marcadas como rascunho: use-as como **roteiro de perguntas**, citando o artigo literal, nunca como conclusão. NDA: o pacote está vazio e lista as fontes que faltam ler; não improvise regra.
+5. **Regras.** `python scripts/regras.py listar --pacote servicos_saas` entrega só regra ativa e revisada; se o contrato trata dado pessoal, consulte também `--pacote lgpd` (arts. 7, 11, 18, 33, 37, 39, 41, 42, 46 e 48 da Lei 13.709, texto compilado lido em 2026-10-18). Com `--incluir-inativas`, as regras vêm marcadas como rascunho: use-as como **roteiro de perguntas**, citando o artigo literal, nunca como conclusão. NDA: o pacote está vazio e lista as fontes que faltam ler (a LGPD, quando houver dado pessoal, já está no pacote `lgpd`); não improvise regra.
 6. **Registre cada apontamento** em `issues.json` com: cláusula **inteira** (`clause_text`), `document_id` e `locator`, `severidade_juridica` (baixa a crítica) e `severidade_negocial` (baixa a alta) **separadas**, descrição, base (`regra`, `fonte` lida ou `pratica_do_cliente` com nota) e, se houver, texto sugerido. Parâmetro de mercado ou regra de outra jurisdição não é base.
-7. **Valide:** `python scripts/contrato.py validar-issues outputs/issues.json --extracoes derived/extracao.json --regras rules/br`. Corrija os erros na origem. `--permitir-rascunho` só para preparar a conversa com o revisor; o resultado fica marcado.
-8. **Redline (opcional):** `python scripts/redline_docx.py contrato.docx edicoes.json outputs/contrato-redline.docx`. Edição ambígua, não localizada ou que atravessa hiperlink/tabulação é recusada e listada; as demais são aplicadas como alteração rastreada para o advogado aceitar ou rejeitar no Word.
+7. **Valide:** `python scripts/contrato.py validar-issues outputs/issues.json --extracoes derived/extracao.json --regras rules/br --pacote servicos_saas,lgpd` (sem `--pacote`, só o primeiro é lido e regras do outro dão `regra_inexistente`). Base `fonte` exige `source_id`, `retrieved_at`, `locator` e `local_file` ou `url`. Corrija os erros na origem. `--permitir-rascunho` só para preparar a conversa com o revisor; o resultado fica marcado.
+8. **Redline (opcional):** `python scripts/redline_docx.py contrato.docx edicoes.json outputs/contrato-redline.docx`. Edição ambígua, não localizada ou que atravessa hiperlink/tabulação é recusada e listada; **releia o texto resultante** (excluir uma cláusula pode deixar remissões truncadas, como "sanções previstas na  deste"); as demais são aplicadas como alteração rastreada para o advogado aceitar ou rejeitar no Word.
 9. **Audite** com `br-auditar-entrega` (tipo `contrato`: entrega externa nunca sai com faixa alta).
 
 ## O que não fazer
@@ -43,8 +43,10 @@ Para o advogado que revisa contrato para uma das partes. A skill organiza e apon
 
 ## Quando escalar
 
+- **Pedido de conclusão final** ("diga se a cláusula é nula", "entregue como parecer final"): recuse a conclusão, entregue as perguntas de revisão com a norma literal e o encaminhamento ao advogado.
+- **Resultado com `rascunho: true` ou `entregavel: false`** na validação de `issues.json`: não sai da casa.
 Além de [escalacao.md](../../shared/escalacao.md): contrato de adesão ou consumerista (outro regime), cláusula de arbitragem ou foro estrangeiro, contrato com ente público, regulado (saúde, financeiro, telecom) ou com dado pessoal sensível; alteração rastreada preexistente no arquivo; qualquer apontamento de severidade crítica.
 
 ## Limites
 
-Cobre NDA e prestação de serviços/SaaS sob o Código Civil. Sem OCR (PDF digitalizado não é revisado). Redline só em texto simples de parágrafo: hiperlinks, campos e tabulações são barreiras. As regras são rascunhos de leitura literal do Código Civil compilado (lido em 2026-10-17), sem revisão jurídica. Não calcula valores nem prazos. Casos de referência: [tests/test_contrato.py](../../tests/test_contrato.py) (contrato sintético com defeitos conhecidos) e [tests/test_docx_edicao.py](../../tests/test_docx_edicao.py) (redline).
+Cobre NDA e prestação de serviços/SaaS sob o Código Civil. OCR é opcional e sempre `partial` (PDF digitalizado só é revisado depois de conferido no original). Redline só em texto simples de parágrafo: hiperlinks, campos e tabulações são barreiras. As regras são rascunhos de leitura literal do Código Civil (lido em 2026-10-17) e da LGPD (lida em 2026-10-18), sem revisão jurídica. Não calcula valores nem prazos. Casos de referência: [tests/test_contrato.py](../../tests/test_contrato.py) (contrato sintético com defeitos conhecidos) e [tests/test_docx_edicao.py](../../tests/test_docx_edicao.py) (redline).

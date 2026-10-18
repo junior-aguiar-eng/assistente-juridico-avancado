@@ -49,7 +49,9 @@ def modelo_matter(matter_id: str) -> dict:
         "matter_id": matter_id, "objective": None, "client_role": None,
         "jurisdiction": {"ramo": None, "tribunal": None, "uf": None},
         "as_of": None, "facts_date": None,
-        "confidentiality": {"nivel": None, "consultas_externas": None, "politica_modelo": None},
+        "confidentiality": {"nivel": None, "consultas_externas": None, "politica_modelo": None, "privilegio": None,
+                            "segredo_de_justica": None},
+        "conflicts": None, "partes": [],
         "capabilities": {"ocr": False}, "processos": [], "documentos": [], "lacunas_iniciais": []}}
 
 
@@ -159,12 +161,19 @@ def capacidades() -> dict:
     def lib(nome):
         return importlib.util.find_spec(nome) is not None
 
-    fetch = Path.home() / ".claude" / "scripts" / "fetch_oficial.py"
+    fetch = Path(__file__).resolve().parent / "fetch_oficial.py"
+    if not fetch.is_file():
+        fetch = Path.home() / ".claude" / "scripts" / "fetch_oficial.py"
+    import ocr as ocr_mod
+
+    exe = ocr_mod.localizar_tesseract()
+    lang, aviso_ocr = ("", "Tesseract não encontrado") if not exe else ocr_mod.escolher_idioma(exe)
     return {"detectado": {"python": sys.version.split()[0], "pdfplumber": lib("pdfplumber"), "python_docx": lib("docx"),
                           "lxml": lib("lxml"), "fetch_oficial": fetch.is_file(), "git": shutil.which("git") is not None},
-            "ocr": False, "tesseract_no_path": shutil.which("tesseract") is not None,
-            "observacao": "ocr fica falso: não há integração de OCR. Registre forgelex e navegador_app no matter.json só "
-                          "depois de confirmar que as ferramentas existem nesta sessão."}
+            "ocr": bool(lang), "ocr_idioma": lang or None, "ocr_aviso": aviso_ocr, "tesseract": exe,
+            "observacao": "ocr verdadeiro significa que 'extract.py --ocr' pode ser usado (resultado sempre partial e marcado). "
+                          "Registre forgelex e navegador_app no matter.json só depois de confirmar que as ferramentas "
+                          "existem nesta sessão."}
 
 
 def main(argv=None) -> int:

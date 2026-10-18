@@ -492,7 +492,10 @@ def status(qc_path, aprovacao_path=None) -> dict:
     obrig = qc.get("aprovacao_humana_obrigatoria", True)
     out = {"estado_tecnico": qc["estado_tecnico"], "faixa": qc.get("faixa"), "tipo_entrega": qc.get("tipo_entrega"),
            "aprovacao_humana_obrigatoria": obrig, "revisao_humana": "pendente", "alterados": [], "ausentes": []}
-    out["liberado_para_uso"] = qc["estado_tecnico"] == "revisao_pronta" and not obrig
+    # a integridade dos artefatos é conferida sempre, com ou sem aprovação: pacote mexido depois da auditoria não está liberado
+    alt0, aus0 = _recalcular({"artefatos": qc.get("artefatos", [])}, qcp.parent)
+    out.update(alterados=alt0, ausentes=aus0)
+    out["liberado_para_uso"] = qc["estado_tecnico"] == "revisao_pronta" and not obrig and not (alt0 or aus0)
     if not aprovacao_path or not Path(aprovacao_path).is_file():
         return out
     ap = json.loads(Path(aprovacao_path).read_text(encoding="utf-8"))
@@ -501,7 +504,7 @@ def status(qc_path, aprovacao_path=None) -> dict:
         alt.append(qcp.name)
     out.update(alterados=alt, ausentes=aus, revisor=ap["revisor"]["nome"], registrado_em=ap["registrado_em"])
     out["revisao_humana"] = "invalidada" if (alt or aus) else ap["decisao"]
-    out["liberado_para_uso"] = (qc["estado_tecnico"] == "revisao_pronta"
+    out["liberado_para_uso"] = (qc["estado_tecnico"] == "revisao_pronta" and not (alt0 or aus0)
                                 and (out["revisao_humana"] == "aprovada" or not obrig))
     return out
 
@@ -517,8 +520,8 @@ def main(argv=None) -> int:
     a.add_argument("--artefato", action="append", default=[])
     a.add_argument("--timeline", help="timeline.json gerado por cronologia.py")
     a.add_argument("--matter", help="matter.json: confere conflitos de interesse e sigilo")
-    a.add_argument("--tipo-entrega", choices=TIPOS_ENTREGA, default="interna",
-                   help="cliente, peticao e contrato nunca ficam na faixa de confiança alta")
+    a.add_argument("--tipo-entrega", choices=TIPOS_ENTREGA, required=True,
+                   help="para quê o pacote será usado (obrigatório): cliente, peticao e contrato nunca ficam na faixa alta")
     a.add_argument("--reverificar", type=int, default=0, metavar="N", help="relê até N fontes oficiais e compara o texto")
     a.add_argument("--relatorio", action="append", default=[], help="relatório .md de entrega (precisa do aviso padrão)")
     a.add_argument("--sem-teses-centrais", action="store_true", help="declara que nenhuma proposição é tese central")

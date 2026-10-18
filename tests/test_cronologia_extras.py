@@ -87,7 +87,9 @@ def test_exposicao_de_fatos_exige_matter_e_so_traz_relevancia_alta_ou_media(tmp_
     linhas = [l for l in md.splitlines() if l[:2].rstrip(".").isdigit() or l.startswith(("1.", "2.", "3.", "4."))]
     assert len(linhas) == 4  # f004, f005, f006 e f001; f003 (baixa) e fatos sem data ficam de fora
     assert "Segundo decisão da Corte local (TJSP), transcrita no voto, em" in md
-    assert "f003" not in md
+    assert "f003" not in md.split("## Fora desta exposição")[0]  # f003 (baixa) só aparece na lista dos não narrados
+    fora = md.split("## Fora desta exposição")[1]
+    assert "f003" in fora and "f002" in fora  # nada some sem aviso
 
 
 def test_triagem_mista_oculta_o_que_nao_e_ok_e_o_usuario_pode_incluir(tmp_path):
@@ -169,3 +171,24 @@ def test_todo_relatorio_termina_com_o_aviso_padrao(tmp_path):
 def test_conferir_continua_valido_para_cronologia_gerada_com_matter(tmp_path):
     gerar(tmp_path, matter=MATTER, janela_meses=3)
     assert cronologia.conferir(FACTS, tmp_path / "t.json")["atualizada"] is True
+
+
+def test_exposicao_recusa_matter_sem_campo_privilegio(tmp_path):
+    m = json.loads(MATTER.read_text(encoding="utf-8"))
+    m["matter"]["confidentiality"].pop("privilegio")
+    (tmp_path / "m.json").write_text(json.dumps(m), encoding="utf-8")
+    with pytest.raises(ValueError, match="privilegio ausente"):
+        cronologia.gerar(FACTS, tmp_path / "t.json", tmp_path / "c.md", matter=tmp_path / "m.json", formato="fatos")
+
+
+def test_reformatar_o_facts_sem_mudar_fato_nao_invalida_a_cronologia(tmp_path):
+    f = tmp_path / "facts.json"
+    f.write_bytes(FACTS.read_bytes())
+    cronologia.gerar(f, tmp_path / "t.json", tmp_path / "c.md")
+    f.write_text(json.dumps(json.loads(f.read_text(encoding="utf-8")), ensure_ascii=False, indent=4), encoding="utf-8")
+    r = cronologia.conferir(f, tmp_path / "t.json")
+    assert r["atualizada"] is True and r["facts_json_mudou"] is True and r["conteudo_diverge"] is False
+    obj = json.loads(f.read_text(encoding="utf-8"))
+    obj["facts"][0]["text"] += " (alterado)"
+    f.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    assert cronologia.conferir(f, tmp_path / "t.json")["atualizada"] is False

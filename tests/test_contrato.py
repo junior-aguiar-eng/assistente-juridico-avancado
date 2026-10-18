@@ -14,6 +14,7 @@ import extract  # noqa: E402
 import regras  # noqa: E402
 
 CC = RAIZ / "tests" / "casos" / "verificacao_stj" / "fontes" / "cc_compilado.md"
+LGPD = RAIZ / "tests" / "casos" / "regras_fontes" / "lgpd_compilado.md"
 REGRAS = RAIZ / "rules" / "br"
 
 
@@ -142,15 +143,15 @@ def test_posicao_da_parte_e_obrigatoria(ext_e_issue):
 
 def test_sem_extracao_avisa_que_nao_conferiu_o_texto(ext_e_issue):
     _, iss = ext_e_issue
-    iss["issues"][0]["base"] = [{"tipo": "fonte", "source_id": "src-abc"}]
+    iss["issues"][0]["base"] = [{"tipo": "fonte", "source_id": "src-abc", "url": "https://www.planalto.gov.br/x", "retrieved_at": "2026-10-18", "locator": "art. 413"}]
     r = contrato.validar_issues(iss)
     assert r["erros"] == [] and "trecho_nao_conferido" in [x["codigo"] for x in r["avisos"]]
 
 
 # ------------------------------------------------------------------ pacotes de regras
 def test_pacotes_gerados_estao_inativos_sem_revisor_e_batem_com_a_fonte():
-    r = regras.validar(REGRAS, CC)
-    assert r["erros"] == [] and r["regras"] == 9
+    r = regras.validar(REGRAS, fontes={"cc": CC, "lgpd": LGPD})
+    assert r["erros"] == [] and r["regras"] == 19
     for arq in REGRAS.glob("*.json"):
         for regra in json.loads(arq.read_text(encoding="utf-8"))["regras"]:
             assert regra["status"] == "inativa" and regra["revisao"]["revisor"] is None
@@ -165,7 +166,7 @@ def test_carregar_nao_entrega_regra_inativa_a_menos_que_peca_e_ela_vem_marcada()
 
 def test_pacote_nda_nao_tem_regra_inventada_e_lista_o_que_falta():
     nda = regras.carregar(REGRAS, "nda", incluir_inativas=True)
-    assert nda["regras"] == [] and len(nda["pendencias_de_fonte"]) == 3
+    assert nda["regras"] == [] and len(nda["pendencias_de_fonte"]) == 2
 
 
 def test_ativar_sem_revisor_e_erro(tmp_path):
@@ -193,3 +194,62 @@ def test_extrair_artigo_recusa_artigo_inexistente_e_nao_confunde_421_com_421a():
         regras.extrair_artigo(texto, "99999")
     a421 = regras.extrair_artigo(texto, "421")["texto_literal"]
     assert a421.startswith("Art. 421.") and "421-A" not in a421.split("\n")[0]
+
+
+def test_pacote_lgpd_tem_texto_literal_sem_dispositivo_revogado_ou_vetado():
+    pacote = {r["id"]: r for r in regras.carregar(REGRAS, "lgpd", incluir_inativas=True)["regras"]}
+    assert set(pacote) == {f"lgpd-{n}" for n in (7, 11, 18, 33, 37, 39, 41, 42, 46, 48)}
+    art7 = pacote["lgpd-7"]["fonte"]
+    assert art7["dispositivos_revogados"] == ["§ 1º", "§ 2º"] and "Revogado" not in art7["texto_literal"]
+    art41 = pacote["lgpd-41"]["fonte"]
+    assert art41["dispositivos_revogados"] == ["§ 4º"] and "VETADO" not in art41["texto_literal"].upper()
+    for r in pacote.values():
+        f = r["fonte"]
+        assert f["norma_id"] == "lgpd" and "13.709" in f["norma"] and f["url"].endswith("l13709compilado.htm")
+        assert "Vigência" not in f["texto_literal"] and "Seção" not in f["texto_literal"]
+        assert r["status"] == "inativa" and r["revisao"]["revisor"] is None
+
+
+def test_pacote_lgpd_diverge_se_o_texto_for_alterado(tmp_path):
+    pasta = tmp_path / "r"
+    pasta.mkdir()
+    obj = json.loads((REGRAS / "lgpd.json").read_text(encoding="utf-8"))
+    obj["regras"][0]["fonte"]["texto_literal"] = obj["regras"][0]["fonte"]["texto_literal"].replace("hipóteses", "situações")
+    (pasta / "lgpd.json").write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    assert "texto_diverge_da_fonte" in [e["codigo"] for e in regras.validar(pasta, fontes={"lgpd": LGPD})["erros"]]
+    assert regras.validar(pasta)["erros"] == []  # sem a fonte, só a estrutura é conferida
+
+
+def test_issue_pode_citar_regra_de_dois_pacotes(ext_e_issue):
+    ext, iss = ext_e_issue
+    iss["issues"][0]["base"] = [{"tipo": "regra", "rule_id": "civ-413"}, {"tipo": "regra", "rule_id": "lgpd-42"}]
+    r = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas,lgpd", permitir_rascunho=True)
+    assert r["erros"] == [] and [a["codigo"] for a in r["avisos"]].count("regra_rascunho") == 2
+    assert "regra_inexistente" in cods(contrato.validar_issues(iss, ext, REGRAS, "servicos_saas", permitir_rascunho=True))
+
+
+def test_critica_apoiada_so_em_rascunho_nunca_passa_nem_com_permissao(ext_e_issue):
+    ext, iss = ext_e_issue
+    iss["issues"][0].update(severidade_juridica="critica", base=[{"tipo": "regra", "rule_id": "civ-413"}])
+    r = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas", permitir_rascunho=True)
+    assert "critica_sem_base_juridica" in cods(r) and r["rascunho"] is True and r["entregavel"] is False
+
+
+def test_fonte_inventada_nao_sustenta_apontamento(ext_e_issue):
+    ext, iss = ext_e_issue
+    iss["issues"][0].update(severidade_juridica="critica", base=[{"tipo": "fonte", "source_id": "s-inventada"}])
+    r = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas")
+    assert "fonte_incompleta" in cods(r) and "critica_sem_base_juridica" in cods(r)
+
+
+def test_resultado_limpo_e_entregavel(ext_e_issue):
+    ext, iss = ext_e_issue
+    iss["issues"][0]["base"] = [{"tipo": "fonte", "source_id": "s1", "local_file": "fontes/cc.md", "retrieved_at": "2026-10-18", "locator": "art. 413"}]
+    r = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas")
+    assert r["erros"] == [] and r["rascunho"] is False and r["entregavel"] is True
+
+
+def test_linha_de_assinatura_nao_e_campo_em_branco_nem_falta_de_assinatura(tmp_path):
+    ext, _ = extrair_contrato(tmp_path, ["1. Objeto. Serviços.", "São Paulo, ____ de ____ de 2026.",
+                                         "____________ CONTRATANTE        ____________ CONTRATADA"])
+    assert contrato.precheck(ext)["documentos"][0]["achados"] == []

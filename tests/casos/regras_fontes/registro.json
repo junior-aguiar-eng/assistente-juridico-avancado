@@ -1,0 +1,18 @@
+{
+  "schema_version": "1",
+  "fontes": [
+    {
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm",
+      "origem": "oficial",
+      "retrieved_at": "2026-10-18T15:13:33+00:00",
+      "avisos": [],
+      "status": "lida",
+      "source_id": "src-e68f6b890ec7",
+      "local_file": "tests\\casos\\regras_fontes\\lgpd_compilado.md",
+      "bytes": 91903,
+      "sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
+      "content_type": "text/markdown",
+      "via": "fetch_oficial.py"
+    }
+  ]
+}

@@ -207,6 +207,9 @@ def _conferir_trecho(r, caminho, ref, locator, excerpt, idx, kind=None):
     if ach is None:
         r.erro("bloco_inexistente", f"{caminho}.block_id", f"bloco '{bid}' não existe em {did}")
         return
+    if ach and any("ocr" in b.get("tags", []) for b in ach):
+        r.aviso("trecho_de_ocr", f"{caminho}.excerpt",
+                "o trecho vem de OCR: dígitos, acentos e nomes podem estar errados; confira no original antes de tratar como prova")
     if not ach:
         r.erro("trecho_nao_encontrado", f"{caminho}.excerpt",
                f"o trecho não está no texto extraído de {did}" + (f" (bloco {bid})" if bid else ""))
@@ -329,6 +332,37 @@ def validar_facts(obj, idx=None) -> Resultado:
     return r
 
 
+_MESES = {"janeiro": 1, "fevereiro": 2, "março": 3, "marco": 3, "abril": 4, "maio": 5, "junho": 6, "julho": 7,
+          "agosto": 8, "setembro": 9, "outubro": 10, "novembro": 11, "dezembro": 12}
+_DATA_NUM = re.compile(r"(?<!\d)(\d{1,2})\s*[/.\-]\s*(\d{1,2})\s*[/.\-]\s*(\d{4}|\d{2})(?!\d)")
+_MES_ANO = re.compile(r"(?<![\d/.\-])(\d{1,2})\s*[/.\-]\s*((?:19|20)\d{2})(?!\d)")
+_ANO4 = re.compile(r"(?<!\d)((?:19|20)\d{2})(?!\d)")
+
+
+def _componentes_da_data(original: str) -> dict:
+    """Ano, mês e dia que o texto da data realmente contém (não o que alguém deduziu dele)."""
+    anos, meses, dias = set(), set(), set()
+    for m in _DATA_NUM.finditer(original):
+        d, mes, a = int(m.group(1)), int(m.group(2)), m.group(3)
+        dias.add(d)
+        meses.add(mes)
+        anos.add(int(a) if len(a) == 4 else 2000 + int(a))
+    for m in _MES_ANO.finditer(original):  # 03/2026
+        if 1 <= int(m.group(1)) <= 12:
+            meses.add(int(m.group(1)))
+    anos |= {int(a) for a in _ANO4.findall(original)}
+    baixo = original.lower()
+    for nome, n in _MESES.items():
+        for m in re.finditer(r"(?<![a-zçã])" + nome + r"(?![a-zçã])", baixo):
+            meses.add(n)
+            ant = re.search(r"(\d{1,2})\s*[º°o]?\s*(?:de\s+)?$", baixo[:m.start()])
+            if ant:
+                dias.add(int(ant.group(1)))
+    for m in re.finditer(r"\bdia\s+(\d{1,2})\b", baixo):
+        dias.add(int(m.group(1)))
+    return {"anos": anos, "meses": meses, "dias": dias}
+
+
 def _validar_data(r, d, c):
     if not isinstance(d, dict):
         r.erro("tipo_invalido", c, "'date' deve ser objeto")
@@ -345,12 +379,23 @@ def _validar_data(r, d, c):
         if iso is not None:
             r.erro("data_incoerente", f"{c}.iso", "precisão 'indefinida' exige iso=null: não invente precisão")
         return
+    n_erros = len(r.erros)
     if not isinstance(iso, str) or not _ISO_PARCIAL.match(iso) or len(iso) != PRECISOES[prec]:
         r.erro("data_incoerente", f"{c}.iso", f"precisão '{prec}' exige formato com {PRECISOES[prec]} caracteres (AAAA[-MM[-DD]])")
     elif len(iso) == 10 and not _data_valida(iso):
         r.erro("data_invalida", f"{c}.iso", f"'{iso}' não é data de calendário válida")
     elif len(iso) == 7 and not 1 <= int(iso[5:]) <= 12:
         r.erro("data_invalida", f"{c}.iso", f"mês inválido em '{iso}'")
+    if len(r.erros) == n_erros and isinstance(iso, str) and isinstance(d.get("original"), str):
+        comp = _componentes_da_data(d["original"])
+        ano = int(iso[:4])
+        if ano not in comp["anos"]:
+            r.erro("data_inventada", f"{c}.iso", f"o ano {ano} não aparece em '{d['original']}': ano deduzido do contexto não vira data; "
+                                                   "use precisão 'indefinida' (iso=null) e registre a lacuna")
+        elif len(iso) >= 7 and int(iso[5:7]) not in comp["meses"]:
+            r.erro("data_inventada", f"{c}.iso", f"o mês {iso[5:7]} não aparece em '{d['original']}'")
+        elif len(iso) == 10 and int(iso[8:]) not in comp["dias"]:
+            r.erro("data_inventada", f"{c}.iso", f"o dia {iso[8:]} não aparece em '{d['original']}': use precisão 'mes' ou 'ano'")
 
 
 # --------------------------------------------------------------------------- claims.json
@@ -522,7 +567,8 @@ def _conferir_hash(r, p, s, idx):
 
 # --------------------------------------------------------------------------- matter.json
 RAMOS = ("civel", "consumidor", "empresarial", "administrativo", "familia", "outro", "nao_informado")
-PAPEIS = ("autor", "reu", "terceiro", "interessado", "nao_aplicavel", "nao_informado")
+PAPEIS = ("autor", "reu", "recorrente", "recorrido", "terceiro", "interessado", "contratante", "contratada", "divulgadora",
+          "receptora", "nao_aplicavel", "nao_informado")
 NIVEIS = ("publico", "restrito", "sigiloso")
 CONSULTAS = ("permitidas", "somente_termos_genericos", "proibidas")
 

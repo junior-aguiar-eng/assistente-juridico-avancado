@@ -13,7 +13,8 @@
     "facts_date": "2013-11",
     "confidentiality": {
       "nivel": "publico",
-      "consultas_externas": "permitidas"
+      "consultas_externas": "permitidas",
+      "privilegio": "nao_aplicavel"
     },
     "capabilities": {
       "ocr": false,
