@@ -1,0 +1,56 @@
+{
+  "schema_version": "1",
+  "fontes": [
+    {
+      "url": "https://processo.stj.jus.br/SCON/GetInteiroTeorDoAcordao?num_registro=202300446420",
+      "origem": "oficial",
+      "retrieved_at": "2026-10-18T01:34:28+00:00",
+      "avisos": [],
+      "status": "lida",
+      "source_id": "src-ebbe1b68d9e9",
+      "local_file": "tests\\casos\\stj_corpus\\pdf\\stj_202300446420.pdf",
+      "bytes": 931610,
+      "sha256": "ebbe1b68d9e99096d5adb9e2861b04e6b44a49fb787570f100b0846a17113db3",
+      "http": 200,
+      "content_type": "application/pdf"
+    },
+    {
+      "url": "https://processo.stj.jus.br/SCON/GetInteiroTeorDoAcordao?num_registro=202200577192",
+      "origem": "oficial",
+      "retrieved_at": "2026-10-18T01:34:46+00:00",
+      "avisos": [],
+      "status": "lida",
+      "source_id": "src-814c37f8ee42",
+      "local_file": "tests\\casos\\stj_corpus\\pdf\\stj_202200577192.pdf",
+      "bytes": 187245,
+      "sha256": "814c37f8ee42f1fa6b8bad6c7a76a65e3d787c61004047397383ac55be3d6257",
+      "http": 200,
+      "content_type": "application/pdf"
+    },
+    {
+      "url": "https://processo.stj.jus.br/SCON/GetInteiroTeorDoAcordao?num_registro=202404110805",
+      "origem": "oficial",
+      "retrieved_at": "2026-10-18T01:34:48+00:00",
+      "avisos": [],
+      "status": "lida",
+      "source_id": "src-6f0c402971ea",
+      "local_file": "tests\\casos\\stj_corpus\\pdf\\stj_202404110805.pdf",
+      "bytes": 459322,
+      "sha256": "6f0c402971eaf37a91682b00845772d38108858de91f7c0243b3064b3593151c",
+      "http": 200,
+      "content_type": "application/pdf"
+    },
+    {
+      "url": "https://processo.stj.jus.br/SCON/GetInteiroTeorDoAcordao?num_registro=202401637939",
+      "origem": "oficial",
+      "retrieved_at": "2026-10-18T01:36:20+00:00",
+      "avisos": [],
+      "status": "source_missing",
+      "motivo": "conteudo_inesperado: era esperado um PDF e veio text/html;charset=ISO-8859-1 (página genérica ou aviso do portal); o documento não foi obtido",
+      "source_id": "falha-ea418ba6f8",
+      "http": 200,
+      "content_type": "text/html;charset=ISO-8859-1",
+      "bytes": 40304
+    }
+  ]
+}

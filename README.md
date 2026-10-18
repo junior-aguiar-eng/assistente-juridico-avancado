@@ -22,8 +22,8 @@ python scripts/revisar_skill.py skills/*/SKILL.md   # revisão mecânica das ski
 | [br-pesquisa-juridica](skills/br-pesquisa-juridica/SKILL.md) | escrita e testada | `fontes.py`, `shared/fontes.json` |
 | [br-verificar-citacoes](skills/br-verificar-citacoes/SKILL.md) | escrita e testada | `validate.py` (claims.json) |
 | [br-auditar-entrega](skills/br-auditar-entrega/SKILL.md) | escrita e testada | `auditar.py` |
-| br-revisar-contrato | **não iniciada** (Fase 4; exige revisor jurídico) | |
-| br-preencher-minuta | **não iniciada** (Fase 4) | |
+| br-revisar-contrato | **rascunho mecânico** (Fase 4): pré-checagem, `issues.json` validado, redline; regras `rules/br` **inativas até revisor jurídico** | [tests/test_contrato.py](tests/test_contrato.py) |
+| br-preencher-minuta | **escrita** (Fase 4): seis estados de campo, valor extraído tem de estar literalmente no trecho | [tests/test_docx_edicao.py](tests/test_docx_edicao.py) |
 
 Fluxos: mapear um caso (triagem, mapear-autos, cronologia, auditar); pesquisar e verificar (triagem, pesquisa, verificar-citacoes, auditar).
 
@@ -35,7 +35,7 @@ Fluxos: mapear um caso (triagem, mapear-autos, cronologia, auditar); pesquisar e
 | 4 | contratos e minuta: aguardam revisor jurídico |
 | 5 | liberação: 12 casos de regressão, incluindo outros tribunais e documentos escaneados |
 
-Testes: 273 (mais 1 de rede opcional). Tudo foi testado em **um acórdão do STJ e no Código Civil compilado**; outros tipos de documento não foram avaliados. As skills (prompts) passam na revisão mecânica (`revisar_skill.py`), mas **não foram avaliadas com modelo**. Nenhum revisor jurídico foi nomeado: o pacote não substitui revisão por advogado.
+Testes: 390 (mais 1 de rede opcional). Os acórdãos reais testados são **quatro do STJ** (Corte Especial e Sexta Turma, com a ementa dos dados abertos como gabarito objetivo; um quinto veio como página HTML e foi recusado) e o Código Civil compilado; contratos, petições e planilhas só têm casos sintéticos. As skills (prompts) passam na revisão mecânica (`revisar_skill.py`), mas **não foram avaliadas com modelo**. Nenhum revisor jurídico foi nomeado: o pacote não substitui revisão por advogado.
 
 ## Scripts
 
@@ -47,6 +47,10 @@ Testes: 273 (mais 1 de rede opcional). Tudo foi testado em **um acórdão do STJ
 | `python scripts/cronologia.py gerar\|conferir` | ordena sem inventar precisão e sem calcular prazos; relevância, exposição de fatos com filtro de sigilo, versões |
 | `python scripts/fontes.py plano\|baixar\|anotacoes` | pontes de fontes por política do caso; download com hash e registro; alterações de um dispositivo à data dos fatos |
 | `python scripts/auditar.py auditar\|aprovar\|status` | gate final com faixa de confiança; a aprovação exige terminal interativo e a frase digitada pelo revisor |
+| `python scripts/contrato.py precheck\|validar-issues` | pré-checagem do contrato (campo em branco, anexo ausente, remissão quebrada, assinatura) e validação do `issues.json` (cláusula inteira, dois eixos de severidade, base verificável) |
+| `python scripts/redline_docx.py ORIG.docx EDICOES.json SAIDA.docx` | cópia do DOCX com alterações rastreadas; edição ambígua ou fora do texto simples é recusada; o original não muda |
+| `python scripts/preencher.py lint\|gerar` | preenche modelo com `{{campo}}`; campo sem prova vira marcador amarelo |
+| `python scripts/regras.py gerar\|validar\|listar` | pacotes `rules/br` com o texto literal do Código Civil; todos **inativos** até um revisor jurídico ativar |
 | `python scripts/revisar_skill.py skills/*/SKILL.md` | revisão mecânica das skills (estrutura, atualidade, superfície de confiança) |
 
 ## Regras comuns

@@ -41,6 +41,16 @@ PEDIDOS = {
         "revisar antes de entregar e liberar o trabalho",
         "faça o gate final antes da entrega",
     ],
+    "br-revisar-contrato": [
+        "revisar este contrato de prestação de serviços",
+        "o que devo negociar neste NDA",
+        "faça o redline do contrato com as cláusulas que mudaria",
+    ],
+    "br-preencher-minuta": [
+        "preencher o modelo com os dados do cliente",
+        "gerar a minuta a partir deste modelo e destes documentos",
+        "completar a procuração com os dados dos documentos",
+    ],
 }
 CASOS = [(skill, pedido) for skill, ps in PEDIDOS.items() for pedido in ps]
 

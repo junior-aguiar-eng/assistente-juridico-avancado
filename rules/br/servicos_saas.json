@@ -1,0 +1,208 @@
+{
+  "schema_version": "1",
+  "pacote": "servicos_saas",
+  "jurisdicao": "BR",
+  "regras": [
+    {
+      "id": "civ-412",
+      "topico": "cláusula penal: teto",
+      "pergunta_de_revisao": "A cláusula penal ou multa ultrapassa o valor da obrigação principal?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma": "Lei nº 10.406/2002 (Código Civil)",
+        "artigo": "412",
+        "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+        "arquivo_sha256": "0c83b287fb1dd410ad7ddb629003e7f9a73244e61a5590ec50133d024a92532e",
+        "lido_em": "2026-10-17",
+        "versao": "compilada",
+        "texto_literal": "Art. 412. O valor da cominação imposta na cláusula penal não pode exceder o da obrigação principal.",
+        "redacao": []
+      }
+    },
+    {
+      "id": "civ-413",
+      "topico": "cláusula penal: redução",
+      "pergunta_de_revisao": "O valor da multa é manifestamente excessivo para a natureza e a finalidade do negócio, ou há cumprimento parcial?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma": "Lei nº 10.406/2002 (Código Civil)",
+        "artigo": "413",
+        "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+        "arquivo_sha256": "0c83b287fb1dd410ad7ddb629003e7f9a73244e61a5590ec50133d024a92532e",
+        "lido_em": "2026-10-17",
+        "versao": "compilada",
+        "texto_literal": "Art. 413. A penalidade deve ser reduzida eqüitativamente pelo juiz se a obrigação principal tiver sido cumprida em parte, ou se o montante da penalidade for manifestamente excessivo, tendo-se em vista a natureza e a finalidade do negócio.",
+        "redacao": []
+      }
+    },
+    {
+      "id": "civ-421a",
+      "topico": "paridade e alocação de riscos",
+      "pergunta_de_revisao": "A alocação de riscos e as regras de revisão foram previstas e respeitadas, ou há elemento concreto que afasta a presunção de paridade?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma": "Lei nº 10.406/2002 (Código Civil)",
+        "artigo": "421-A",
+        "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+        "arquivo_sha256": "0c83b287fb1dd410ad7ddb629003e7f9a73244e61a5590ec50133d024a92532e",
+        "lido_em": "2026-10-17",
+        "versao": "compilada",
+        "texto_literal": "Art. 421-A. Os contratos civis e empresariais presumem-se paritários e simétricos até a presença de elementos concretos que justifiquem o afastamento dessa presunção, ressalvados os regimes jurídicos previstos em leis especiais, garantido também que:\nI - as partes negociantes poderão estabelecer parâmetros objetivos para a interpretação das cláusulas negociais e de seus pressupostos de revisão ou de resolução;\nII - a alocação de riscos definida pelas partes deve ser respeitada e observada; e\nIII - a revisão contratual somente ocorrerá de maneira excepcional e limitada.",
+        "redacao": [
+          "Incluído pela Lei nº 13.874, de 2019"
+        ]
+      }
+    },
+    {
+      "id": "civ-422",
+      "topico": "boa-fé",
+      "pergunta_de_revisao": "Alguma cláusula impede a conduta de boa-fé na conclusão ou na execução do contrato?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma": "Lei nº 10.406/2002 (Código Civil)",
+        "artigo": "422",
+        "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+        "arquivo_sha256": "0c83b287fb1dd410ad7ddb629003e7f9a73244e61a5590ec50133d024a92532e",
+        "lido_em": "2026-10-17",
+        "versao": "compilada",
+        "texto_literal": "Art. 422. Os contratantes são obrigados a guardar, assim na conclusão do contrato, como em sua execução, os princípios de probidade e boa-fé.",
+        "redacao": []
+      }
+    },
+    {
+      "id": "civ-423",
+      "topico": "adesão: ambiguidade",
+      "pergunta_de_revisao": "O contrato é de adesão e tem cláusula ambígua ou contraditória a interpretar a favor do aderente?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma": "Lei nº 10.406/2002 (Código Civil)",
+        "artigo": "423",
+        "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+        "arquivo_sha256": "0c83b287fb1dd410ad7ddb629003e7f9a73244e61a5590ec50133d024a92532e",
+        "lido_em": "2026-10-17",
+        "versao": "compilada",
+        "texto_literal": "Art. 423. Quando houver no contrato de adesão cláusulas ambíguas ou contraditórias, dever-se-á adotar a interpretação mais favorável ao aderente.",
+        "redacao": []
+      }
+    },
+    {
+      "id": "civ-424",
+      "topico": "adesão: renúncia antecipada",
+      "pergunta_de_revisao": "O contrato é de adesão e a cláusula renuncia antecipadamente a direito resultante da natureza do negócio?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma": "Lei nº 10.406/2002 (Código Civil)",
+        "artigo": "424",
+        "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+        "arquivo_sha256": "0c83b287fb1dd410ad7ddb629003e7f9a73244e61a5590ec50133d024a92532e",
+        "lido_em": "2026-10-17",
+        "versao": "compilada",
+        "texto_literal": "Art. 424. Nos contratos de adesão, são nulas as cláusulas que estipulem a renúncia antecipada do aderente a direito resultante da natureza do negócio.",
+        "redacao": []
+      }
+    },
+    {
+      "id": "civ-473",
+      "topico": "resilição unilateral",
+      "pergunta_de_revisao": "A denúncia unilateral respeita o aviso e o investimento considerável feito pela outra parte?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma": "Lei nº 10.406/2002 (Código Civil)",
+        "artigo": "473",
+        "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+        "arquivo_sha256": "0c83b287fb1dd410ad7ddb629003e7f9a73244e61a5590ec50133d024a92532e",
+        "lido_em": "2026-10-17",
+        "versao": "compilada",
+        "texto_literal": "Art. 473. A resilição unilateral, nos casos em que a lei expressa ou implicitamente o permita, opera mediante denúncia notificada à outra parte.\nParágrafo único. Se, porém, dada a natureza do contrato, uma das partes houver feito investimentos consideráveis para a sua execução, a denúncia unilateral só produzirá efeito depois de transcorrido prazo compatível com a natureza e o vulto dos investimentos.",
+        "redacao": []
+      }
+    },
+    {
+      "id": "civ-478",
+      "topico": "onerosidade excessiva",
+      "pergunta_de_revisao": "Em contrato de execução continuada, há cláusula que afasta a resolução por onerosidade excessiva?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma": "Lei nº 10.406/2002 (Código Civil)",
+        "artigo": "478",
+        "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+        "arquivo_sha256": "0c83b287fb1dd410ad7ddb629003e7f9a73244e61a5590ec50133d024a92532e",
+        "lido_em": "2026-10-17",
+        "versao": "compilada",
+        "texto_literal": "Art. 478. Nos contratos de execução continuada ou diferida, se a prestação de uma das partes se tornar excessivamente onerosa, com extrema vantagem para a outra, em virtude de acontecimentos extraordinários e imprevisíveis, poderá o devedor pedir a resolução do contrato. Os efeitos da sentença que a decretar retroagirão à data da citação.",
+        "redacao": []
+      }
+    },
+    {
+      "id": "civ-598",
+      "topico": "prestação de serviço: prazo máximo",
+      "pergunta_de_revisao": "O prazo de prestação de serviço regido pelo Código Civil passa de quatro anos?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma": "Lei nº 10.406/2002 (Código Civil)",
+        "artigo": "598",
+        "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm",
+        "arquivo_sha256": "0c83b287fb1dd410ad7ddb629003e7f9a73244e61a5590ec50133d024a92532e",
+        "lido_em": "2026-10-17",
+        "versao": "compilada",
+        "texto_literal": "Art. 598. A prestação de serviço não se poderá convencionar por mais de quatro anos, embora o contrato tenha por causa o pagamento de dívida de quem o presta, ou se destine à execução de certa e determinada obra. Neste caso, decorridos quatro anos, dar-se-á por findo o contrato, ainda que não concluída a obra.",
+        "redacao": []
+      }
+    }
+  ],
+  "pendencias_de_fonte": []
+}

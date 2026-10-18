@@ -64,12 +64,12 @@ def msgs(r):
 
 
 # ------------------------------------------------------------------ as skills do pacote
-def test_as_seis_skills_do_pacote_passam_na_revisao_sem_ressalva():
-    assert len(SKILLS) == 6
+def test_as_oito_skills_do_pacote_passam_na_revisao_sem_ressalva():
+    assert len(SKILLS) == 8
     r = rs.revisar_todas(SKILLS, date(2026, 10, 17))
     ruins = {s["nome"]: [a["mensagem"] for a in s["achados"] if a["gravidade"] != "info"] for s in r["skills"]
              if s["veredito"] != "PRONTA"}
-    assert ruins == {} and r["resumo"] == {"PRONTA": 6, "ATENCAO": 0, "PREOCUPACAO_MATERIAL": 0}
+    assert ruins == {} and r["resumo"] == {"PRONTA": 8, "ATENCAO": 0, "PREOCUPACAO_MATERIAL": 0}
 
 
 def test_skills_com_texto_de_regra_declaram_atualidade_e_ela_vence_com_o_tempo():

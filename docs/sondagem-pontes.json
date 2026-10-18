@@ -1,5 +1,5 @@
 {
-  "consultado_em": "2026-10-17T03:13:15+00:00",
+  "consultado_em": "2026-10-18T01:28:57+00:00",
   "resultados": [
     {
       "id": "planalto_cc",
@@ -9,12 +9,12 @@
         {
           "http": 200,
           "bytes": 923899,
-          "seg": 1.6,
+          "seg": 1.32,
           "ctype": "text/html",
           "user_agent_navegador": true,
           "tentativa": 1,
           "esperado_encontrado": true,
-          "sha256": "bb53a1716fd7349e"
+          "sha256": "2887247aec9155f6"
         }
       ]
     },
@@ -26,12 +26,12 @@
         {
           "http": 200,
           "bytes": 1691185,
-          "seg": 1.85,
+          "seg": 1.36,
           "ctype": "text/html",
           "user_agent_navegador": true,
           "tentativa": 1,
           "esperado_encontrado": true,
-          "sha256": "628d01da48d5dcf3"
+          "sha256": "c7c0ce776e881638"
         }
       ]
     },
@@ -43,12 +43,12 @@
         {
           "http": 200,
           "bytes": 642,
-          "seg": 0.59,
+          "seg": 0.3,
           "ctype": "application/json",
           "user_agent_navegador": true,
           "tentativa": 1,
           "esperado_encontrado": true,
-          "sha256": "bc3e2d8881985dc9"
+          "sha256": "ddcb35ed5a3dc9eb"
         }
       ]
     },
@@ -60,7 +60,7 @@
         {
           "http": 200,
           "bytes": 173737,
-          "seg": 0.76,
+          "seg": 0.49,
           "ctype": "application/json",
           "user_agent_navegador": true,
           "tentativa": 1,
@@ -76,13 +76,13 @@
       "tentativas": [
         {
           "http": 200,
-          "bytes": 76549,
-          "seg": 0.56,
+          "bytes": 76590,
+          "seg": 0.48,
           "ctype": "text/html",
           "user_agent_navegador": true,
           "tentativa": 1,
           "esperado_encontrado": true,
-          "sha256": "7c3be79c832657a0"
+          "sha256": "fbe1956ffc545083"
         }
       ]
     },
@@ -94,7 +94,7 @@
         {
           "http": 202,
           "bytes": 0,
-          "seg": 0.44,
+          "seg": 0.23,
           "ctype": "text/html; charset=UTF-8",
           "user_agent_navegador": true,
           "tentativa": 1
@@ -102,7 +102,7 @@
         {
           "http": 202,
           "bytes": 0,
-          "seg": 0.21,
+          "seg": 0.17,
           "ctype": "text/html; charset=UTF-8",
           "user_agent_navegador": true,
           "tentativa": 2
@@ -110,7 +110,7 @@
         {
           "http": 202,
           "bytes": 0,
-          "seg": 0.2,
+          "seg": 0.17,
           "ctype": "text/html; charset=UTF-8",
           "user_agent_navegador": false,
           "tentativa": 1
@@ -123,14 +123,28 @@
       "obs": null,
       "tentativas": [
         {
-          "http": 200,
-          "bytes": 40457,
-          "seg": 0.66,
-          "ctype": "text/html; charset=utf-8",
+          "http": null,
+          "bytes": 0,
+          "seg": 25.14,
+          "erro": "TimeoutError: The read operation timed out",
           "user_agent_navegador": true,
-          "tentativa": 1,
-          "esperado_encontrado": true,
-          "sha256": "bfaa6d504b2cc5fd"
+          "tentativa": 1
+        },
+        {
+          "http": null,
+          "bytes": 0,
+          "seg": 25.09,
+          "erro": "TimeoutError: The read operation timed out",
+          "user_agent_navegador": true,
+          "tentativa": 2
+        },
+        {
+          "http": null,
+          "bytes": 0,
+          "seg": 25.13,
+          "erro": "TimeoutError: The read operation timed out",
+          "user_agent_navegador": false,
+          "tentativa": 1
         }
       ]
     },
@@ -142,7 +156,7 @@
         {
           "http": 403,
           "bytes": 0,
-          "seg": 0.25,
+          "seg": 0.17,
           "erro": "HTTP 403",
           "user_agent_navegador": true,
           "tentativa": 1
@@ -150,7 +164,7 @@
         {
           "http": 403,
           "bytes": 0,
-          "seg": 0.18,
+          "seg": 0.15,
           "erro": "HTTP 403",
           "user_agent_navegador": true,
           "tentativa": 2
@@ -158,7 +172,7 @@
         {
           "http": 403,
           "bytes": 0,
-          "seg": 0.18,
+          "seg": 0.17,
           "erro": "HTTP 403",
           "user_agent_navegador": false,
           "tentativa": 1
@@ -172,13 +186,13 @@
       "tentativas": [
         {
           "http": 200,
-          "bytes": 9048,
-          "seg": 0.62,
+          "bytes": 9050,
+          "seg": 0.34,
           "ctype": "text/html; charset=UTF-8",
           "user_agent_navegador": true,
           "tentativa": 1,
           "esperado_encontrado": false,
-          "sha256": "6dc0fb2f51454217"
+          "sha256": "2103a7289d265e93"
         }
       ]
     },
@@ -190,7 +204,7 @@
         {
           "http": 401,
           "bytes": 0,
-          "seg": 0.45,
+          "seg": 0.23,
           "erro": "HTTP 401",
           "user_agent_navegador": true,
           "tentativa": 1
@@ -205,7 +219,7 @@
         {
           "http": 200,
           "bytes": 804,
-          "seg": 1.07,
+          "seg": 0.83,
           "ctype": "application/json",
           "user_agent_navegador": true,
           "tentativa": 1,

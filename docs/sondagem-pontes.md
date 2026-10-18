@@ -64,3 +64,7 @@ O que a extração localiza com pdfplumber: ementa (p. 1 a 3), RELATÓRIO (p. 4)
 - **DataJud:** a chave pública é distribuída pelo CNJ, mas é uma credencial; só entra se você autorizar o uso. Sem ela, nada de consulta processual.
 - Ler o PDF de inteiro teor do STJ e testar a extração de trecho (será feito com `extract.py`).
 - Testar a estabilidade: repetir a sondagem em outros horários e medir limites.
+
+## Nova sondagem (2026-10-17)
+
+Resultado igual ao anterior em 10 de 11 alvos (Planalto, Senado, STF portal, Câmara: 200 com o conteúdo esperado; SCON do STJ: 403; DataJud sem chave: 401; STF jurisprudência: 202 com desafio; LexML: 200 sem o conteúdo esperado). Única mudança: `dadosabertos.web.stj.jus.br` estourou 25 s nas três tentativas da sondagem, mas respondeu 200 em 17,6 s num `curl` logo depois. Tratar como lento e intermitente: usar timeout de 60 s e uma nova tentativa antes de declarar indisponível.

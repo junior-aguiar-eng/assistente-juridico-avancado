@@ -1,0 +1,50 @@
+---
+name: br-revisar-contrato
+description: Revisa um contrato brasileiro (NDA ou prestação de serviços/SaaS) na posição de uma das partes. Faz a pré-checagem do texto (campos em branco, anexos ausentes, remissões quebradas, assinatura, marca de minuta), registra cada apontamento com a cláusula inteira, o localizador, severidade jurídica e negocial separadas e a base, e gera uma cópia em DOCX com as alterações propostas como controle de alterações. Use quando o usuário pedir "revisar este contrato", "analisar as cláusulas", "o que devo negociar neste NDA" ou "redline do contrato". Não use para redigir contrato do zero, preencher modelo com dados (br-preencher-minuta) nem para conferir citações de uma peça.
+version: 0.1.0
+last_reviewed: 2026-10-17
+owner: "pendente: mantenedor técnico e revisor jurídico a nomear"
+---
+
+# Revisão de contrato
+
+Regras comuns: [garantias](../../shared/garantias.md), [estados](../../shared/estados.md), [formatos](../../shared/dados.md), [falhas jurídicas](../../shared/falhas-juridicas.md), [escalação](../../shared/escalacao.md).
+
+**Estado desta skill: rascunho.** As regras de revisão (`rules/br`) estão **inativas e sem revisor jurídico**. Enquanto nenhum profissional do Direito as ativar, a skill faz a pré-checagem e o redline mecânico, e qualquer apontamento sustentado só por regra de rascunho sai marcado `RASCUNHO_NAO_REVISADO` e **não pode ser entregue como conclusão**.
+
+## Público e natureza do trabalho
+
+Para o advogado que revisa contrato para uma das partes. A skill organiza e aponta; **quem decide o que é risco, o que negociar e o que aceitar é o advogado**. Nada aqui é parecer.
+
+## Entrada e saída
+
+- **Entrada:** o contrato (DOCX de preferência; PDF e TXT servem para leitura, não para redline) e o `matter.json` com a **posição da parte** (`client_role`): a gravidade de uma cláusula depende de quem a revisa.
+- **Saída:** `outputs/precheck.json`, `outputs/issues.json` validado e, se pedido, `outputs/contrato-redline.docx` com alterações rastreadas. O original nunca é alterado.
+
+## Roteiro
+
+1. **Posição da parte.** Sem `client_role` em `matter.json`, pare e pergunte: contratante ou contratada, divulgadora ou receptora. Não assuma.
+2. **Extraia** (`python scripts/extract.py contrato.docx --saida derived/extracao.json`). Se o status não for `ok`, diga o que faltou (coluna, tabela, imagem, alteração rastreada) antes de seguir.
+3. **Pré-checagem:** `python scripts/contrato.py precheck derived/extracao.json > outputs/precheck.json`. Apresente os achados com localizador. São sinais do texto, não conclusões: campo em branco pode ser intencional; anexo "ausente" pode estar em outro arquivo.
+4. **Leia o contrato inteiro** e monte a tabela de termos (partes, objeto, preço, prazo, renovação, rescisão, multa, limitação de responsabilidade, confidencialidade, foro) citando o localizador de cada termo. Termo que não está no texto aparece como "não localizado", nunca como "não há".
+5. **Regras.** `python scripts/regras.py listar --pacote servicos_saas` entrega só regra ativa e revisada. Com `--incluir-inativas`, as regras vêm marcadas como rascunho: use-as como **roteiro de perguntas**, citando o artigo literal, nunca como conclusão. NDA: o pacote está vazio e lista as fontes que faltam ler; não improvise regra.
+6. **Registre cada apontamento** em `issues.json` com: cláusula **inteira** (`clause_text`), `document_id` e `locator`, `severidade_juridica` (baixa a crítica) e `severidade_negocial` (baixa a alta) **separadas**, descrição, base (`regra`, `fonte` lida ou `pratica_do_cliente` com nota) e, se houver, texto sugerido. Parâmetro de mercado ou regra de outra jurisdição não é base.
+7. **Valide:** `python scripts/contrato.py validar-issues outputs/issues.json --extracoes derived/extracao.json --regras rules/br`. Corrija os erros na origem. `--permitir-rascunho` só para preparar a conversa com o revisor; o resultado fica marcado.
+8. **Redline (opcional):** `python scripts/redline_docx.py contrato.docx edicoes.json outputs/contrato-redline.docx`. Edição ambígua, não localizada ou que atravessa hiperlink/tabulação é recusada e listada; as demais são aplicadas como alteração rastreada para o advogado aceitar ou rejeitar no Word.
+9. **Audite** com `br-auditar-entrega` (tipo `contrato`: entrega externa nunca sai com faixa alta).
+
+## O que não fazer
+
+- **Não use memória como regra.** Artigo, súmula ou prática de mercado só entra com fonte lida ou marcado "não verificado".
+- **Não funda as duas severidades.** Cláusula pode ser juridicamente segura e comercialmente ruim, ou o inverso.
+- **Não declare cláusula nula, abusiva ou válida** como fato: aponte a pergunta de revisão e a norma, e deixe a conclusão ao advogado.
+- **Não trate "não encontrei" como "não existe".** Cláusula ausente é lacuna a confirmar no original.
+- **Não envie o contrato a serviço externo** sem a autorização de `confidentiality.consultas_externas`.
+
+## Quando escalar
+
+Além de [escalacao.md](../../shared/escalacao.md): contrato de adesão ou consumerista (outro regime), cláusula de arbitragem ou foro estrangeiro, contrato com ente público, regulado (saúde, financeiro, telecom) ou com dado pessoal sensível; alteração rastreada preexistente no arquivo; qualquer apontamento de severidade crítica.
+
+## Limites
+
+Cobre NDA e prestação de serviços/SaaS sob o Código Civil. Sem OCR (PDF digitalizado não é revisado). Redline só em texto simples de parágrafo: hiperlinks, campos e tabulações são barreiras. As regras são rascunhos de leitura literal do Código Civil compilado (lido em 2026-10-17), sem revisão jurídica. Não calcula valores nem prazos. Casos de referência: [tests/test_contrato.py](../../tests/test_contrato.py) (contrato sintético com defeitos conhecidos) e [tests/test_docx_edicao.py](../../tests/test_docx_edicao.py) (redline).

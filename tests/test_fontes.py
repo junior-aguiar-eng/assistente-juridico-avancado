@@ -126,6 +126,21 @@ def test_mesmo_nome_com_bytes_diferentes_guarda_as_duas_versoes(rede, tmp_path):
     assert len(json.loads((tmp_path / "r.json").read_text(encoding="utf-8"))["fontes"]) == 3
 
 
+def test_inteiro_teor_que_volta_como_html_generico_nao_vira_fonte_lida(rede, tmp_path):
+    url = "https://processo.stj.jus.br/SCON/GetInteiroTeorDoAcordao?num_registro=202401637939"
+    rede["respostas"] = [(200, {"Content-Type": "text/html;charset=ISO-8859-1"}, b"<html>STJ - Integra de Acordaos</html>")]
+    reg = tmp_path / "r.json"
+    e = fontes.baixar(url, tmp_path / "f", reg)
+    assert e["status"] == "source_missing" and "conteudo_inesperado" in e["motivo"]
+    assert not (tmp_path / "f").exists() or not list((tmp_path / "f").iterdir())  # nada é guardado como fonte
+    assert json.loads(reg.read_text(encoding="utf-8"))["fontes"][0]["status"] == "source_missing"
+    # uma URL qualquer em HTML continua sendo página lida; o exigir explícito vale em qualquer URL
+    rede["respostas"] = [(200, {"Content-Type": "text/html"}, b"<html>oi</html>")]
+    assert fontes.baixar("https://www.stf.jus.br/x", tmp_path / "g")["status"] == "lida"
+    rede["respostas"] = [(200, {"Content-Type": "text/html"}, b"<html>oi</html>")]
+    assert fontes.baixar("https://www.stf.jus.br/x", tmp_path / "h", exigir="pdf")["status"] == "source_missing"
+
+
 @pytest.mark.parametrize("nome", ["../../evil.pdf", "..\\..\\evil.pdf", "..", ".", "/etc/passwd", "C:\\Windows\\x.pdf"])
 def test_nome_de_arquivo_nunca_sai_da_pasta_de_destino(rede, tmp_path, nome):
     rede["respostas"] = [(200, {"Content-Type": "application/pdf"}, b"%PDF-1.4 X")]

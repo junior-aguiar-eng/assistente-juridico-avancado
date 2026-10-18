@@ -33,10 +33,10 @@ Legenda: **feito** (nesta rodada), **Fase 4** (depende de skills ainda não escr
 | Chen `output-templates` | `PARTIES.md`, `PRIVACY_FLAGS.md` com valores mascarados, glossário | **feito**: `partes` no `matter.json` e `triagem.py privacidade` (CPF e CNPJ com dígito, cartão, e-mail, telefone). **Não adotado**: glossário multilíngue |
 | Chen `extract.py` | manipuladores de e-mail (`.eml`), planilha, HTML, imagem, áudio, vídeo; `preflight` de ferramentas | **feito**: `.eml` e `triagem.py capacidades`. **Não adotado** por ora: áudio, vídeo, imagem com OCR, planilha |
 | code-lawyer `48-qc-gate` | sete verificações de saída, rótulo único de fonte por proposição, bloqueio quando nada foi verificado, **rodapé de aviso obrigatório**, no máximo 2 rodadas por verificação com declaração visível | **feito**: gate de aviso nos relatórios, regra das 2 rodadas, bloqueio sem extração (já existia) |
-| code-lawyer `pack-template` | pacote por jurisdição (`_pack.md`, tabela de domínios, fontes recomendadas, metadados) | **Fase 4** |
-| code-lawyer `06-output-and-severity` | duplo eixo de risco (jurídico e comercial), cartão de problema com texto completo da cláusula, "sinalize em excesso", comentário curto copiável | **Fase 4** |
-| code-lawyer `20-slot-and-fill` | cinco estados de preenchimento mais `pending_drafting`; `extracted` exige valor literal no trecho | **Fase 4** |
-| evolsb `skill.md` | pré-checagem do contrato (campos em branco, anexos ausentes, assinatura, páginas), posição da parte, tabela de termos, sinais de alerta, cláusulas ausentes, inconsistências internas | **Fase 4**; sem os parâmetros de mercado dos EUA |
+| code-lawyer `pack-template` | pacote por jurisdição (`_pack.md`, tabela de domínios, fontes recomendadas, metadados) | **feito (mecânico)**: `rules/br/*.json`, todas inativas até revisor jurídico |
+| code-lawyer `06-output-and-severity` | duplo eixo de risco (jurídico e comercial), cartão de problema com texto completo da cláusula, "sinalize em excesso", comentário curto copiável | **feito**: `contrato.py validar-issues` (dois eixos, cláusula inteira) |
+| code-lawyer `20-slot-and-fill` | cinco estados de preenchimento mais `pending_drafting`; `extracted` exige valor literal no trecho | **feito**: seis estados em `preencher.py` |
+| evolsb `skill.md` | pré-checagem do contrato (campos em branco, anexos ausentes, assinatura, páginas), posição da parte, tabela de termos, sinais de alerta, cláusulas ausentes, inconsistências internas | **feito** em `contrato.py precheck`; sem os parâmetros de mercado dos EUA |
 
 ## O que continua fora
 

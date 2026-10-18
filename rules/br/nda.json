@@ -1,0 +1,11 @@
+{
+  "schema_version": "1",
+  "pacote": "nda",
+  "jurisdicao": "BR",
+  "regras": [],
+  "pendencias_de_fonte": [
+    "Lei nº 9.279/1996, art. 195, XI e XII (concorrência desleal e segredo de empresa): texto compilado ainda não lido",
+    "Lei nº 13.709/2018 (LGPD), no que o NDA trata de dado pessoal: texto compilado ainda não lido",
+    "Prazo de vigência do dever de sigilo e foro: sem regra legal específica; decisão do revisor jurídico"
+  ]
+}

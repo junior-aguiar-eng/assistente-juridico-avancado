@@ -135,8 +135,12 @@ def _registrar(registro: Path | None, entrada: dict):
 
 
 def baixar(url: str, destino: Path, registro: Path | None = None, nome: str | None = None,
-           fetch_oficial: Path | None = None) -> dict:
+           fetch_oficial: Path | None = None, exigir: str | None = None) -> dict:
+    """exigir='pdf': a resposta tem de ser PDF de verdade. Vale por padrão para URL de inteiro teor do STJ,
+    que devolve uma página HTML genérica (200) quando não entrega o documento."""
     destino = Path(destino)
+    if exigir is None and "getinteiroteor" in url.lower():
+        exigir = "pdf"
     base = {"url": url, "origem": classificar_origem(url), "retrieved_at": _agora(), "avisos": []}
 
     def falha(motivo, **extra):
@@ -183,6 +187,10 @@ def baixar(url: str, destino: Path, registro: Path | None = None, nome: str | No
             return falha(f"{desafio}: não contornado", http=status)
         if status == 200 and corpo:
             ext = _extensao(headers.get("Content-Type", ""), corpo)
+            if exigir == "pdf" and corpo[:5] != b"%PDF-":
+                return falha("conteudo_inesperado: era esperado um PDF e veio " + str(headers.get("Content-Type")) +
+                             " (página genérica ou aviso do portal); o documento não foi obtido", http=status,
+                             content_type=headers.get("Content-Type"), bytes=len(corpo))
             if ext == ".pdf" and corpo[:5] != b"%PDF-":
                 base["avisos"].append("conteudo_inesperado: Content-Type diz PDF mas os bytes não começam com %PDF-")
             destino.mkdir(parents=True, exist_ok=True)
@@ -299,6 +307,7 @@ def main(argv=None) -> int:
     b.add_argument("--destino", required=True)
     b.add_argument("--registro")
     b.add_argument("--nome")
+    b.add_argument("--exigir", choices=["pdf"], help="recusa a resposta se não for desse tipo")
     a = sub.add_parser("anotacoes")
     a.add_argument("fonte")
     a.add_argument("--artigo", required=True)
@@ -311,7 +320,7 @@ def main(argv=None) -> int:
             matter = json.loads(Path(n.matter).read_text(encoding="utf-8")) if n.matter else None
             res, cod = plano(n.tipo, matter), 0
         elif n.cmd == "baixar":
-            res = baixar(n.url, Path(n.destino), Path(n.registro) if n.registro else None, n.nome)
+            res = baixar(n.url, Path(n.destino), Path(n.registro) if n.registro else None, n.nome, exigir=n.exigir)
             cod = 0 if res["status"] == "lida" else 1
         else:
             res, cod = anotacoes(Path(n.fonte), n.artigo, n.paragrafo, n.inciso, n.data_fatos), 0

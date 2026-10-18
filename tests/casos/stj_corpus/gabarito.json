@@ -1,0 +1,51 @@
+{
+ "gerado_em": "2026-10-17",
+ "observacao": "A ementa vem do conjunto de dados abertos do STJ, independente da extração do PDF.",
+ "casos": [
+  {
+   "numero_registro": "202200577192",
+   "arquivo": "pdf/stj_202200577192.pdf",
+   "sha256": "814c37f8ee42f1fa6b8bad6c7a76a65e3d787c61004047397383ac55be3d6257",
+   "orgao": "CORTE ESPECIAL",
+   "classe": "AgRg no Inq",
+   "ementa_oficial": "DIREITO PROCESSUAL PENAL. AGRAVO REGIMENTAL CONTRA DECISÃO QUE\n DETERMINOU O DESMEMBRAMENTO. FORO POR PRERROGATIVA DE FUNÇÃO. ART.\n 80 DO CPP. PLURALIDADE DE RÉUS. COMPLEXIDADE. INDIVIDUALIZAÇÃO DAS\n CONDUTAS. ALEGADA UNIDADE PROBATÓRIA E BILATERALIDADE DOS CRIMES DE\n CORRUPÇÃO ATIVA E PASSIVA. FUNDAMENTAÇÃO ADEQUADA E CONCRETA.\n DECISÃO MONOCRÁTICA MANTIDA. AGRAVO REGIMENTAL NÃO PROVIDO.\n 1. Agravo regimental interposto contra decisão monocrática que\n determinou o desmembramento do processo, mantendo a competência do\n Superior Tribunal de Justiça exclusivamente em relação à acusação\n formulada contra agente com prerrogativa de foro e dois corréus\n diretamente imbricados, com declínio da competência quanto aos\n demais denunciados para vara criminal estadual.\n 2. Há quatro questões em discussão: (i) saber se a unidade fática e\n a conexão probatória entre os crimes de corrupção passiva e ativa\n impedem o desmembramento da ação penal; (ii) saber se o\n desmembramento possui caráter excepcional à luz do art. 80 do CPP e\n se houve demonstração objetiva da conveniência e necessidade; (iii)\n saber se o risco de decisões inconciliáveis entre instâncias obsta a\n cisão processual; e (iv) saber se a decisão agravada padece de\n ausência de fundamentação concreta e individualizada, em violação ao\n art. 93, IX, da Constituição Federal.\n 3. A prerrogativa de foro, de natureza excepcional, deve ser\n interpretada restritivamente e não se comunica automaticamente aos\n demais acusados, sob pena de violação ao princípio do juiz natural;\n o desmembramento é técnica legítima de racionalização da jurisdição\n penal originária.\n 4. A denúncia descreve, de forma individualizada, as condutas de\n cada denunciado, permitindo julgamento em separado sem prejuízo ao\n esclarecimento dos fatos, ao contraditório e à ampla defesa.\n 5. O art. 80 do CPP autoriza o desmembramento quando conveniente à\n instrução criminal ou à adequada prestação jurisdicional; no caso,\n pluralidade de réus, elevada complexidade fático-probatória,\n ausência de recebimento da denúncia, multiplicidade de incidentes e\n risco concreto e iminente de prescrição consubstanciam motivação\n específica suficiente.\n 6. A jurisprudência consolidada em ações penais originárias\n estabelece como regra o desmembramento em relação a réus sem\n prerrogativa de foro, sendo excepcional a manutenção da unidade\n processual, incumbindo o ônus argumentativo a quem pretende a\n reunião.\n 7. O risco de decisões inconciliáveis não impede a cisão, por ser\n inerente ao sistema de jurisdições múltiplas e por existir tutela\n recursal adequada; a preservação da unidade quanto ao núcleo\n probatório essencial sob competência do Tribunal mitiga o risco\n apontado.\n 8. A decisão agravada apresenta fundamentação concreta e contextual,\n examinando circunstâncias específicas do processo e justificando o\n desmembramento e a manutenção excepcional da competência quanto aos\n corréus diretamente imbricados com o agente detentor de\n prerrogativa, em conformidade com o art. 93, IX, da Constituição\n Federal.\n 9. Agravo regimental desprovido.",
+   "fonte_do_gabarito": "dadosabertos.web.stj.jus.br, conjunto espelhos-de-acordaos-corte-especial/20260731.json",
+   "esperado_da_extracao": {
+    "status": "ok",
+    "paginas": 10
+   }
+  },
+  {
+   "numero_registro": "202300446420",
+   "arquivo": "pdf/stj_202300446420.pdf",
+   "sha256": "ebbe1b68d9e99096d5adb9e2861b04e6b44a49fb787570f100b0846a17113db3",
+   "orgao": "CORTE ESPECIAL",
+   "classe": "AgInt na SLS",
+   "ementa_oficial": "AGRAVO INTERNO. SUSPENSÃO DE LIMINAR E SENTENÇA. CONTRATO DE\n CONCESSÃO DA RODOVIA BR 040 - TRECHO JUIZ DE FORA/PETRÓPOLIS/RIO DE\n JANEIRO. DECISÃO QUE DETERMINA SUA PRORROGAÇÃO/EXTENSÃO A PRETEXTO\n DE ASSEGURAR A MANUTENÇÃO DO EQUILÍBRIO ECONÔMICO-FINANCEIRO\n ACORDADO ORGINARIAMENTE. PRESERVAÇÃO DA CONTINUIDADE NA PRESTAÇÃO\n DOS SERVIÇOS. LIMITAÇÃO DOS EFEITOS.\n 1. O instituto da suspensão de liminar e de sentença proferida\n contra o Poder Público é medida extraordinária, cujos pilares se\n assentam no manifesto interesse público ou flagrante ilegitimidade e\n na prevenção de grave lesão à ordem, à saúde, à segurança e à\n economia públicas.\n 2.  A prorrogação contínua do contrato de concessão do trecho\n rodoviário BR 040 - Juiz de Fora/Petrópolis/Rio de Janeiro, cujo\n prazo de vigência de 25 (vinte e cinco) anos exauriu-se há mais de 2\n (dois) anos, pode causar prejuízo à própria prestação do serviço e\n acaba por gerar incerteza quanto à duração final da concessão da\n requerida (CONCER).\n 3. Independentemente de haver ou não a necessidade (direito) de\n recomposição do equilíbrio econômico-financeiro do contrato -\n matéria que escapa do âmbito do incidente em apreço, que não é\n substituto recursal - não há razoabilidade em se manter indefinido o\n prazo de concessão (com sucessivas prorrogações), porquanto enseja\n insegurança jurídica, acabando por afastar, potencialmente,\n eventuais interessados para o novo procedimento licitatório.\n 4. A conciliação dos interesses dos usuários e a preservação da\n ordem e economia públicas passa pela limitação da prorrogação do\n contrato de concessão firmado com a CONCER à realização e conclusão\n do novo procedimento licitatório e a efetiva delegação dos serviços\n à nova concessionária, caso antes não seja proferida a decisão\n (final) de mérito na ação originária.\n 5. Agravo interno improvido.",
+   "fonte_do_gabarito": "dadosabertos.web.stj.jus.br, conjunto espelhos-de-acordaos-corte-especial/20260731.json",
+   "esperado_da_extracao": {
+    "status": "partial",
+    "paginas": 61
+   }
+  },
+  {
+   "numero_registro": "202404110805",
+   "arquivo": "pdf/stj_202404110805.pdf",
+   "sha256": "6f0c402971eaf37a91682b00845772d38108858de91f7c0243b3064b3593151c",
+   "orgao": "SEXTA TURMA",
+   "classe": "AgRg no AREsp",
+   "ementa_oficial": "AGRAVO REGIMENTAL EM AGRAVO EM RECURSO ESPECIAL. TRÁFICO DE DROGAS.\n PLEITO PARA CONDENAÇÃO. BUSCA PESSOAL. VALIDADE DOS FUNDAMENTOS\n APRESENTADOS PELA CORTE DE ORIGEM. JUSTA CAUSA NÃO RECONHECIDA PELA\n INSTÂNCIA ORDINÁRIA. AUSÊNCIA DE FUNDADA SUSPEITA. JURISPRUDÊNCIA DO\n STJ. ABSOLVIÇÃO QUE SE IMPÕE.\n Agravo regimental improvido.",
+   "fonte_do_gabarito": "dadosabertos.web.stj.jus.br, conjunto espelhos-de-acordaos-sexta-turma/20260731.json",
+   "esperado_da_extracao": {
+    "status": "ok",
+    "paginas": 22
+   }
+  }
+ ],
+ "sem_inteiro_teor": [
+  {
+   "numero_registro": "202401637939",
+   "motivo": "o portal devolveu página HTML genérica no lugar do PDF; fontes.baixar recusa (source_missing)"
+  }
+ ]
+}
