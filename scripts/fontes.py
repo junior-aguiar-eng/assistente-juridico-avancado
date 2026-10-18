@@ -47,6 +47,8 @@ def plano(tipo: str, matter: dict | None = None, registro_pontes: Path = REGISTR
     m = (matter or {}).get("matter", matter or {}) if matter else {}
     caps = m.get("capabilities") or {}
     consultas = (m.get("confidentiality") or {}).get("consultas_externas")
+    definida = consultas is not None
+    consultas = consultas or "permitidas"  # padrão: o usuário decide no próprio ambiente; sem política, nada é barrado
     saida = []
     for p in sorted((p for p in reg["pontes"] if tipo in p["tipos"]), key=lambda p: p["ordem"]):
         faltam = [r for r in p["requer"] if matter and not caps.get(r)]
@@ -57,8 +59,6 @@ def plano(tipo: str, matter: dict | None = None, registro_pontes: Path = REGISTR
             estado, motivo = "indisponivel", f"capacidade não registrada no matter.json: {', '.join(faltam)}"
         elif p["envia_termos_do_caso"] and consultas == "somente_termos_genericos":
             estado, motivo = "restrita", "use só termos genéricos (sem nomes, números de processo ou fatos do caso)"
-        elif p["envia_termos_do_caso"] and matter and consultas is None:
-            estado, motivo = "restrita", "política de consultas externas não definida: defina na triagem antes de usar"
         saida.append({"id": p["id"], "ordem": p["ordem"], "origem": p["origem"], "estado": estado, "motivo": motivo,
                       "como": p["como"], "envia_termos_do_caso": p["envia_termos_do_caso"], "limites": p["limites"]})
     uteis = [s for s in saida if s["estado"] in ("disponivel", "restrita")]
@@ -68,12 +68,12 @@ def plano(tipo: str, matter: dict | None = None, registro_pontes: Path = REGISTR
     avisos = []
     if matter is None:
         avisos.append("sem matter.json: nenhuma política de confidencialidade foi aplicada a este plano")
-    elif consultas is None:
-        avisos.append("política de consultas externas (matter.confidentiality.consultas_externas) não definida: pare e pergunte ao "
-                      "advogado antes de usar qualquer ponte que envie termos do caso; busca aberta na web também é consulta externa")
+    elif not definida:
+        avisos.append("consultas_externas não definida: tratada como 'permitidas' (o usuário decide no próprio ambiente; "
+                      "para restringir, registre a política no matter.json)")
     elif consultas in ("proibidas", "somente_termos_genericos"):
-        avisos.append(f"consultas externas '{consultas}': vale também para busca aberta na web e para pedido do usuário; "
-                      "só muda por decisão registrada do advogado no matter.json")
+        avisos.append(f"consultas externas '{consultas}' (escolha do usuário): vale também para busca aberta na web; "
+                      "para mudar, o usuário edita o matter.json")
     if not oficiais:
         avisos.append("nenhuma ponte oficial utilizável: o teto é 'partial' até o usuário fornecer o documento oficial")
     if desatualizado:

@@ -32,7 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))  # injecao.py, mesmo co
 import injecao  # noqa: E402
 import ocr  # noqa: E402
 
-EXTRACTOR_VERSION = "0.3.0"
+EXTRACTOR_VERSION = "0.4.0"
 SCHEMA_VERSION = "1"
 IDIOMA = "pt-BR"  # assumido, não detectado
 EXTENSOES = {".pdf", ".docx", ".txt", ".md", ".eml", ".html", ".htm", ".csv", ".tsv", ".xlsx"}
@@ -157,6 +157,17 @@ def _titulo(txt, ln, largura, margem):
     return None
 
 
+_INICIO_INLINE = re.compile(r"^(?:(EMENTA\b[^:]{0,60}:)|(Decis[ãa]o:))\s*\S")
+
+
+def _secao_inline(txt: str) -> str | None:
+    """Linha que abre a seção e já traz o texto dela ("EMENTA SOBRE REPERCUSSÃO GERAL: ...", "Decisão: O Tribunal...")."""
+    m = _INICIO_INLINE.match(txt)
+    if not m:
+        return None
+    return "ementa" if m.group(1) else "decisao"
+
+
 def _maior_vao(chars) -> float:
     """Maior espaço horizontal entre caracteres consecutivos de uma linha (colunas e células deixam vãos grandes)."""
     pos = sorted((c for c in chars if str(c.get("text", "")).strip()), key=lambda c: c["x0"])
@@ -169,6 +180,7 @@ def _ler_pdf(path: Path):
     import pdfplumber
 
     paginas, avisos, cobertura, truncado = [], [], [], False
+    duplicados: list[tuple[int, int]] = []
     estrutura = {"colunas": [], "tabelas": []}
     inicio = time.monotonic()
     with pdfplumber.open(path) as pdf:
@@ -178,6 +190,13 @@ def _ler_pdf(path: Path):
                 avisos.append(_aviso("tempo_excedido", f"leitura interrompida após {MAX_SEGUNDOS} s: lidas {i - 1} de {total} páginas"))
                 break
             try:
+                # PDFs que imprimem cada glifo duas vezes na mesma posição (negrito simulado, comum em documentos do STF)
+                # saem com "SSuupprreemmoo": remove só o glifo repetido no mesmo ponto; "ss" e "rr" legítimos ficam
+                antes = len(page.chars)
+                pagina_limpa = page.dedupe_chars(tolerance=1)
+                if antes - len(pagina_limpa.chars) >= 3:
+                    duplicados.append((i, antes - len(pagina_limpa.chars)))
+                page = pagina_limpa
                 linhas = [ln for ln in page.extract_text_lines(strip=True, return_chars=True) if ln["text"].strip()]
             except Exception as e:  # noqa: BLE001
                 linhas = []
@@ -200,6 +219,9 @@ def _ler_pdf(path: Path):
                 area += larg * alt
             cobertura.append(min(1.0, area / (w * h)) if w * h else 0.0)
         truncado = total > MAX_PAGES
+    for pg, n in duplicados:
+        avisos.append(_aviso("glifos_duplicados_removidos", f"{n} caracteres impressos em dobro na mesma posição foram colapsados "
+                                                            "(negrito simulado); o texto lido é o que se vê na página", pg))
     if truncado:
         avisos.append(_aviso("truncado", f"lidas {MAX_PAGES} de {total} páginas"))
     return paginas, avisos, total, cobertura, estrutura
@@ -271,6 +293,10 @@ def _montar_blocos_pdf(paginas):
                 fechar()
                 secao, ant = titulo, ln
                 continue
+            if (inline := _secao_inline(txt)):
+                fechar()
+                secao = inline
+                ant = None
             recuo = ln["x0"] - margem
             quote = recuo >= LIMIAR_CITACAO and secao in SECOES_NARRATIVAS
             novo = atual is None or quote != atual["_q"]

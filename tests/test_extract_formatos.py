@@ -327,3 +327,17 @@ def test_texto_juridico_comum_nao_dispara_instrucao_embutida(frase):
     import injecao
 
     assert not injecao.alguma(frase)
+
+
+def test_pdf_com_glifo_impresso_em_dobro_sai_legivel_e_o_texto_legitimo_com_letra_dobrada_fica(tmp_path):
+    f = tmp_path / "dobro.pdf"
+    linhas = []
+    for i, texto in enumerate(["Supremo Tribunal Federal", "Decisao sobre Repercussao Geral"]):
+        linhas += [(72, 760 - 30 * i, texto), (72, 760 - 30 * i, texto)]  # mesma posição, duas vezes: negrito simulado
+    linhas.append((72, 700, "Esta linha tem ss e rr legitimos: passos, carros, terra"))
+    pdf_texto(f, [linhas])
+    doc, _ = extract.extrair(f)
+    texto = " ".join(b["text"] for b in doc["blocks"])
+    assert "Supremo Tribunal Federal" in texto and "SSuupprreemmoo" not in texto and "Supremmo" not in texto
+    assert "passos, carros, terra" in texto  # letras dobradas de verdade não são mexidas
+    assert "glifos_duplicados_removidos" in cods(doc)

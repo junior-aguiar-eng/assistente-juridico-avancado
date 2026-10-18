@@ -312,7 +312,8 @@ def test_registrar_arquivo_do_usuario_guarda_hash_e_origem_sem_ler_o_conteudo(tm
 
 def test_plano_avisa_quando_a_politica_de_consultas_nao_foi_definida_ou_e_restritiva():
     sem = fontes.plano("precedente_stj", {"matter": {"confidentiality": {}}})
-    assert "não definida" in sem["aviso"] and "busca aberta" in sem["aviso"]
+    assert "tratada como 'permitidas'" in sem["aviso"]
+    assert not [p for p in sem["pontes"] if p["estado"] in ("excluida", "restrita")]  # sem política, nada é barrado
     proib = fontes.plano("precedente_stj", {"matter": {"confidentiality": {"consultas_externas": "proibidas"}}})
-    assert "busca aberta na web" in proib["aviso"] and "decisão registrada" in proib["aviso"]
+    assert "busca aberta na web" in proib["aviso"] and "o usuário edita o matter.json" in proib["aviso"]
     assert "sem matter.json" in fontes.plano("norma")["aviso"]

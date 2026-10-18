@@ -39,7 +39,7 @@ Para o advogado que revisa contrato para uma das partes. A skill organiza e apon
 - **Não funda as duas severidades.** Cláusula pode ser juridicamente segura e comercialmente ruim, ou o inverso.
 - **Não declare cláusula nula, abusiva ou válida** como fato: aponte a pergunta de revisão e a norma, e deixe a conclusão ao advogado.
 - **Não trate "não encontrei" como "não existe".** Cláusula ausente é lacuna a confirmar no original.
-- **Não envie o contrato a serviço externo** sem a autorização de `confidentiality.consultas_externas`.
+- **Respeite a política do usuário** em `confidentiality.consultas_externas` (padrão `permitidas`): se ele a restringiu, não envie o contrato a serviço externo.
 
 ## Quando escalar
 

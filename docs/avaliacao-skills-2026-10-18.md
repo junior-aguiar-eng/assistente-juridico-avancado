@@ -43,3 +43,7 @@
 ## Próxima avaliação
 
 Repetir com documentos reais (STF, TJ, escaneado real: casos R06, R07 e R10 do manifesto de regressão) e, idealmente, com um segundo modelo. A avaliação não substitui a revisão do revisor jurídico designado.
+
+## Atualização: política de consultas externas
+
+Depois desta avaliação o titular decidiu que a política de confidencialidade é **livre escolha do usuário, no próprio ambiente e na própria conta de IA**. O pacote deixou de exigir `consultas_externas` (padrão `permitidas`) e de mandar "parar e perguntar"; continua respeitando a política quando o usuário a registra restritiva. Os achados sobre "busca aberta na web" valem, portanto, só para casos em que o usuário escolheu `proibidas` ou `somente_termos_genericos`.

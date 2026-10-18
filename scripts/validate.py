@@ -677,13 +677,16 @@ def validar_matter(obj, idx=None) -> Resultado:
             r.erro("data_incoerente", f"{c}.facts_date", "a data dos fatos não pode ser posterior à data de referência")
     conf = m.get("confidentiality")
     if not isinstance(conf, dict):
-        r.erro("campo_obrigatorio", f"{c}.confidentiality", "'confidentiality' é obrigatório (nivel e consultas_externas)")
+        r.erro("campo_obrigatorio", f"{c}.confidentiality", "'confidentiality' é obrigatório (ao menos nivel; consultas_externas é opcional e o padrão é 'permitidas')")
     else:
         nivel = _enum(r, conf, "nivel", f"{c}.confidentiality", NIVEIS)
-        consultas = _enum(r, conf, "consultas_externas", f"{c}.confidentiality", CONSULTAS)
+        # a política é escolha do usuário no próprio ambiente: sem ela, vale 'permitidas'
+        consultas = _enum(r, conf, "consultas_externas", f"{c}.confidentiality", CONSULTAS, obrigatorio=False) or "permitidas"
         if nivel in ("restrito", "sigiloso"):
-            _texto(r, conf, "politica_modelo", f"{c}.confidentiality")
-            if consultas == "permitidas":
+            if not (isinstance(conf.get("politica_modelo"), str) and conf["politica_modelo"].strip()):
+                r.aviso("politica_modelo_nao_registrada", f"{c}.confidentiality.politica_modelo",
+                        "nível restrito ou sigiloso sem registro do que pode ir ao modelo: opcional, mas ajuda quem revisar depois")
+            if consultas == "permitidas" and conf.get("consultas_externas") is not None:
                 r.aviso("sigilo_com_consultas_externas", f"{c}.confidentiality.consultas_externas",
                         f"nível '{nivel}' com consultas externas permitidas: termos do caso podem sair da máquina")
         priv = _enum(r, conf, "privilegio", f"{c}.confidentiality", PRIVILEGIO, obrigatorio=False)

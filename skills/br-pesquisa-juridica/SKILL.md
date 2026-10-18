@@ -46,8 +46,7 @@ Além de [escalacao.md](../../shared/escalacao.md): política de sigilo `proibid
 
 ## Armadilhas
 
-- **Busca aberta na web é consulta externa.** Com `consultas_externas` = `proibidas` ou `somente_termos_genericos`, nenhuma busca aberta com nome de parte, número de processo ou fatos do caso, ainda que o usuário peça. Recuse e ofereça mudar a política por decisão registrada do advogado no `matter.json`.
-- **Política ausente.** Se `consultas_externas` não está no `matter.json`, pare e pergunte antes de qualquer ponte que envie termos do caso.
+- **A política de consultas é do usuário.** Respeite a registrada em `consultas_externas`, inclusive para busca aberta na web (também é consulta externa): `proibidas` ou `somente_termos_genericos` valem até o usuário mudá-las, editando o `matter.json`. Sem política registrada, o padrão é `permitidas`; não trave o trabalho perguntando.
 - **Arquivo que o usuário já forneceu.** Registre com `python scripts/fontes.py registrar ARQUIVO --registro fontes/registro.json --origem oficial|secundaria` (hash, `obtained_via: user_supplied_source`). A claim segue `unverified` até a `br-verificar-citacoes`; diga ao usuário "lido, pendente de verificação" e não responda o mérito como fato confirmado.
 - **Busca vazia não é inexistência.** `NOT_FOUND` só diz que o corpus daquela ponte não tem. Escreva "não localizado nas pontes consultadas (liste)".
 - **Memória não é fonte.** Nada de número de processo, relator, data ou súmula "de cabeça": sem fonte lida, é `unverified`.

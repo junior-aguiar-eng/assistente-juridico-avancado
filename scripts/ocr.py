@@ -4,7 +4,7 @@ O resultado é sempre menos confiável que texto nativo: o extrator marca os blo
 `partial` e o validador avisa quando um trecho citado vem de OCR. Nada aqui baixa arquivo ou instala ferramenta.
 
   JURIS_TESSERACT   caminho do executável (senão: PATH e pastas padrão do Windows)
-  JURIS_TESSDATA    pasta com os idiomas (.traineddata), se não for a do Tesseract
+  JURIS_TESSDATA    pasta com os idiomas (.traineddata); padrão: ~/.juris-skills/tessdata, se existir
 """
 from __future__ import annotations
 
@@ -31,9 +31,18 @@ def localizar_tesseract() -> str | None:
     return next((c for c in _PADROES_WINDOWS if Path(c).is_file()), None)
 
 
+def _pasta_tessdata() -> str | None:
+    """JURIS_TESSDATA, senão ~/.juris-skills/tessdata (onde fica o idioma 'por' quando o Tesseract do sistema não o tem)."""
+    env = os.environ.get("JURIS_TESSDATA")
+    if env:
+        return env
+    padrao = Path.home() / ".juris-skills" / "tessdata"
+    return str(padrao) if any(padrao.glob("*.traineddata")) else None
+
+
 def _cmd(exe: str, *args: str) -> list[str]:
-    td = os.environ.get("JURIS_TESSDATA")
-    return [exe, *args] + (["--tessdata-dir", td] if td else [])
+    td = _pasta_tessdata()
+    return [exe, *(["--tessdata-dir", td] if td else []), *args]  # a opção vem antes dos argumentos posicionais
 
 
 def idiomas(exe: str) -> list[str]:
@@ -64,7 +73,8 @@ def ler_paginas(exe: str, pdf_path: Path, paginas: list[int], lang: str) -> dict
             img = pdf.pages[n - 1].to_image(resolution=DPI).original
             png = Path(tmp) / f"p{n}.png"
             img.convert("RGB").save(png)
-            r = subprocess.run(_cmd(exe, str(png), "stdout", "-l", lang, "--psm", "3", "tsv"),
+            # "-c tessedit_create_tsv=1" em vez da config "tsv": a pasta de idiomas do usuário pode não ter configs/
+            r = subprocess.run(_cmd(exe, str(png), "stdout", "-l", lang, "--psm", "3", "-c", "tessedit_create_tsv=1"),
                                capture_output=True, timeout=TIMEOUT_PAGINA)
             if r.returncode != 0:
                 raise RuntimeError(r.stderr.decode("utf-8", "replace")[:200])

@@ -46,7 +46,8 @@ def test_modelo_gerado_pelo_init_nao_valida_ate_a_triagem_ser_feita():
     r = validate.validar_matter(triagem.modelo_matter("caso-1"))
     caminhos = {e["caminho"] for e in r.erros}
     assert {"$.matter.objective", "$.matter.client_role", "$.matter.jurisdiction.ramo", "$.matter.as_of",
-            "$.matter.confidentiality.nivel", "$.matter.confidentiality.consultas_externas"} <= caminhos
+            "$.matter.confidentiality.nivel"} <= caminhos
+    assert "$.matter.confidentiality.consultas_externas" not in caminhos  # opcional: o padrão é 'permitidas'
 
 
 @pytest.mark.parametrize("mudanca,codigo", [
@@ -81,7 +82,7 @@ def test_sigilo_exige_politica_para_o_modelo_e_avisa_sobre_consultas_externas(ma
     m = copy.deepcopy(matter)
     m["matter"]["confidentiality"] = {"nivel": "sigiloso", "consultas_externas": "permitidas", "privilegio": "triado"}
     r = validate.validar_matter(m)
-    assert cods(r.erros) == ["campo_obrigatorio"] and cods(r.avisos) == ["sigilo_com_consultas_externas"]
+    assert r.erros == [] and cods(r.avisos) == ["politica_modelo_nao_registrada", "sigilo_com_consultas_externas"]
     m["matter"]["confidentiality"] = {"nivel": "sigiloso", "consultas_externas": "proibidas",
                                       "politica_modelo": "nenhum trecho sai da máquina", "privilegio": "triado"}
     r = validate.validar_matter(m)
