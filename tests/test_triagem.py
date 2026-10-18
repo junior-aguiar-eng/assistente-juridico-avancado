@@ -118,13 +118,13 @@ def test_inventario_hashes_nao_extraiveis_e_mudancas(tmp_path):
     caso = tmp_path / "c"
     triagem.init(caso, "caso-1")
     (caso / "input" / "peticao.txt").write_text("texto", encoding="utf-8")
-    (caso / "input" / "planilha.xlsx").write_bytes(b"PK")
+    (caso / "input" / "planilha.xls").write_bytes(b"PK")
     sub = caso / "input" / "anexos"
     sub.mkdir()
     (sub / "a.txt").write_text("anexo", encoding="utf-8")
     inv = triagem.inventario(caso)
-    assert set(inv["arquivos"]) == {"peticao.txt", "planilha.xlsx", "anexos/a.txt"}
-    assert inv["nao_extraiveis"] == ["planilha.xlsx"] and inv["mudancas_desde_o_inventario_anterior"] is None
+    assert set(inv["arquivos"]) == {"peticao.txt", "planilha.xls", "anexos/a.txt"}
+    assert inv["nao_extraiveis"] == ["planilha.xls"] and inv["mudancas_desde_o_inventario_anterior"] is None
     assert len(inv["arquivos"]["peticao.txt"]["sha256"]) == 64
     (caso / "input" / "novo.txt").write_text("novo", encoding="utf-8")
     inv = triagem.inventario(caso)

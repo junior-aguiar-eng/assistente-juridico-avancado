@@ -32,7 +32,7 @@ def test_pesquisa_nao_pode_marcar_fonte_lida_e_deixar_unverified():
     obj["claims"][0]["sources"] = [{
         "source_id": "s1", "origin": "oficial", "access": "lida", "url": "https://www.planalto.gov.br/x",
         "retrieved_at": "2026-10-17", "content_hash": "a" * 64, "text_scope": "texto_legal",
-        "pinpoint": {"locator": "art. 206", "excerpt": "texto"}}]
+        "pinpoint": {"locator": "art. 206", "excerpt": "texto da fonte lida pelo revisor"}}]
     assert "unverified_com_fonte_lida" in cods(validate.validar_claims(obj).erros)  # leitura é de br-verificar-citacoes
 
 
@@ -66,7 +66,7 @@ def test_vigencia_a_epoca_dos_fatos_usa_a_data_do_matter_e_o_art_206_do_caso_rea
         "quote_status": "conferida",
         "sources": [{"source_id": "s1", "origin": "oficial", "access": "lida", "url": "https://www.planalto.gov.br/x",
                      "retrieved_at": "2026-10-17", "content_hash": "b" * 64, "text_scope": "texto_legal",
-                     "pinpoint": {"locator": "art. 206", "excerpt": "texto"},
+                     "pinpoint": {"locator": "art. 206", "excerpt": "texto da fonte lida pelo revisor"},
                      "legal_time": {"as_of": "2026-10-17", "vigencia": r["legal_time_sugerido"]["vigencia"]}}]}]}
     resultado = validate.validar_claims(obj)
     assert resultado.erros == [] and resultado.avisos == []  # legal_time registrado como não verificada

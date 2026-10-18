@@ -82,7 +82,7 @@ def _baixar(url, destino):
 
 
 def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."), timeline=None,
-            matter=None, tipo_entrega="interna", reverificar=0, relatorios=()) -> dict:
+            matter=None, tipo_entrega="interna", reverificar=0, relatorios=(), sem_teses_centrais=False) -> dict:
     g = Gates()
     externa = tipo_entrega != "interna"
     rigor = "reprovado" if (modo == "fundamentada" or externa) else "alerta"
@@ -134,13 +134,15 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
     # G03 cobertura de leitura
     lacunas = [f for f in objs.get("facts", {}).get("facts", []) if isinstance(f, dict) and f.get("kind") == "lacuna"]
     nao_ok = [d for d in docs if d.get("status") != "ok"]
-    sem_lacuna = []
+    sem_lacuna, so_pelo_nome = [], []
     for d in nao_ok:
         nome = Path(d.get("path", "")).name
-        coberto = any(nome and nome in f.get("text", "") or d.get("document_id") and d["document_id"] in f.get("text", "")
-                      for f in lacunas)
+        forte = any(f.get("document_id") and f.get("document_id") == d.get("document_id") for f in lacunas)
+        fraco = any(nome and nome in f.get("text", "") for f in lacunas)
         g.pend("cobertura", nome or "(sem nome)", f"documento {d.get('status')}: {[a['codigo'] for a in d.get('warnings', [])]}")
-        if not coberto:
+        if not forte and fraco:
+            so_pelo_nome.append(nome)
+        elif not forte:
             sem_lacuna.append(d)
     if not docs:
         g.add("G03_cobertura_leitura", "todo documento lido ou registrado como lacuna", "alerta", "nenhuma extração informada")
@@ -152,9 +154,13 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
     elif sem_lacuna:
         g.add("G03_cobertura_leitura", "todo documento lido ou registrado como lacuna", "reprovado",
               "falha silenciosa: sem lacuna registrada para " + ", ".join(Path(d["path"]).name for d in sem_lacuna))
+    elif so_pelo_nome:
+        g.add("G03_cobertura_leitura", "todo documento lido ou registrado como lacuna", "alerta",
+              "lacuna ligada ao documento só pelo nome do arquivo no texto livre: acrescente 'document_id' à lacuna ("
+              + ", ".join(so_pelo_nome) + ")")
     else:
         g.add("G03_cobertura_leitura", "todo documento lido ou registrado como lacuna", "aprovado",
-              f"{len(nao_ok)} documento(s) não lido(s) por inteiro, todos registrados como lacuna")
+              f"{len(nao_ok)} documento(s) não lido(s) por inteiro, todos registrados como lacuna (por document_id)")
 
     # G04 originais intactos desde a extração
     mudou, ausente = [], []
@@ -218,7 +224,12 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         for c in pend:
             g.pend("tese_central", c.get("id"), f"estado {c.get('status')}")
         if not centrais:
-            g.add("G06_teses_centrais", "teses centrais com apoio verificado", "alerta", "nenhuma proposição marcada como central")
+            if sem_teses_centrais:
+                g.add("G06_teses_centrais", "teses centrais com apoio verificado", "alerta",
+                      "declarado pelo usuário: nenhuma proposição é tese central (--sem-teses-centrais)")
+            else:
+                g.add("G06_teses_centrais", "teses centrais com apoio verificado", rigor,
+                      "nenhuma proposição marcada como central: marque as que sustentam a peça ou declare --sem-teses-centrais")
         elif pend:
             g.add("G06_teses_centrais", "teses centrais com apoio verificado",
                   rigor,
@@ -510,6 +521,7 @@ def main(argv=None) -> int:
                    help="cliente, peticao e contrato nunca ficam na faixa de confiança alta")
     a.add_argument("--reverificar", type=int, default=0, metavar="N", help="relê até N fontes oficiais e compara o texto")
     a.add_argument("--relatorio", action="append", default=[], help="relatório .md de entrega (precisa do aviso padrão)")
+    a.add_argument("--sem-teses-centrais", action="store_true", help="declara que nenhuma proposição é tese central")
     a.add_argument("--saida", required=True)
     p = sub.add_parser("aprovar")
     p.add_argument("qc")
@@ -528,7 +540,7 @@ def main(argv=None) -> int:
             if not (n.facts or n.claims):
                 raise ValueError("informe --facts e/ou --claims")
             qc = auditar(n.facts, n.claims, n.extracoes, n.modo, n.artefato, Path(n.saida).resolve().parent, n.timeline,
-                         n.matter, n.tipo_entrega, n.reverificar, n.relatorio)
+                         n.matter, n.tipo_entrega, n.reverificar, n.relatorio, n.sem_teses_centrais)
             Path(n.saida).write_text(json.dumps(qc, ensure_ascii=False, indent=2), encoding="utf-8")
             res, cod = qc, 0 if qc["estado_tecnico"] == "revisao_pronta" else 1
         elif n.cmd == "aprovar":

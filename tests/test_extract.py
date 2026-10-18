@@ -37,7 +37,7 @@ def test_stj_documento_e_status(stj):
 def test_stj_secoes_na_ordem_e_paginas(stj):
     seg = extract.segmentos(stj)
     assert [s["section"] for s in seg] == [
-        "cabecalho", "ementa", "acordao", "ementa", "relatorio", "voto", "termo_de_julgamento"]
+        "cabecalho", "ementa", "acordao", "ementa", "relatorio", "voto", "termo_de_julgamento", "rodape"]
     por = {s["section"]: s for s in seg if s["section"] in ("relatorio", "voto", "termo_de_julgamento")}
     assert por["relatorio"]["page"] == 4
     assert por["voto"]["page"] == 5 and por["voto"]["page_end"] == 14
@@ -52,10 +52,15 @@ def test_stj_ementa_extraida_confere_com_fonte_estruturada(stj):
         assert extract.similaridade(s["text"], ref) >= 0.99
 
 
-def test_stj_cabecalho_e_rodape_de_assinatura_removidos(stj):
-    textos = " ".join(b["text"] for b in stj["blocks"])
-    assert "Documento eletrônico" not in textos and "Código de Controle" not in textos
-    assert any(a["codigo"] == "cabecalho_rodape_removido" for a in stj["warnings"])
+def test_stj_rodape_sai_do_corpo_e_volta_como_blocos_da_secao_rodape(stj):
+    corpo = " ".join(b["text"] for b in stj["blocks"] if b["section"] != "rodape")
+    assert "Documento eletrônico" not in corpo and "Código de Controle" not in corpo
+    rodape = [b for b in stj["blocks"] if b["section"] == "rodape"]
+    assert rodape and all(b["tags"] == ["repetido"] and b["locator"].startswith("p.") for b in rodape)
+    publicacao = next(b for b in rodape if "Publicação no DJEN/CNJ de 20/03/2026" in b["text"])
+    assert publicacao["locator"] == "p.1-2"  # a data de publicação continua citável
+    assert any(a["codigo"] == "cabecalho_rodape_removido" and "rodape" in a["detalhe"] for a in stj["warnings"])
+    assert "layout_em_colunas_ou_tabela" not in {a["codigo"] for a in stj["warnings"]}
 
 
 def test_stj_citacao_distinta_do_texto_do_relator(stj):
@@ -153,12 +158,13 @@ def test_pdf_corrompido_e_truncado_nao_levantam_excecao(tmp_path):
     f = tmp_path / "corrompido.pdf"
     f.write_bytes(b"%PDF-1.4\n1 0 obj << /Type /Catalog >> endobj\n")
     doc, _ = extract.extrair(f)
-    assert doc["status"] in ("failed", "no_text")
-    trunc = tmp_path / "truncado.pdf"
-    trunc.write_bytes(PDF_STJ.read_bytes()[:60000])
-    doc, _ = extract.extrair(trunc)
-    assert doc["status"] in ("failed", "partial", "no_text", "ok")  # nunca exceção
-    assert doc["warnings"] or doc["status"] == "ok"
+    assert doc["status"] == "failed" and doc["warnings"][0]["codigo"] == "erro_de_leitura"
+    assert "No /Root object" in doc["warnings"][0]["detalhe"]
+    for corte in (20000, 60000, len(PDF_STJ.read_bytes()) - 200):  # truncado em qualquer ponto: falha explícita, nunca texto parcial
+        trunc = tmp_path / f"truncado_{corte}.pdf"
+        trunc.write_bytes(PDF_STJ.read_bytes()[:corte])
+        doc, _ = extract.extrair(trunc)
+        assert doc["status"] == "failed" and doc["blocks"] == [] and doc["warnings"][0]["codigo"] == "erro_de_leitura"
 
 
 def test_entradas_recusadas(tmp_path):

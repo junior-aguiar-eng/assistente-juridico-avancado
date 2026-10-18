@@ -72,8 +72,19 @@ def inventario(caso: Path, travar: bool = False) -> dict:
     if not entrada.is_dir():
         raise ValueError(f"não existe {entrada}: rode 'init' primeiro")
     atual = {}
-    for p in sorted(x for x in entrada.rglob("*") if x.is_file()):
+    arquivos = []
+    for raiz, dirs, nomes in os.walk(entrada, followlinks=False):  # nunca entra em diretório que é link
+        dirs[:] = [d for d in dirs if not (Path(raiz) / d).is_symlink()]
+        for d in os.listdir(raiz):
+            if (Path(raiz) / d).is_symlink() and (Path(raiz) / d).is_dir():
+                arquivos.append(Path(raiz) / d)  # o link de diretório é registrado, não percorrido
+        arquivos += [Path(raiz) / n for n in nomes]
+    for p in sorted(set(arquivos)):
         rel = p.relative_to(entrada).as_posix()
+        if p.is_symlink():  # link: não lê o destino (pode apontar para fora da pasta do caso)
+            atual[rel] = {"sha256": None, "bytes": 0, "extensao": p.suffix.lower(), "extraivel": False,
+                          "link_simbolico": True}
+            continue
         atual[rel] = {"sha256": _sha(p), "bytes": p.stat().st_size, "extensao": p.suffix.lower(),
                       "extraivel": p.suffix.lower() in extract.EXTENSOES}
         if travar:

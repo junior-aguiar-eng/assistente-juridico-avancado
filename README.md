@@ -42,7 +42,7 @@ Testes: 273 (mais 1 de rede opcional). Tudo foi testado em **um acórdão do STJ
 | Comando | Para quê |
 |---|---|
 | `python scripts/triagem.py init\|inventario\|processos\|privacidade\|capacidades` | pasta do caso, hash dos originais (`--travar`), números CNJ com dígito conferido, dados pessoais mascarados, capacidades do ambiente |
-| `python scripts/extract.py ARQ... --saida extracao.json` | PDF, DOCX, TXT, MD e e-mail (.eml) em blocos com página, seção, localizador e marca de citação; sem OCR; perda de texto vira `partial` |
+| `python scripts/extract.py ARQ... --saida extracao.json` | PDF, DOCX, TXT, MD, e-mail (.eml), HTML salvo, CSV/TSV e XLSX em blocos com página, seção, localizador e marca de citação; rodapés repetidos voltam como seção `rodape`; sem OCR; perda de texto, colunas/tabelas em PDF, planilha oculta ou limite de tempo viram `partial`; arquivo com razão de compressão absurda é recusado; frase dirigida ao modelo dentro do documento gera `possivel_instrucao_embutida` (aviso, o texto segue como dado) |
 | `python scripts/validate.py ARQ.json --extracoes extracao.json` | valida `matter.json`, `facts.json` e `claims.json` contra as regras e o texto extraído ([formatos](shared/dados.md)) |
 | `python scripts/cronologia.py gerar\|conferir` | ordena sem inventar precisão e sem calcular prazos; relevância, exposição de fatos com filtro de sigilo, versões |
 | `python scripts/fontes.py plano\|baixar\|anotacoes` | pontes de fontes por política do caso; download com hash e registro; alterações de um dispositivo à data dos fatos |

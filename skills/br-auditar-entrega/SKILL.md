@@ -1,6 +1,6 @@
 ---
 name: br-auditar-entrega
-description: Gate final antes de entregar ou usar um pacote jurídico (matter.json, facts.json, claims.json, cronologia, extração e fontes): roda a checagem técnica, atribui a faixa de confiança (alta, mista, não entregar), faz a revisão crítica com objeções fundamentadas e prepara a aprovação humana ligada a hashes. Use quando o usuário pedir para "auditar", "revisar antes de entregar" ou "liberar" um trabalho feito com as outras skills do pacote. Não use para aprovar o mérito jurídico, assinar, protocolar ou enviar.
+description: Gate final antes de entregar ou usar um pacote jurídico (matter.json, facts.json, claims.json, extração e fontes): roda a checagem técnica, atribui a faixa de confiança (alta, mista, não entregar), faz a revisão crítica com objeções fundamentadas e prepara a aprovação humana ligada a hashes. Use quando o usuário pedir para "auditar", "revisar antes de entregar" ou "liberar" um trabalho feito com as outras skills do pacote. Não use para aprovar o mérito jurídico, assinar, protocolar ou enviar.
 version: 0.2.0
 last_reviewed: 2026-10-17
 owner: "pendente: mantenedor técnico e revisor jurídico a nomear"

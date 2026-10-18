@@ -98,6 +98,8 @@ Alegação não vira fato: o documento que mostra a alegação a sustenta como a
 | fonte `lida` | exige `url` ou `local_file`, `retrieved_at` (data ISO), `content_hash` (sha256, 64 hex), `text_scope` (`ementa`, `inteiro_teor`, `texto_legal`, `outro`) e `pinpoint` com `locator` e `excerpt` |
 | fonte não lida | pode trazer `error`; não leva `pinpoint` |
 | `legal_time` | opcional na fonte: `as_of` (data) e `vigencia` (`vigente`, `revogada`, `nao_verificada`) |
+| `cited_text` | opcional na proposição, booleano: `true` declara que a proposição é sobre o que a decisão transcreve. Precedente, tema ou súmula `supported` cujo trecho só aparece em passagem transcrita (acórdão que cita outro) é erro sem `cited_text=true` |
+| `tipo` `sumula` e `tema` | o escopo é livre, mas a regra de revisão é: `supported` só com fonte oficial `lida` que traga o enunciado ou a tese literal. O validador não confere isso sozinho (confere oficial, `lida` e trecho no texto); quem revisa confere que o trecho é o enunciado |
 
 ### Regras de coerência por estado
 

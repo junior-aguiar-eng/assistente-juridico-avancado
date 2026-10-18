@@ -1,6 +1,6 @@
 ---
 name: br-mapear-autos
-description: Mapeia os documentos de um caso brasileiro (autos, petições, decisões, contratos em PDF, DOCX, TXT, MD ou e-mail) em inventário com cobertura de leitura e matriz de fatos com fonte, separando fato documentado, alegação, inferência, fato informado pelo usuário e lacuna, com marca de relevância e de sigilo. Use quando o usuário entregar uma pasta ou arquivos e pedir para "mapear o caso", "organizar os fatos e provas" ou "o que os autos dizem". Não use para ordenar fatos no tempo (br-cronologia), pesquisar a lei (br-pesquisa-juridica) nem conferir citações (br-verificar-citacoes).
+description: Mapeia os documentos de um caso brasileiro (autos, petições, decisões, contratos em PDF, DOCX, TXT, MD ou e-mail) em inventário com cobertura de leitura e matriz de fatos com fonte, separando fato documentado, alegação, inferência, fato informado pelo usuário e lacuna, com marca de relevância e de sigilo. Use quando o usuário entregar uma pasta ou arquivos e pedir para "mapear o caso", "organizar os fatos e provas", "extrair os fatos dos documentos" ou "o que os autos dizem". Não use para ordenar fatos no tempo (br-cronologia), pesquisar a lei (br-pesquisa-juridica) nem conferir citações (br-verificar-citacoes).
 version: 0.2.0
 last_reviewed: 2026-10-17
 owner: "pendente: mantenedor técnico e revisor jurídico a nomear"
@@ -62,4 +62,4 @@ Além de [escalacao.md](../../shared/escalacao.md): fato central que só existe 
 
 ## Limites
 
-Não valora a prova nem decide qual versão prevalece. Heurísticas de seção e citação foram calibradas em acórdão do STJ; confira em outros formatos. Sem áudio, vídeo, imagem ou planilha. Caso de referência: [tests/casos/mapeamento_stj](../../tests/casos/mapeamento_stj/facts.json).
+Não valora a prova nem decide qual versão prevalece. Heurísticas de seção e citação foram calibradas em acórdão do STJ; confira em outros formatos. Sem áudio, vídeo ou imagem. Planilha só traz o valor salvo (fórmula não é recalculada) e PDF em colunas ou tabela sai `partial`: confira no original. Caso de referência: [tests/casos/mapeamento_stj](../../tests/casos/mapeamento_stj/facts.json).

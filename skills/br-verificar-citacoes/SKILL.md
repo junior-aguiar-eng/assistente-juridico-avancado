@@ -1,6 +1,6 @@
 ---
 name: br-verificar-citacoes
-description: Verifica citações jurídicas brasileiras (artigos de lei, acórdãos do STF e do STJ, súmulas, temas) contra a fonte oficial lida, separando existência, leitura e apoio à tese, distinguindo proposição contradita de proposição sem apoio, e grava claims.json validado. Use quando houver proposições a conferir antes de uma peça, parecer ou resposta, ou quando o usuário pedir "confira essas citações". Não use para pesquisar a tese (br-pesquisa-juridica), para mapear autos (br-mapear-autos) nem para calcular prazos.
+description: Verifica citações jurídicas brasileiras (artigos de lei, acórdãos do STF e do STJ, súmulas, temas) contra a fonte oficial lida, separando existência, leitura e apoio à tese, distinguindo proposição contradita de proposição sem apoio, e grava claims.json validado. Use quando houver proposições a conferir antes de uma peça, parecer ou resposta, ou quando o usuário pedir "confira essas citações", "veja se o acórdão apoia a tese" ou "as referências de jurisprudência estão certas". Não use para pesquisar a tese (br-pesquisa-juridica), para mapear autos (br-mapear-autos) nem para calcular prazos.
 version: 0.2.0
 last_reviewed: 2026-10-17
 owner: "pendente: mantenedor técnico e revisor jurídico a nomear"

@@ -126,6 +126,17 @@ def test_mesmo_nome_com_bytes_diferentes_guarda_as_duas_versoes(rede, tmp_path):
     assert len(json.loads((tmp_path / "r.json").read_text(encoding="utf-8"))["fontes"]) == 3
 
 
+@pytest.mark.parametrize("nome", ["../../evil.pdf", "..\\..\\evil.pdf", "..", ".", "/etc/passwd", "C:\\Windows\\x.pdf"])
+def test_nome_de_arquivo_nunca_sai_da_pasta_de_destino(rede, tmp_path, nome):
+    rede["respostas"] = [(200, {"Content-Type": "application/pdf"}, b"%PDF-1.4 X")]
+    destino = tmp_path / "fontes"
+    e = fontes.baixar(URL_STJ, destino, nome=nome)
+    assert e["status"] == "lida"
+    gravado = Path(e["local_file"]).resolve()
+    assert gravado.parent == destino.resolve() and gravado.is_file()
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["fontes"]
+
+
 @pytest.mark.parametrize("resposta", [
     (403, {"Cf-Mitigated": "challenge"}, b"<html>Just a moment</html>"),
     (202, {"x-amzn-waf-action": "challenge"}, b""),

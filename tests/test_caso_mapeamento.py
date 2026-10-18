@@ -48,7 +48,8 @@ def test_fato_material_de_decisao_transcrita_nao_pode_passar_como_documentado(fa
     r = validate.validar_facts(f, idx)
     assert r.erros == []
     assert "documentado_em_citacao" in cods(r.avisos)
-    assert validate.validar_facts(f, idx).avisos != validate.validar_facts(facts, idx).avisos
+    avisos = cods(validate.validar_facts(f, idx).avisos)
+    assert avisos.count("documentado_em_citacao") == 1 and avisos.count("trecho_em_citacao") == 2  # f004 trocou de aviso; f005 e f006 seguem como alegação
 
 
 def test_atos_do_proprio_documento_sao_documentados_sem_aviso(facts, idx):
@@ -91,16 +92,16 @@ def test_inventario_mostra_todo_arquivo_inclusive_o_nao_lido(tmp_path):
     with open(entrada / "escaneado.pdf", "wb") as fh:
         w.write(fh)
     (entrada / "nota.txt").write_text("Contrato assinado em 10/03/2023.\n\nValor: R$ 1.000,00.", encoding="utf-8")
-    (entrada / "planilha.xlsx").write_bytes(b"PK\x03\x04")
+    (entrada / "planilha.xls").write_bytes(b"PK\x03\x04")
     arquivos = sorted(str(p) for p in entrada.iterdir())
     r = subprocess.run([sys.executable, "-P", str(RAIZ / "scripts" / "extract.py"), *arquivos, "--no-cache"],
                        capture_output=True, cwd=RAIZ)
     saida = json.loads(r.stdout.decode("utf-8"))
     por_nome = {Path(d["path"]).name: d for d in saida["documents"]}
-    assert set(por_nome) == {"decisao.pdf", "escaneado.pdf", "nota.txt", "planilha.xlsx"}  # nenhum arquivo some
+    assert set(por_nome) == {"decisao.pdf", "escaneado.pdf", "nota.txt", "planilha.xls"}  # nenhum arquivo some
     assert {n: d["status"] for n, d in por_nome.items()} == {
-        "decisao.pdf": "ok", "escaneado.pdf": "no_text", "nota.txt": "ok", "planilha.xlsx": "failed"}
-    assert por_nome["planilha.xlsx"]["warnings"][0]["codigo"] == "extensao_nao_aceita"
+        "decisao.pdf": "ok", "escaneado.pdf": "no_text", "nota.txt": "ok", "planilha.xls": "failed"}
+    assert por_nome["planilha.xls"]["warnings"][0]["codigo"] == "extensao_nao_aceita"
     assert por_nome["escaneado.pdf"]["warnings"][0]["codigo"] == "pagina_sem_texto"
     assert r.returncode == 2  # há arquivo recusado
 

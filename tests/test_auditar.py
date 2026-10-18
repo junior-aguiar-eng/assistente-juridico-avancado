@@ -136,8 +136,15 @@ def test_documento_nao_lido_exige_lacuna_que_o_nomeie(tmp_path):
     (pasta / "facts.json").write_text(
         json.dumps(facts("Documento escaneado.pdf não lido: sem camada de texto."), ensure_ascii=False), encoding="utf-8")
     qc = auditar.auditar(str(pasta / "facts.json"), None, [str(pasta / "extracao.json")], base=pasta)
-    assert next(g for g in qc["gates"] if g["id"] == "G03_cobertura_leitura")["resultado"] == "aprovado"
+    g03b = next(g for g in qc["gates"] if g["id"] == "G03_cobertura_leitura")
+    assert g03b["resultado"] == "alerta" and "document_id" in g03b["detalhe"]  # ligação só pelo nome é fraca
     assert qc["estado_tecnico"] == "revisao_pronta"
+    did = json.loads((pasta / "extracao.json").read_text(encoding="utf-8"))["documents"][0]["document_id"]
+    forte = facts("Não lido: sem camada de texto.")
+    forte["facts"][0]["document_id"] = did
+    (pasta / "facts.json").write_text(json.dumps(forte, ensure_ascii=False), encoding="utf-8")
+    qc = auditar.auditar(str(pasta / "facts.json"), None, [str(pasta / "extracao.json")], base=pasta)
+    assert next(g for g in qc["gates"] if g["id"] == "G03_cobertura_leitura")["resultado"] == "aprovado"
 
 
 # ------------------------------------------------------------------ aprovação humana ligada a hashes

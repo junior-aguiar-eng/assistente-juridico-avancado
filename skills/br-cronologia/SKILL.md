@@ -1,6 +1,6 @@
 ---
 name: br-cronologia
-description: Gera a cronologia de um caso a partir do facts.json validado, ordenando sem inventar precisão e sem calcular prazos: datas parciais ficam parciais, fatos de ordem incerta são marcados, fatos sem data vão para seção própria, cada fato mostra se é documentado, alegação, inferência ou informado, e a relevância é aplicada da perspectiva do papel do cliente. Tem variante de exposição de fatos com filtro de sigilo. Use depois de br-mapear-autos, quando o usuário pedir "cronologia", "linha do tempo", "o que aconteceu e quando" ou "exposição de fatos". Não use para calcular prazo processual ou prescricional, nem para extrair fatos dos documentos.
+description: Gera a cronologia de um caso a partir do facts.json validado, ordenando sem inventar precisão: datas parciais ficam parciais, fatos de ordem incerta são marcados, fatos sem data vão para seção própria, cada fato mostra se é documentado, alegação, inferência ou informado, e a relevância fica marcada. Tem variante de exposição de fatos. Use quando já houver fatos registrados e o usuário pedir "cronologia", "linha do tempo", "o que aconteceu e quando" ou "exposição de fatos". Não use para calcular prazo processual ou prescricional, nem para extrair fatos dos documentos.
 version: 0.2.0
 last_reviewed: 2026-10-17
 owner: "pendente: mantenedor técnico e revisor jurídico a nomear"

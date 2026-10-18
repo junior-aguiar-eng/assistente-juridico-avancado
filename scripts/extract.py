@@ -28,19 +28,40 @@ import warnings
 import zipfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # injecao.py, mesmo com python -P
+import injecao  # noqa: E402
+
 EXTRACTOR_VERSION = "0.3.0"
 SCHEMA_VERSION = "1"
 IDIOMA = "pt-BR"  # assumido, não detectado
-EXTENSOES = {".pdf", ".docx", ".txt", ".md", ".eml"}
+EXTENSOES = {".pdf", ".docx", ".txt", ".md", ".eml", ".html", ".htm", ".csv", ".tsv", ".xlsx"}
 MAX_PAGES = 2000
 LIMIAR_PARAGRAFO = 30  # recuo de primeira linha (pt)
 LIMIAR_CITACAO = 90  # recuo de citação em bloco (pt)
 LIMIAR_IMAGEM = 0.5  # fração da página coberta por imagem
 LIMIAR_CARACTERES = 300  # texto abaixo disso, numa página coberta por imagem, indica digitalização
+MAX_SEGUNDOS = 300  # tempo máximo de leitura de um PDF (verificado entre páginas)
+VAO_COLUNA = 36.0  # vão horizontal (pt) que separa colunas ou células
+PROPORCAO_COLUNAS = 0.35  # fração de linhas com vão largo que caracteriza colunas ou tabela
 MAX_DESCOMPRIMIDO = 200 * 1024 * 1024  # DOCX: soma dos tamanhos descomprimidos (proteção contra zip bomb)
 PARAMS = {"idioma": IDIOMA, "lim_par": LIMIAR_PARAGRAFO, "lim_cit": LIMIAR_CITACAO, "max_pages": MAX_PAGES,
-          "lim_img": LIMIAR_IMAGEM, "lim_chars": LIMIAR_CARACTERES}
-PARAMS_HASH = hashlib.sha256(json.dumps(PARAMS, sort_keys=True).encode()).hexdigest()[:8]
+          "lim_img": LIMIAR_IMAGEM, "lim_chars": LIMIAR_CARACTERES, "vao": VAO_COLUNA, "cols": PROPORCAO_COLUNAS}
+
+
+def _versoes_das_bibliotecas() -> dict:
+    from importlib import metadata
+
+    v = {}
+    for nome in ("pdfplumber", "pdfminer.six", "python-docx", "lxml"):
+        try:
+            v[nome] = metadata.version(nome)
+        except metadata.PackageNotFoundError:
+            v[nome] = "ausente"
+    return v
+
+
+# a chave do cache muda com os parâmetros e com a versão das bibliotecas que leem o arquivo
+PARAMS_HASH = hashlib.sha256(json.dumps({**PARAMS, "libs": _versoes_das_bibliotecas()}, sort_keys=True).encode()).hexdigest()[:8]
 
 TITULOS = {
     "EMENTA": "ementa", "RELATORIO": "relatorio", "VOTO": "voto", "ACORDAO": "acordao",
@@ -135,20 +156,42 @@ def _titulo(txt, ln, largura, margem):
     return None
 
 
+def _maior_vao(chars) -> float:
+    """Maior espaço horizontal entre caracteres consecutivos de uma linha (colunas e células deixam vãos grandes)."""
+    pos = sorted((c for c in chars if str(c.get("text", "")).strip()), key=lambda c: c["x0"])
+    return max((b["x0"] - a["x1"] for a, b in zip(pos, pos[1:])), default=0.0)
+
+
 def _ler_pdf(path: Path):
+    import time
+
     import pdfplumber
 
     paginas, avisos, cobertura, truncado = [], [], [], False
+    estrutura = {"colunas": [], "tabelas": []}
+    inicio = time.monotonic()
     with pdfplumber.open(path) as pdf:
         total = len(pdf.pages)
         for i, page in enumerate(pdf.pages[:MAX_PAGES], 1):
+            if i > 1 and time.monotonic() - inicio > MAX_SEGUNDOS:
+                avisos.append(_aviso("tempo_excedido", f"leitura interrompida após {MAX_SEGUNDOS} s: lidas {i - 1} de {total} páginas"))
+                break
             try:
-                linhas = [ln for ln in page.extract_text_lines(strip=True) if ln["text"].strip()]
+                linhas = [ln for ln in page.extract_text_lines(strip=True, return_chars=True) if ln["text"].strip()]
             except Exception as e:  # noqa: BLE001
                 linhas = []
                 avisos.append(_aviso("pagina_ilegivel", f"{type(e).__name__}: {e}", i))
+            for ln in linhas:
+                ln["gap"] = _maior_vao(ln.pop("chars", []))
             w, h = float(page.width), float(page.height)
             paginas.append((w, h, linhas))
+            if len(linhas) >= 8 and sum(1 for ln in linhas if ln["gap"] >= VAO_COLUNA) / len(linhas) >= PROPORCAO_COLUNAS:
+                estrutura["colunas"].append(i)
+            try:
+                if (page.lines or page.rects) and any(len(t.rows) >= 2 and len(t.rows[0].cells) >= 2 for t in page.find_tables()):
+                    estrutura["tabelas"].append(i)
+            except Exception:  # noqa: BLE001 - detecção de tabela é auxiliar; falhar não pode derrubar a leitura
+                pass
             area = 0.0
             for im in page.images:
                 larg = max(0.0, min(im["x1"], w) - max(im["x0"], 0.0))
@@ -158,7 +201,7 @@ def _ler_pdf(path: Path):
         truncado = total > MAX_PAGES
     if truncado:
         avisos.append(_aviso("truncado", f"lidas {MAX_PAGES} de {total} páginas"))
-    return paginas, avisos, total, cobertura
+    return paginas, avisos, total, cobertura, estrutura
 
 
 _VOCAB_RODAPE = re.compile(r"(?i)documento eletr[oô]nico|assinad[oa]|signat[aá]rio|c[oó]digo de controle|"
@@ -170,7 +213,8 @@ def _remover_repetidas(paginas):
 
     Só sai a linha repetida que (a) tem vocabulário de assinatura/paginação em 2+ páginas ou
     (b) se repete em metade ou mais das páginas. Texto duplicado em apenas 2 páginas (documento
-    reproduzido duas vezes no mesmo PDF) permanece."""
+    reproduzido duas vezes no mesmo PDF) permanece. As linhas removidas voltam como blocos da seção
+    'rodape' (datas de publicação e de assinatura são evidência)."""
     contagem: dict[str, set[int]] = {}
     amostras: dict[str, str] = {}
     for n, (_, h, linhas) in enumerate(paginas):
@@ -182,16 +226,20 @@ def _remover_repetidas(paginas):
     n_pag = len(paginas)
     repetidas = {k for k, v in contagem.items()
                  if (len(v) >= 2 and _VOCAB_RODAPE.search(amostras[k])) or (len(v) >= 3 and len(v) >= 0.5 * n_pag)}
-    removidas, novas = 0, []
-    for w, h, linhas in paginas:
+    removidas, novas, detalhes = 0, [], {}
+    for n, (w, h, linhas) in enumerate(paginas, 1):
         mantidas = []
         for ln in linhas:
-            if (ln["top"] < h * 0.06 or ln["top"] > h * 0.88) and _rodape_chave(ln["text"]) in repetidas:
+            k = _rodape_chave(ln["text"])
+            if (ln["top"] < h * 0.06 or ln["top"] > h * 0.88) and k in repetidas:
                 removidas += 1
+                detalhes.setdefault(k, {"texto": ln["text"].strip(), "paginas": set()})["paginas"].add(n)
             else:
                 mantidas.append(ln)
         novas.append((w, h, mantidas))
-    return novas, removidas, sorted({amostras[k] for k in repetidas})[:3]
+    lista = sorted(({"texto": d["texto"], "paginas": sorted(d["paginas"])} for d in detalhes.values()),
+                   key=lambda d: (d["paginas"][0], d["texto"]))
+    return novas, removidas, sorted({amostras[k] for k in repetidas})[:3], lista
 
 
 def _salto_de_paragrafo(ln, ant, passo_no_bloco) -> bool:
@@ -252,14 +300,20 @@ def _montar_blocos_pdf(paginas):
 
 
 def extrair_pdf(path: Path) -> dict:
-    paginas, avisos, total, cobertura = _ler_pdf(path)
+    paginas, avisos, total, cobertura, estrutura = _ler_pdf(path)
     texto_bruto = _hash_texto(ln["text"] for _, _, ls in paginas for ln in ls)
     sem_texto = [i for i, (_, _, ls) in enumerate(paginas, 1) if not ls]
     for i in sem_texto:
         avisos.append(_aviso("pagina_sem_texto", "possível digitalização; OCR indisponível", i))
-    paginas, removidas, exemplos = _remover_repetidas(paginas)
+    for i in estrutura["colunas"]:
+        avisos.append(_aviso("layout_em_colunas_ou_tabela",
+                             "muitas linhas com vãos largos: colunas ou tabela; a ordem de leitura e as células não são confiáveis", i))
+    for i in estrutura["tabelas"]:
+        avisos.append(_aviso("tabela_no_pdf", "tabela com linhas desenhadas: as células saem lidas linha a linha, sem separar colunas", i))
+    paginas, removidas, exemplos, rodapes = _remover_repetidas(paginas)
     if removidas:
-        avisos.append(_aviso("cabecalho_rodape_removido", f"{removidas} linhas repetidas; exemplos: {exemplos}"))
+        avisos.append(_aviso("cabecalho_rodape_removido",
+                             f"{removidas} linhas repetidas; voltam como blocos da seção 'rodape'; exemplos: {exemplos}"))
     # página coberta por imagem com pouco texto: o corpo é imagem e o texto restante é carimbo ou rodapé
     digitalizadas = []
     for i, ((_, _, ls), cob) in enumerate(zip(paginas, cobertura), 1):
@@ -275,10 +329,16 @@ def extrair_pdf(path: Path) -> dict:
     chars = sum(len(b["text"]) for b in blocos)
     if chars and sum(b["text"].count("�") for b in blocos) / chars > 0.01:
         avisos.append(_aviso("codificacao_suspeita", "muitos caracteres de substituição (U+FFFD)"))
+    for d in rodapes:
+        pg = d["paginas"]
+        blocos.append({"id": f"b{len(blocos) + 1:04d}", "locator": f"p.{pg[0]}" if pg[0] == pg[-1] else f"p.{pg[0]}-{pg[-1]}",
+                       "text": _ws(d["texto"]), "tags": ["repetido"], "page": pg[0], "page_end": pg[-1], "section": "rodape",
+                       "is_quote": False, "quote_basis": None})
     sem_corpo = set(sem_texto) | set(digitalizadas)
+    codigos_parciais = ("truncado", "pagina_ilegivel", "codificacao_suspeita", "tempo_excedido", "layout_em_colunas_ou_tabela")
     if len(sem_corpo) == len(paginas):
         status = "no_text"
-    elif sem_corpo or any(a["codigo"] in ("truncado", "pagina_ilegivel", "codificacao_suspeita") for a in avisos):
+    elif sem_corpo or any(a["codigo"] in codigos_parciais for a in avisos):
         status = "partial"
     else:
         status = "ok"
@@ -342,9 +402,8 @@ def extrair_docx(path: Path) -> dict:
 
     avisos, xp = [], _xpaths()
     with zipfile.ZipFile(path) as z:
+        _checar_zip(z)
         infos = z.infolist()
-        if sum(i.file_size for i in infos) > MAX_DESCOMPRIMIDO:
-            raise ArquivoSuspeito(f"tamanho descomprimido acima de {MAX_DESCOMPRIMIDO // (1024 * 1024)} MB")
         partes = {i.filename: z.read(i.filename) for i in infos
                   if re.match(r"word/(document|footnotes|endnotes|header\d*|footer\d*|comments\w*)\.xml$", i.filename)}
     doc_xml = _xml_seguro(partes["word/document.xml"])
@@ -429,6 +488,234 @@ def extrair_texto(path: Path) -> dict:
                        "is_quote": quote, "quote_basis": "marcador" if quote else None})
     return {"status": "ok" if blocos else "no_text", "page_count": None,
             "blocks": _finalizar_blocos(blocos), "warnings": avisos, "text_sha256": _hash_texto([texto])}
+
+
+# --------------------------------------------------------------------------- ZIP (DOCX, XLSX)
+MAX_RAZAO_COMPRESSAO = 1000  # membro grande com razão acima disso é assinatura de zip bomb
+MAX_LINHAS = 100_000
+
+
+def _checar_zip(z: zipfile.ZipFile) -> None:
+    infos = z.infolist()
+    if sum(i.file_size for i in infos) > MAX_DESCOMPRIMIDO:
+        raise ArquivoSuspeito(f"tamanho descomprimido acima de {MAX_DESCOMPRIMIDO // (1024 * 1024)} MB")
+    for i in infos:
+        if i.file_size > 5 * 1024 * 1024 and i.compress_size and i.file_size / i.compress_size > MAX_RAZAO_COMPRESSAO:
+            raise ArquivoSuspeito(f"membro '{i.filename}' com razão de compressão {i.file_size // i.compress_size}:1 (zip bomb)")
+
+
+# --------------------------------------------------------------------------- HTML
+_BLOCOS_HTML = ("p", "li", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "pre", "tr", "dt", "dd", "figcaption")
+_OCULTO_XPATH = ("//*[@hidden or @aria-hidden='true' or contains(translate(@style,' ',''),'display:none') "
+                 "or contains(translate(@style,' ',''),'visibility:hidden') or contains(translate(@style,' ',''),'font-size:0')]")
+
+
+def extrair_html(path: Path) -> dict:
+    """Página HTML salva: parágrafos, itens, títulos e linhas de tabela. Texto oculto é ignorado e avisado."""
+    from lxml import html as lh
+
+    bruto = path.read_bytes()
+    avisos, blocos, brutos = [], [], []
+    # sem <meta charset> o lxml assume latin-1 e estraga a acentuação: decodifica aqui (UTF-8 estrito, depois windows-1252)
+    cab = bruto[:2048].decode("ascii", errors="ignore")
+    m_cs = re.search(r"charset\s*=\s*[\"']?([\w-]+)", cab, re.I)
+    try:
+        texto_html = bruto.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        cs = m_cs.group(1) if m_cs else "windows-1252"
+        try:
+            texto_html = bruto.decode(cs)
+        except (LookupError, UnicodeDecodeError):
+            texto_html = bruto.decode("windows-1252", errors="replace")
+        avisos.append(_aviso("codificacao_assumida", f"não era UTF-8; lido como {cs}"))
+    texto_html = re.sub(r"^\s*<\?xml[^>]*\?>", "", texto_html)  # lxml recusa str com declaração de encoding
+    raiz = lh.fromstring(texto_html, parser=lh.HTMLParser(no_network=True, remove_comments=True, remove_pis=True, huge_tree=False))
+    for el in raiz.xpath("//script|//style|//noscript|//template"):
+        el.drop_tree()
+    ocultos = []
+    for el in raiz.xpath(_OCULTO_XPATH):
+        t = " ".join(el.text_content().split())
+        if t:
+            ocultos.append(t[:80])
+        el.drop_tree()
+    if ocultos:
+        avisos.append(_aviso("texto_oculto_html", f"{len(ocultos)} trecho(s) invisível(is) ignorado(s) (possível injeção): {ocultos[:2]}"))
+    n_img = len(raiz.xpath("//img"))
+    if n_img:
+        avisos.append(_aviso("parte_nao_extraida", f"{n_img} imagem(ns) não lida(s): texto em imagem não é extraído"))
+    secao, npar, ntab, tabelas = "corpo", 0, 0, {}
+    for el in raiz.iter():
+        if not isinstance(el.tag, str) or el.tag not in _BLOCOS_HTML or el.xpath(".//*[self::" + " or self::".join(_BLOCOS_HTML) + "]"):
+            continue
+        if el.tag == "tr":
+            tab = next((a for a in el.iterancestors("table")), None)
+            if tab is not None and id(tab) not in tabelas:
+                ntab += 1
+                tabelas[id(tab)] = [ntab, 0]
+            numero, linha = tabelas.get(id(tab), [0, 0]) if tab is not None else (0, 0)
+            if tab is not None:
+                tabelas[id(tab)][1] += 1
+                linha = tabelas[id(tab)][1]
+            texto = " | ".join(_ws(c.text_content()) for c in el.xpath("./td|./th"))
+            loc = f"tab.{numero}.lin.{linha}"
+            if not texto.strip(" |"):
+                continue
+        else:
+            texto = _ws(el.text_content())
+            if not texto:
+                continue
+            npar += 1
+            loc = f"html.par.{npar}"
+            if el.tag.startswith("h") and len(el.tag) == 2:
+                secao = _slug(texto)
+        citacao = el.tag == "blockquote" or any(True for _ in el.iterancestors("blockquote"))
+        blocos.append({"page": None, "locator": loc, "section": secao, "texto": texto, "is_quote": citacao,
+                       "quote_basis": "blockquote" if citacao else None, "tags": []})
+        brutos.append(texto)
+    return {"status": "ok" if blocos else "no_text", "page_count": None, "blocks": _finalizar_blocos(blocos),
+            "warnings": avisos, "text_sha256": _hash_texto(brutos)}
+
+
+# --------------------------------------------------------------------------- CSV, TSV
+def extrair_csv(path: Path) -> dict:
+    import csv
+    import io
+
+    avisos, bruto = [], path.read_bytes()
+    try:
+        texto = bruto.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        texto = bruto.decode("windows-1252", errors="replace")
+        avisos.append(_aviso("codificacao_assumida", "não era UTF-8; lido como windows-1252"))
+    if path.suffix.lower() == ".tsv":
+        delim = "\t"
+    else:
+        try:
+            delim = csv.Sniffer().sniff(texto[:4096], delimiters=",;|\t").delimiter
+        except csv.Error:
+            delim = ","
+    blocos, brutos, parcial = [], [], False
+    for n, linha in enumerate(csv.reader(io.StringIO(texto), delimiter=delim), 1):
+        if n > MAX_LINHAS:
+            avisos.append(_aviso("truncado", f"lidas {MAX_LINHAS} linhas"))
+            parcial = True
+            break
+        t = " | ".join(_ws(c) for c in linha)
+        if t.strip(" |"):
+            blocos.append({"page": None, "locator": f"tab.1.lin.{n}", "section": "planilha", "texto": t,
+                           "is_quote": False, "quote_basis": None, "tags": ["cabecalho"] if n == 1 else []})
+            brutos.append(t)
+    return {"status": "no_text" if not blocos else ("partial" if parcial else "ok"), "page_count": None,
+            "blocks": _finalizar_blocos(blocos), "warnings": avisos, "text_sha256": _hash_texto(brutos)}
+
+
+# --------------------------------------------------------------------------- XLSX
+_NS_X = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+_NS_R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+_FORMATOS_DATA = set(range(14, 23)) | {27, 30, 36, 45, 46, 47, 50, 57}
+
+
+def _serial_para_iso(n: float) -> str:
+    from datetime import datetime as _dt, timedelta
+
+    base = _dt(1899, 12, 30)  # sistema 1900 com o erro do ano bissexto: vale para seriais acima de 60
+    d = base + timedelta(days=n)
+    return d.date().isoformat() if abs(n - int(n)) < 1e-9 else d.isoformat(timespec="minutes")
+
+
+def _coluna(ref: str) -> int:
+    letras = re.match(r"[A-Z]+", ref).group(0)
+    n = 0
+    for ch in letras:
+        n = n * 26 + ord(ch) - 64
+    return n - 1
+
+
+def extrair_xlsx(path: Path) -> dict:
+    """Planilha .xlsx lida direto do XML: valores em cache, datas convertidas, planilhas ocultas ignoradas e avisadas."""
+    avisos, blocos, brutos, parcial = [], [], [], False
+    with zipfile.ZipFile(path) as z:
+        _checar_zip(z)
+        nomes = set(z.namelist())
+
+        def ler(n):
+            return _xml_seguro(z.read(n))
+
+        wb = ler("xl/workbook.xml")
+        rels = {r.get("Id"): r.get("Target") for r in ler("xl/_rels/workbook.xml.rels")}
+        folhas = [(s.get("name"), s.get("state", "visible"), rels.get(s.get(f"{{{_NS_R}}}id"))) for s in wb.iter(f"{{{_NS_X}}}sheet")]
+        textos = []
+        if "xl/sharedStrings.xml" in nomes:
+            textos = ["".join(t.text or "" for t in si.iter(f"{{{_NS_X}}}t")) for si in ler("xl/sharedStrings.xml").iter(f"{{{_NS_X}}}si")]
+        datas = set()
+        if "xl/styles.xml" in nomes:
+            est = ler("xl/styles.xml")
+            custom = {int(n.get("numFmtId")): n.get("formatCode", "") for n in est.iter(f"{{{_NS_X}}}numFmt")}
+            xfs = [x for cx in est.iter(f"{{{_NS_X}}}cellXfs") for x in cx]
+            for k, x in enumerate(xfs):
+                fid = int(x.get("numFmtId", 0))
+                codigo = re.sub(r'"[^"]*"|\[[^\]]*\]', "", custom.get(fid, ""))
+                if fid in _FORMATOS_DATA or re.search(r"(?i)[dmy]{2}|h{1,2}:", codigo):
+                    datas.add(k)
+        formulas_sem_valor = formulas = linhas_lidas = 0
+        for nome, estado, alvo in folhas:
+            if estado != "visible":
+                parcial = True
+                avisos.append(_aviso("planilha_oculta", f"planilha '{nome}' ({estado}) ignorada: conteúdo oculto não entra"))
+                continue
+            caminho = "xl/" + (alvo or "").lstrip("/").removeprefix("xl/")
+            if caminho not in nomes:
+                avisos.append(_aviso("planilha_nao_encontrada", f"'{nome}' aponta para {alvo}, que não existe no arquivo"))
+                parcial = True
+                continue
+            for linha in ler(caminho).iter(f"{{{_NS_X}}}row"):
+                linhas_lidas += 1
+                if linhas_lidas > MAX_LINHAS:
+                    avisos.append(_aviso("truncado", f"lidas {MAX_LINHAS} linhas"))
+                    parcial = True
+                    break
+                celulas: dict[int, str] = {}
+                for c in linha.iter(f"{{{_NS_X}}}c"):
+                    tipo, v, f_, inl = c.get("t"), c.find(f"{{{_NS_X}}}v"), c.find(f"{{{_NS_X}}}f"), c.find(f"{{{_NS_X}}}is")
+                    if f_ is not None:
+                        formulas += 1
+                        formulas_sem_valor += v is None
+                    if tipo == "inlineStr" and inl is not None:
+                        valor = "".join(t.text or "" for t in inl.iter(f"{{{_NS_X}}}t"))
+                    elif v is None or v.text is None:
+                        continue
+                    elif tipo == "s":
+                        valor = textos[int(v.text)]
+                    elif tipo == "b":
+                        valor = "VERDADEIRO" if v.text == "1" else "FALSO"
+                    elif tipo == "e":
+                        valor = f"#ERRO({v.text})"
+                    elif tipo == "str":
+                        valor = v.text
+                    else:
+                        valor = v.text
+                        if int(c.get("s", 0)) in datas:
+                            try:
+                                valor = f"{_serial_para_iso(float(v.text))} (serial {v.text})"
+                            except (ValueError, OverflowError):
+                                pass
+                    celulas[_coluna(c.get("r", "A1"))] = _ws(valor)
+                if celulas:
+                    texto = " | ".join(celulas.get(i, "") for i in range(max(celulas) + 1)).rstrip(" |")
+                    if texto.strip():
+                        blocos.append({"page": None, "locator": f"plan.{_slug(nome)}.lin.{linha.get('r', linhas_lidas)}",
+                                       "section": _slug(nome), "texto": texto, "is_quote": False, "quote_basis": None, "tags": []})
+                        brutos.append(texto)
+        if formulas_sem_valor:
+            parcial = True
+            avisos.append(_aviso("formula_sem_valor", f"{formulas_sem_valor} fórmula(s) sem valor em cache: abra e salve a planilha no Excel"))
+        elif formulas:
+            avisos.append(_aviso("formulas_nao_recalculadas", f"{formulas} fórmula(s): o valor lido é o do último cálculo salvo"))
+        if any(re.match(r"xl/(comments|threadedComments)", n) for n in nomes):
+            parcial = True
+            avisos.append(_aviso("parte_nao_extraida", "comentários da planilha não foram extraídos"))
+    return {"status": "no_text" if not blocos else ("partial" if parcial else "ok"), "page_count": None,
+            "blocks": _finalizar_blocos(blocos), "warnings": avisos, "text_sha256": _hash_texto(brutos)}
 
 
 # --------------------------------------------------------------------------- E-MAIL (.eml)
@@ -516,7 +803,9 @@ def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0):
     base.update({"document_id": f"doc-{sha[:12]}", "sha256": sha, "size_bytes": len(bruto),
                  "media_type": {".pdf": "application/pdf", ".txt": "text/plain", ".md": "text/markdown",
                                 ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                ".eml": "message/rfc822"}[p.suffix.lower()]})
+                                ".eml": "message/rfc822", ".html": "text/html", ".htm": "text/html", ".csv": "text/csv",
+                                ".tsv": "text/tab-separated-values",
+                                ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}[p.suffix.lower()]})
     arq_cache = Path(cache_dir) / f"{sha[:32]}-{EXTRACTOR_VERSION}-{PARAMS_HASH}.json" if cache_dir else None
     if arq_cache and arq_cache.is_file():
         with contextlib.suppress(Exception):
@@ -526,7 +815,8 @@ def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0):
     try:
         with warnings.catch_warnings(), contextlib.redirect_stdout(sys.stderr):
             warnings.simplefilter("ignore")
-            r = {".pdf": extrair_pdf, ".docx": extrair_docx, ".eml": extrair_eml}.get(p.suffix.lower(), extrair_texto)(p)
+            r = {".pdf": extrair_pdf, ".docx": extrair_docx, ".eml": extrair_eml, ".html": extrair_html, ".htm": extrair_html,
+                 ".csv": extrair_csv, ".tsv": extrair_csv, ".xlsx": extrair_xlsx}.get(p.suffix.lower(), extrair_texto)(p)
     except ArquivoSuspeito as e:
         return falha("arquivo_suspeito", str(e))
     except Exception as e:  # noqa: BLE001 - arquivo corrompido ou formato inesperado
@@ -534,6 +824,16 @@ def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0):
     # text_sha256 identifica o texto lido, independente do arquivo (o mesmo acórdão baixado duas vezes
     # pode ter bytes diferentes) e da segmentação em blocos; cada leitor o calcula sobre o texto bruto
     doc = {**base, "extractor_versions": _versoes(), **r}
+    # texto que parece dirigido ao modelo: só avisa; o conteúdo continua sendo dado
+    suspeitas = []
+    for b in doc["blocks"]:
+        for a in injecao.detectar(b["text"]):
+            suspeitas.append({"locator": b.get("locator"), "block_id": b["id"], **a})
+    if suspeitas:
+        doc["instrucoes_suspeitas"] = suspeitas[:30]
+        for x in suspeitas[:5]:
+            doc["warnings"].append(_aviso("possivel_instrucao_embutida",
+                                          f"{x['locator']}: {x['padrao']}: {x['trecho']!r} (tratado como dado, não como ordem)"))
     if arq_cache and doc["status"] != "failed":
         arq_cache.parent.mkdir(parents=True, exist_ok=True)
         tmp = arq_cache.with_suffix(".tmp")

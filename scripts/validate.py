@@ -92,7 +92,8 @@ def _data_valida(s) -> bool:
 
 
 def _norm(s: str) -> str:
-    return re.sub(r"\s+", "", unicodedata.normalize("NFC", s)).casefold()
+    """Compara sem espaços, caixa nem hífen (a quebra de linha com hífen no PDF não pode reprovar um trecho certo)."""
+    return re.sub(r"[\s\-­]+", "", unicodedata.normalize("NFC", s)).casefold()
 
 
 def _contem(texto: str, trecho: str) -> bool:
@@ -155,8 +156,45 @@ def _avisar_dados_pessoais(r, caminho, excerpt):
                     f"o trecho contém {', '.join(tipos)}: troque o número por [...] para não repetir o dado nos relatórios")
 
 
+SECOES_NARRATIVAS = ("relatorio", "voto", "relatorio_e_voto", "decisao", "sentenca", "despacho", "parecer")
+
+
+def _avaliar_trecho(r, caminho, excerpt):
+    """Avisos sobre o próprio trecho citado: dado pessoal e trecho curto demais para servir de prova."""
+    if not isinstance(excerpt, str):
+        return
+    _avisar_dados_pessoais(r, caminho, excerpt)
+    if len(re.findall(r"\w+", re.sub(r"\[\.\.\.\]|…", " ", excerpt))) < 4:
+        r.aviso("trecho_curto", f"{caminho}.excerpt",
+                "trecho com menos de 4 palavras é prova fraca (pode estar em vários lugares): cite a frase inteira")
+
+
+def _blocos_do_trecho(doc, bid, excerpt):
+    """Blocos em que o trecho aparece. Sem block_id, aceita trecho que atravessa dois blocos consecutivos."""
+    blocos = doc["blocks"]
+    if bid:
+        bloco = next((b for b in blocos if b["id"] == bid), None)
+        if bloco is None:
+            return None
+        candidatos = [bloco]
+    else:
+        candidatos = blocos
+    ach = [b for b in candidatos if excerpt and _contem(b["text"], excerpt)]
+    if not ach and not bid and excerpt:
+        for a, b in zip(blocos, blocos[1:]):
+            if _contem(a["text"] + " " + b["text"], excerpt):
+                fim = max(x for x in (a.get("page_end"), b.get("page_end"), a.get("page"), b.get("page")) if x) \
+                    if (a.get("page") or b.get("page")) else None
+                ach.append({**a, "text": a["text"] + " " + b["text"], "page_end": fim,
+                            "is_quote": bool(a.get("is_quote") and b.get("is_quote")),
+                            "tags": sorted(set(a.get("tags", [])) | set(b.get("tags", [])))})
+    return ach
+
+
 def _conferir_trecho(r, caminho, ref, locator, excerpt, idx, kind=None):
-    """Confere document_id/block_id/excerpt contra a extração. ref é o dict com os campos."""
+    """Confere document_id/block_id/excerpt contra a extração. ref é o dict com os campos.
+
+    kind: 'documentado', 'alegacao' (fatos), 'claim' (a proposição decide o aviso) ou None."""
     did = ref.get("document_id")
     if idx is None or not did:
         return
@@ -164,17 +202,11 @@ def _conferir_trecho(r, caminho, ref, locator, excerpt, idx, kind=None):
     if doc is None:
         r.erro("documento_nao_extraido", f"{caminho}.document_id", f"'{did}' não consta nas extrações fornecidas")
         return
-    blocos = doc["blocks"]
     bid = ref.get("block_id")
-    if bid:
-        bloco = next((b for b in blocos if b["id"] == bid), None)
-        if bloco is None:
-            r.erro("bloco_inexistente", f"{caminho}.block_id", f"bloco '{bid}' não existe em {did}")
-            return
-        candidatos = [bloco]
-    else:
-        candidatos = blocos
-    ach = [b for b in candidatos if excerpt and _contem(b["text"], excerpt)]
+    ach = _blocos_do_trecho(doc, bid, excerpt)
+    if ach is None:
+        r.erro("bloco_inexistente", f"{caminho}.block_id", f"bloco '{bid}' não existe em {did}")
+        return
     if not ach:
         r.erro("trecho_nao_encontrado", f"{caminho}.excerpt",
                f"o trecho não está no texto extraído de {did}" + (f" (bloco {bid})" if bid else ""))
@@ -184,9 +216,23 @@ def _conferir_trecho(r, caminho, ref, locator, excerpt, idx, kind=None):
         if kind == "documentado":
             r.aviso("documentado_em_citacao", f"{caminho}.excerpt",
                     "fato 'documentado' apoiado só em trecho transcrito: quem narra é outro texto; considere 'alegacao'")
-        else:
+        elif kind != "claim":
             r.aviso("trecho_em_citacao", f"{caminho}.excerpt",
                     "o trecho está em passagem marcada como citação: confirme quem fala (o órgão julgador ou o texto transcrito)")
+    elif kind == "documentado" and all(b.get("section") in SECOES_NARRATIVAS and "dispositivo" not in b.get("tags", [])
+                                       for b in ach):
+        r.aviso("documentado_em_narrativa", f"{caminho}.excerpt",
+                "decisões e peças narram fatos que não provam: confirme que o fato 'documentado' é o próprio ato (decisão, "
+                "protocolo, assinatura) e não um fato material narrado")
+
+
+def _so_em_citacao(idx, s):
+    """True se o pinpoint da fonte só existe em passagem transcrita; None se não dá para saber."""
+    pin = s.get("pinpoint") or {}
+    if idx is None or s.get("document_id") not in (idx or {}) or not isinstance(pin.get("excerpt"), str):
+        return None
+    ach = _blocos_do_trecho(idx[s["document_id"]], s.get("block_id"), pin["excerpt"])
+    return bool(ach) and all(b.get("is_quote") for b in ach) if ach else None
 
 
 # --------------------------------------------------------------------------- facts.json
@@ -226,7 +272,9 @@ def validar_facts(obj, idx=None) -> Resultado:
                     _texto(r, s, k, f"{c}.source")
                 if isinstance(s.get("excerpt"), str):
                     _conferir_trecho(r, f"{c}.source", s, s.get("locator"), s["excerpt"], idx, kind)
-                    _avisar_dados_pessoais(r, f"{c}.source", s["excerpt"])
+                    _avaliar_trecho(r, f"{c}.source", s["excerpt"])
+        if kind == "lacuna":
+            _texto(r, f, "document_id", c, obrigatorio=False)
         if kind == "informado":
             r.aviso("fato_informado_sem_documento", c,
                     f"fato '{fid}' foi informado pelo usuário e não tem documento: obtenha o documento ou mantenha a marca")
@@ -244,7 +292,7 @@ def validar_facts(obj, idx=None) -> Resultado:
                         _texto(r, o, k, cj)
                     if isinstance(o.get("excerpt"), str):
                         _conferir_trecho(r, cj, o, o.get("locator"), o["excerpt"], idx, kind)
-                        _avisar_dados_pessoais(r, cj, o["excerpt"])
+                        _avaliar_trecho(r, cj, o["excerpt"])
         rel = _enum(r, f, "relevancia", c, RELEVANCIA, obrigatorio=False)
         if rel == "alta":
             _texto(r, f, "relevancia_motivo", c)
@@ -360,6 +408,17 @@ def validar_claims(obj, idx=None) -> Resultado:
                     "registre a aplicabilidade (órgão, classe, fatos e fase) ao caso: apoio à tese não é aplicabilidade")
         lidas = [s for s in fontes if s.get("access") == "lida"]
         oficiais = [s for s in lidas if s.get("origin") == "oficial"]
+        if cl.get("cited_text") is not None and not isinstance(cl["cited_text"], bool):
+            r.erro("tipo_invalido", f"{c}.cited_text", "'cited_text' deve ser verdadeiro ou falso")
+        em_citacao = [_so_em_citacao(idx, s) for s in lidas]
+        if em_citacao and all(x is True for x in em_citacao):
+            if status == "supported" and tipo in ("precedente", "tema", "sumula") and cl.get("cited_text") is not True:
+                r.erro("trecho_so_em_citacao", f"{c}.sources",
+                       "o apoio está só em texto transcrito de outra decisão, não no fundamento do órgão julgador: cite o fundamento "
+                       "do próprio órgão ou declare cited_text=true se a proposição é sobre o que a decisão transcreve")
+            elif status in ("partial", "unsupported", "supported") and cl.get("cited_text") is not True:
+                r.aviso("trecho_em_citacao", f"{c}.sources",
+                        "os trechos estão em passagem transcrita: confirme quem fala (o órgão julgador ou o texto transcrito)")
         if status != "unverified" and exist is not None and exist != "confirmada":
             r.erro("existencia_incompativel", f"{c}.existence",
                    f"existence='{exist}' só combina com 'unverified': busca vazia ou fonte inacessível não prova inexistência")
@@ -426,14 +485,19 @@ def _validar_fontes(r, cl, c, idx):
             if not isinstance(s.get("content_hash"), str) or not _HASH.match(s["content_hash"]):
                 r.erro("hash_invalido", f"{p}.content_hash", "fonte lida exige sha256 em 64 caracteres hexadecimais minúsculos")
             _enum(r, s, "text_scope", p, ESCOPOS_TEXTO)
+            if s.get("text_scope") == "inteiro_teor" and idx and s.get("document_id") in idx:
+                d = idx[s["document_id"]]
+                if d.get("media_type") == "application/pdf" and not any(b.get("section") in SECOES_NARRATIVAS for b in d["blocks"]):
+                    r.erro("inteiro_teor_sem_voto", f"{p}.text_scope",
+                           "o documento extraído não tem relatório, voto ou decisão: é só ementa ou parte do acórdão, não inteiro teor")
             pin = s.get("pinpoint")
             if not isinstance(pin, dict):
                 r.erro("campo_obrigatorio", f"{p}.pinpoint", "fonte lida exige 'pinpoint' (locator e excerpt)")
             else:
                 _texto(r, pin, "locator", f"{p}.pinpoint")
                 if _texto(r, pin, "excerpt", f"{p}.pinpoint"):
-                    _conferir_trecho(r, f"{p}.pinpoint", s, pin.get("locator"), pin["excerpt"], idx)
-                    _avisar_dados_pessoais(r, f"{p}.pinpoint", pin["excerpt"])
+                    _conferir_trecho(r, f"{p}.pinpoint", s, pin.get("locator"), pin["excerpt"], idx, "claim")
+                    _avaliar_trecho(r, f"{p}.pinpoint", pin["excerpt"])
                     _conferir_hash(r, p, s, idx)
         elif acesso is not None and s.get("pinpoint") is not None:
             r.erro("pinpoint_sem_leitura", f"{p}.pinpoint", "fonte não lida não pode trazer pinpoint")
@@ -521,7 +585,7 @@ def _validar_partes(r, partes, c, idx):
                 _texto(r, s, k, f"{cp}.source")
             if isinstance(s.get("excerpt"), str):
                 _conferir_trecho(r, f"{cp}.source", s, s.get("locator"), s["excerpt"], idx)
-                _avisar_dados_pessoais(r, f"{cp}.source", s["excerpt"])
+                _avaliar_trecho(r, f"{cp}.source", s["excerpt"])
 
 
 def validar_matter(obj, idx=None) -> Resultado:

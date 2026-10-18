@@ -164,6 +164,37 @@ def revisar_todas(caminhos, hoje=None) -> dict:
             "aviso": "varredura heurística: não é auditoria de segurança; leia os SKILL.md"}
 
 
+# --------------------------------------------------------------------------- gatilhos
+_STOP = set("a o as os um uma uns umas de do da dos das em no na nos nas por para com sem e ou que se ao aos mais mas ja nao "
+            "sobre isso essa esse esta este tudo todo toda quando quer quero preciso pode pedir usuario use usar uso skill "
+            "caso nem como entre ate quais qual sua seu seus suas foi sao ser ter tem".split())
+
+
+def _radicais(texto: str) -> list[str]:
+    sem = "".join(c for c in __import__("unicodedata").normalize("NFD", texto.lower()) if __import__("unicodedata").category(c) != "Mn")
+    return [w[:4] for w in re.findall(r"[a-z0-9]+", sem) if len(w) > 2 and w not in _STOP]
+
+
+def casar_pedido(pedido: str, caminhos) -> list[dict]:
+    """Ordena as skills pela semelhança entre o pedido e a descrição (radicais ponderados pela raridade).
+
+    É uma aproximação grosseira do que o modelo faria ao escolher uma skill: serve para achar gatilhos
+    sobrepostos e pedidos sem dono, não para provar que o modelo escolhe certo."""
+    descricoes = {}
+    for c in caminhos:
+        fm, _ = _frontmatter(Path(c).read_text(encoding="utf-8"))
+        positiva = re.split(r"(?i)\bN[aã]o (use|conclui|substitui)\b", (fm or {}).get("description", ""))[0]  # a parte negativa só desambigua
+        descricoes[(fm or {}).get("name") or Path(c).parent.name] = set(_radicais(positiva))
+    freq: dict[str, int] = {}
+    for rad in descricoes.values():
+        for r_ in rad:
+            freq[r_] = freq.get(r_, 0) + 1
+    alvo = set(_radicais(pedido))
+    ranking = [{"skill": n, "pontos": round(sum(1.0 / freq[r_] for r_ in alvo & rad), 3), "radicais": sorted(alvo & rad)}
+               for n, rad in descricoes.items()]
+    return sorted(ranking, key=lambda x: (-x["pontos"], x["skill"]))
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("skills", nargs="+")

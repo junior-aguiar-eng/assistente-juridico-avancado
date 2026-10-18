@@ -1,0 +1,17 @@
+[project]
+name = "juris-skills-br"
+version = "0.1.0"
+description = "Pacote de skills jurídicas brasileiras: toda afirmação aponta para fonte lida ou fica marcada como não verificada."
+requires-python = ">=3.12"
+readme = "README.md"
+dynamic = ["dependencies"]
+
+[tool.setuptools]
+py-modules = []
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.pytest.ini_options]
+addopts = "--basetemp=.pytest_tmp -p no:cacheprovider"
+testpaths = ["tests"]

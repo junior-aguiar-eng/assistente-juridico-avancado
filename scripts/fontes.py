@@ -118,10 +118,11 @@ def _extensao(content_type: str, corpo: bytes) -> str:
 
 def _nome_arquivo(url: str, nome: str | None) -> str:
     if nome:
-        return re.sub(r"[^\w.\- ]", "_", nome)
+        limpo = re.sub(r"[^\w.\- ]", "_", nome).lstrip(". ")
+        return limpo or "fonte"  # '..' ou '.' nunca viram nome de arquivo
     p = urllib.parse.urlparse(url)
     base = Path(p.path).name or p.hostname or "fonte"
-    return re.sub(r"[^\w.\-]", "_", (base + ("_" + p.query if p.query else ""))[:80])
+    return re.sub(r"[^\w.\-]", "_", (base + ("_" + p.query if p.query else ""))[:80]).lstrip(".") or "fonte"
 
 
 def _registrar(registro: Path | None, entrada: dict):
