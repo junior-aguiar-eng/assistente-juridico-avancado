@@ -2,6 +2,20 @@
 
 Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia as correções ou expansões listadas abaixo.
 
+## Estado consolidado após o PR #1 — 19/10/2026
+
+Este resumo prevalece sobre os estados históricos das etapas registradas abaixo.
+
+- CX-01, CX-02, CX-03 e CX-04: concluídas, revisadas na RV-01 e integradas em main pelo usuário no PR #1: https://github.com/junior-aguiar-eng/assistente-juridico-avancado/pull/1.
+- Commit da entrega: fd2a136f42c118c72de81640a2f4a08d59bb2145. Merge: 39998ba4141d48f6df7c427d43396f0cfeed3e2a, em 19/10/2026 às 19:33:02 UTC. Os oito checks de push/PR da entrega passaram.
+- Pós-merge autorizado: confirmar CI de main, sincronizar somente o worktree do Codex e atualizar este registro; nenhuma nova tarefa funcional iniciada.
+- Worktree do Codex: branch codex/organizacao-colaboracao avançada por fast-forward para 39998ba, igual a origin/main. A árvore de arquivos desse merge é idêntica à entrega fd2a136; nenhum novo merge local foi criado. A branch local main não foi movimentada.
+- CI específico do merge: execução 39311926077 concluída com sucesso nos quatro jobs (Ubuntu e Windows, Python 3.12 e 3.13), incluindo pytest e revisão mecânica das skills: https://github.com/junior-aguiar-eng/assistente-juridico-avancado/actions/runs/39311926077. O SHA validado é o merge 39998ba4141d48f6df7c427d43396f0cfeed3e2a.
+- Checkout do Claude permanece na branch fix/fase2-correcoes, HEAD 4e9989c6ede8e6b9c3d6932310a9768a668d49ca. Arquivos pendentes e documentos locais não foram sobrescritos; sua sincronização não faz parte deste pós-merge. Nenhum Git ou teste foi executado no checkout do Claude.
+- Ao concluir a sincronização, esta atualização ficou local e fora do índice, sem novo commit ou push. Em seguida, o usuário autorizou seu commit local, exclusivamente em docs/COORDENACAO.md; push permanece não autorizado. Nenhuma alteração de branch do Claude.
+- Verificação final: hashes dos 106 arquivos presentes no checkout do Claude e correspondentes aos caminhos versionados do Codex (incluindo os três documentos comuns pendentes no Claude) idênticos à entrada; git diff --check sem erros. Somente docs/COORDENACAO.md alterado no worktree do Codex. Sem nova execução local de testes: árvore integrada idêntica à entrega revisada e CI do merge aprovado.
+- Pendências preservadas: fechamento formal de CL-01/CL-02 a confirmar com o responsável; fontes c001/s2 e c005/s1; documentos reais R07/R10; testes de rede; revisão jurídica identificada e segunda avaliação das skills com documentos reais. Regras jurídicas permanecem inativas. Nenhuma dessas tarefas foi iniciada.
+
 ## Base e locais
 
 Repositório: `https://github.com/junior-aguiar-eng/assistente-juridico-avancado.git`.
