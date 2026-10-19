@@ -65,6 +65,7 @@ def test_vigencia_a_epoca_dos_fatos_usa_a_data_do_matter_e_o_art_206_do_caso_rea
         "id": "c1", "tipo": "norma", "proposition": "p", "status": "supported", "existence": "confirmada",
         "quote_status": "conferida",
         "sources": [{"source_id": "s1", "origin": "oficial", "access": "lida", "url": "https://www.planalto.gov.br/x",
+                     "document_id": "doc-teste",
                      "retrieved_at": "2026-10-17", "content_hash": "b" * 64, "text_scope": "texto_legal",
                      "pinpoint": {"locator": "art. 206", "excerpt": "texto da fonte lida pelo revisor"},
                      "legal_time": {"as_of": "2026-10-17", "vigencia": r["legal_time_sugerido"]["vigencia"]}}]}]}

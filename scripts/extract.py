@@ -29,6 +29,7 @@ import zipfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # injecao.py, mesmo com python -P
+from cli_caminhos import expandir_argumentos  # noqa: E402
 import injecao  # noqa: E402
 import ocr  # noqa: E402
 
@@ -946,7 +947,7 @@ def similaridade(a: str, b: str) -> float:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("arquivos", nargs="+")
+    ap.add_argument("arquivos", nargs="+", help="arquivos ou padrões glob (entre aspas no shell)")
     ap.add_argument("--saida")
     ap.add_argument("--cache-dir", default=".cache/extract")
     ap.add_argument("--no-cache", action="store_true")
@@ -955,7 +956,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     logging.getLogger("pdfminer").setLevel(logging.ERROR)
     docs, hits = [], 0
-    for arq in a.arquivos:
+    for arq in expandir_argumentos(a.arquivos):
         d, hit = extrair(arq, None if a.no_cache else a.cache_dir, a.max_mb, a.ocr)
         docs.append(d)
         hits += hit

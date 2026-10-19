@@ -121,7 +121,7 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         except (OSError, ValueError) as e:
             g.add(gid, f"{rot}.json válido", "reprovado", f"ilegível: {e}")
             continue
-        r = fn(objs[rot], idx if idx else None)
+        r = fn(objs[rot], idx if extracoes else None)
         avisos_val += [(rot, a) for a in r.avisos]
         g.add(gid, f"{rot}.json válido contra as regras e as fontes extraídas",
               "reprovado" if r.erros else "aprovado", _resumo_erros(r) if r.erros else f"{len(r.avisos)} aviso(s)")
@@ -197,7 +197,8 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
                     falt.append(s["local_file"])
                     continue
                 reg(p, "fonte")
-                texto_ok = idx.get(s.get("document_id"), {}).get("text_sha256")
+                did = s.get("document_id")
+                texto_ok = idx.get(did, {}).get("text_sha256") if isinstance(did, str) else None
                 if _sha(p) == s.get("content_hash") or (texto_ok and s.get("content_hash") == texto_ok):
                     conf += 1
                 else:
@@ -316,7 +317,7 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         except (OSError, ValueError) as e:
             g.add("G11_conflitos_de_interesse", "resultado da checagem de conflito registrado", "reprovado", f"matter.json ilegível: {e}")
         else:
-            rm = validate.validar_matter(mj, idx if idx else None)
+            rm = validate.validar_matter(mj, idx if extracoes else None)
             if rm.erros:
                 g.add("G11_conflitos_de_interesse", "resultado da checagem de conflito registrado", "reprovado",
                       "matter.json inválido: " + _resumo_erros(rm))
@@ -368,7 +369,7 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         for c in cl:
             for s in c.get("sources", []) if isinstance(c, dict) else []:
                 if (c.get("status") == "supported" and s.get("access") == "lida" and s.get("origin") == "oficial"
-                        and s.get("url") and s.get("document_id") in idx):
+                        and s.get("url") and isinstance(s.get("document_id"), str) and s["document_id"] in idx):
                     cand.append((0 if c.get("central") is True else 1, str(c.get("id")), s))
         cand.sort(key=lambda x: (x[0], x[1]))
         mudou, falhou, iguais = [], [], 0
@@ -502,10 +503,14 @@ def status(qc_path, aprovacao_path=None) -> dict:
     alt, aus = _recalcular({"artefatos": ap["artefatos"]}, qcp.parent)
     if _sha(qcp) != ap["qc_sha256"]:
         alt.append(qcp.name)
-    out.update(alterados=alt, ausentes=aus, revisor=ap["revisor"]["nome"], registrado_em=ap["registrado_em"])
-    out["revisao_humana"] = "invalidada" if (alt or aus) else ap["decisao"]
-    out["liberado_para_uso"] = (qc["estado_tecnico"] == "revisao_pronta" and not (alt0 or aus0)
-                                and (out["revisao_humana"] == "aprovada" or not obrig))
+    # A aprovação antiga não pode apagar falhas encontradas no pacote atual.
+    out.update(alterados=list(dict.fromkeys(alt0 + alt)), ausentes=list(dict.fromkeys(aus0 + aus)),
+               revisor=ap["revisor"]["nome"], registrado_em=ap["registrado_em"])
+    integro = not (out["alterados"] or out["ausentes"])
+    out["revisao_humana"] = ap["decisao"] if integro else "invalidada"
+    # A dispensa vale sem decisão registrada; nunca supera reprovação ou invalidação.
+    out["liberado_para_uso"] = (qc["estado_tecnico"] == "revisao_pronta" and integro
+                                and out["revisao_humana"] == "aprovada")
     return out
 
 

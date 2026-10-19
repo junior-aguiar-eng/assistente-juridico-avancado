@@ -25,11 +25,11 @@ def _cli(script, *args, cwd):
 
 
 @pytest.fixture
-def caso(tmp_path):
-    """Cópia do caso com extração refeita por caminhos relativos, como em um caso de verdade."""
+def caso(tmp_path, claims_stj_reconferiveis):
+    """Subconjunto reconferível para testar auditoria; não libera o caso histórico completo."""
     pasta = tmp_path / "caso"
     shutil.copytree(VERIF / "fontes", pasta / "fontes")
-    shutil.copy(VERIF / "claims.json", pasta / "claims.json")
+    (pasta / "claims.json").write_text(json.dumps(claims_stj_reconferiveis), encoding="utf-8")
     shutil.copy(MAPA / "facts.json", pasta / "facts.json")
     cod, _ = _cli("extract.py", "fontes/stj_inteiro_teor.pdf", "fontes/cc_compilado.md", "--no-cache",
                   "--saida", "extracao.json", cwd=pasta)
@@ -47,12 +47,12 @@ def res(qc):
 
 
 # ------------------------------------------------------------------ checagem técnica
-def test_caso_de_verificacao_fica_pronto_para_revisao_com_pendencias(monkeypatch):
+def test_caso_historico_bloqueado_ate_recuperar_fontes_secundarias(monkeypatch):
     monkeypatch.chdir(RAIZ)
     qc = auditar.auditar(None, str(VERIF / "claims.json"), [str(VERIF / "extracao.json")], base=VERIF)
-    assert qc["estado_tecnico"] == "revisao_pronta"
+    assert qc["estado_tecnico"] == "bloqueado"
     assert res(qc) == {
-        "G00_extracao_presente": "aprovado", "G01_schema_facts": "nao_aplicavel", "G02_schema_claims": "aprovado", "G03_cobertura_leitura": "aprovado",
+        "G00_extracao_presente": "aprovado", "G01_schema_facts": "nao_aplicavel", "G02_schema_claims": "reprovado", "G03_cobertura_leitura": "aprovado",
         "G04_originais_intactos": "aprovado", "G05_fontes_lidas_conferem": "aprovado",
         "G06_teses_centrais": "aprovado", "G07_proposicoes_refutadas": "alerta", "G08_avisos_do_validador": "aprovado",
         "G10_aviso_no_relatorio": "nao_aplicavel", "G11_conflitos_de_interesse": "nao_aplicavel",
@@ -61,6 +61,10 @@ def test_caso_de_verificacao_fica_pronto_para_revisao_com_pendencias(monkeypatch
         ("c002", "estado unsupported"), ("c003", "estado unverified"), ("c005", "estado partial"),
         ("c002", "a fonte oficial lida contradiz a proposição: levar ao advogado antes de seguir")}
     assert qc["revisao_humana"] == {"estado": "pendente"}
+    g02 = next(g for g in qc["gates"] if g["id"] == "G02_schema_claims")
+    assert "$.claims[0].sources[1].document_id" in g02["detalhe"]
+    assert "$.claims[4].sources[0].document_id" in g02["detalhe"]
+    assert qc["faixa"] == "nao_entregar"
     assert "não é aprovação" in qc["aviso"]
 
 

@@ -196,7 +196,7 @@ def _conferir_trecho(r, caminho, ref, locator, excerpt, idx, kind=None):
 
     kind: 'documentado', 'alegacao' (fatos), 'claim' (a proposição decide o aviso) ou None."""
     did = ref.get("document_id")
-    if idx is None or not did:
+    if idx is None or not isinstance(did, str) or not did.strip():
         return
     doc = idx.get(did)
     if doc is None:
@@ -232,7 +232,8 @@ def _conferir_trecho(r, caminho, ref, locator, excerpt, idx, kind=None):
 def _so_em_citacao(idx, s):
     """True se o pinpoint da fonte só existe em passagem transcrita; None se não dá para saber."""
     pin = s.get("pinpoint") or {}
-    if idx is None or s.get("document_id") not in (idx or {}) or not isinstance(pin.get("excerpt"), str):
+    if (idx is None or not isinstance(s.get("document_id"), str)
+            or s["document_id"] not in idx or not isinstance(pin.get("excerpt"), str)):
         return None
     ach = _blocos_do_trecho(idx[s["document_id"]], s.get("block_id"), pin["excerpt"])
     return bool(ach) and all(b.get("is_quote") for b in ach) if ach else None
@@ -522,6 +523,7 @@ def _validar_fontes(r, cl, c, idx):
         _enum(r, s, "obtained_via", p, OBTIDO, obrigatorio=False)
         acesso = _enum(r, s, "access", p, ACESSOS)
         if acesso == "lida":
+            did = _texto(r, s, "document_id", p)
             if not (isinstance(s.get("url"), str) and s["url"].strip()) and not (
                     isinstance(s.get("local_file"), str) and s["local_file"].strip()):
                 r.erro("campo_obrigatorio", f"{p}.url", "fonte lida exige 'url' ou 'local_file'")
@@ -530,8 +532,8 @@ def _validar_fontes(r, cl, c, idx):
             if not isinstance(s.get("content_hash"), str) or not _HASH.match(s["content_hash"]):
                 r.erro("hash_invalido", f"{p}.content_hash", "fonte lida exige sha256 em 64 caracteres hexadecimais minúsculos")
             _enum(r, s, "text_scope", p, ESCOPOS_TEXTO)
-            if s.get("text_scope") == "inteiro_teor" and idx and s.get("document_id") in idx:
-                d = idx[s["document_id"]]
+            if s.get("text_scope") == "inteiro_teor" and idx is not None and did in idx:
+                d = idx[did]
                 if d.get("media_type") == "application/pdf" and not any(b.get("section") in SECOES_NARRATIVAS for b in d["blocks"]):
                     r.erro("inteiro_teor_sem_voto", f"{p}.text_scope",
                            "o documento extraído não tem relatório, voto ou decisão: é só ementa ou parte do acórdão, não inteiro teor")
@@ -556,7 +558,7 @@ def _validar_fontes(r, cl, c, idx):
 
 
 def _conferir_hash(r, p, s, idx):
-    if idx is None or not s.get("document_id") or s["document_id"] not in idx:
+    if idx is None or not isinstance(s.get("document_id"), str) or s["document_id"] not in idx:
         return
     d = idx[s["document_id"]]
     aceitos = {h for h in (d.get("sha256"), d.get("text_sha256")) if h}

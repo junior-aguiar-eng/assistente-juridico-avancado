@@ -15,6 +15,7 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -144,6 +145,25 @@ def _registrar(registro: Path | None, entrada: dict):
     registro.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def _salvar_versao(alvo: Path, dados: bytes) -> Path:
+    """Reutiliza bytes idênticos ou cria outro arquivo; nunca substitui um existente."""
+    sufixo = _sha_bytes(dados)[:8]
+    tentativa = 0
+    while True:
+        candidato = alvo if tentativa == 0 else alvo.with_name(
+            f"{alvo.stem}-{sufixo}{'-' + str(tentativa) if tentativa > 1 else ''}{alvo.suffix}")
+        try:
+            arq = candidato.open("xb")
+        except FileExistsError:
+            if candidato.is_file() and candidato.read_bytes() == dados:
+                return candidato
+            tentativa += 1
+        else:
+            with arq:
+                arq.write(dados)
+            return candidato
+
+
 def baixar(url: str, destino: Path, registro: Path | None = None, nome: str | None = None,
            fetch_oficial: Path | None = None, exigir: str | None = None) -> dict:
     """exigir='pdf': a resposta tem de ser PDF de verdade. Vale por padrão para URL de inteiro teor do STJ,
@@ -173,12 +193,18 @@ def baixar(url: str, destino: Path, registro: Path | None = None, nome: str | No
         destino.mkdir(parents=True, exist_ok=True)
         alvo = destino / (_nome_arquivo(url, nome).rsplit(".", 1)[0] + ".md")
         try:
-            r = subprocess.run([sys.executable, str(script), url, str(alvo)], capture_output=True, timeout=180)
+            # O conversor só escreve na área temporária: falha ou timeout não toca em versões anteriores.
+            with tempfile.TemporaryDirectory(prefix=".planalto-", dir=destino) as tmp:
+                convertido = Path(tmp) / alvo.name
+                r = subprocess.run([sys.executable, str(script), url, str(convertido)], capture_output=True, timeout=180)
+                if r.returncode != 0 or not convertido.is_file():
+                    return falha("fetch_oficial.py falhou: " + (r.stdout + r.stderr).decode("utf-8", "replace")[-200:].strip())
+                dados = convertido.read_bytes()
+            alvo = _salvar_versao(alvo, dados)
         except subprocess.TimeoutExpired:
             return falha("fetch_oficial.py excedeu 180 s")
-        if r.returncode != 0 or not alvo.is_file():
-            return falha("fetch_oficial.py falhou: " + (r.stdout + r.stderr).decode("utf-8", "replace")[-200:].strip())
-        dados = alvo.read_bytes()
+        except OSError as e:
+            return falha(f"fetch_oficial.py ou gravação da versão falhou: {type(e).__name__}: {e}")
         tachados = dados.count(b"~~") // 2
         if tachados:
             base["avisos"].append(f"{tachados} trecho(s) tachado(s) (~~): revogado ou substituído; não é fonte de regra")
