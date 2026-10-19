@@ -1,6 +1,6 @@
 """Revisão mecânica de SKILL.md contra governance/skill-review-checklist.md.
 
-  python scripts/revisar_skill.py skills/*/SKILL.md [--hoje AAAA-MM-DD]
+  python scripts/revisar_skill.py "skills/*/SKILL.md" [--hoje AAAA-MM-DD]
 
 Confere estrutura, atualidade do conteúdo de regra em references/, sobreposição de gatilhos e a
 superfície de confiança (hooks, ferramentas, URLs, texto oculto, frases de injeção, execução de código,
@@ -15,6 +15,9 @@ import re
 import sys
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # também com python -P
+from cli_caminhos import expandir_argumentos  # noqa: E402
 
 RECOMENDADOS = ("version", "last_reviewed", "owner")
 CHAVES_DE_SUPERFICIE = ("hooks", "allowed-tools", "tools", "mcp", "mcpServers")
@@ -197,16 +200,14 @@ def casar_pedido(pedido: str, caminhos) -> list[dict]:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("skills", nargs="+")
+    ap.add_argument("skills", nargs="+", help="arquivos ou padrões glob (entre aspas no shell)")
     ap.add_argument("--hoje")
     a = ap.parse_args(argv)
-    import glob
-
-    caminhos = []
-    for s in a.skills:  # o PowerShell e o cmd não expandem curingas: expande aqui
-        caminhos += sorted(glob.glob(s)) if any(c in s for c in "*?[") else [s]
-    a.skills = caminhos or a.skills
-    r = revisar_todas(a.skills, date.fromisoformat(a.hoje) if a.hoje else None)
+    caminhos = expandir_argumentos(a.skills)
+    for caminho in caminhos:
+        if not Path(caminho).is_file():
+            ap.error(f"entrada não corresponde a arquivo: {caminho}")
+    r = revisar_todas(caminhos, date.fromisoformat(a.hoje) if a.hoje else None)
     sys.stdout.buffer.write((json.dumps(r, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
     return 1 if r["resumo"]["PREOCUPACAO_MATERIAL"] else 0
 

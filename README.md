@@ -70,14 +70,19 @@ git clone https://github.com/junior-aguiar-eng/assistente-juridico-avancado.git
 cd assistente-juridico-avancado
 pip install -r requirements-dev.txt
 python -m pytest                                      # JURIS_REDE=1 liga o teste que baixa um acórdão do STJ
-python scripts/revisar_skill.py skills/*/SKILL.md     # revisão mecânica das skills
+python scripts/revisar_skill.py "skills/*/SKILL.md"   # revisão mecânica das skills
 ```
+
+`revisar_skill.py` e `extract.py` expandem os curingas no próprio Python. Coloque os padrões entre aspas,
+como `"skills/br-*/SKILL.md"` ou `"meu-caso/input/*"`, para usar o mesmo comando no PowerShell e no Bash.
+Caminhos com espaços também precisam de aspas. Um caminho literal existente com colchetes é tratado como arquivo.
+O revisor recusa entradas sem arquivo correspondente; o extrator registra essas entradas como `failed` e sai com código 2.
 
 Exemplo, do documento ao fato validado:
 
 ```bash
 python scripts/triagem.py init meu-caso --id caso-001
-python scripts/extract.py meu-caso/input/* --saida meu-caso/derived/extracao.json
+python scripts/extract.py "meu-caso/input/*" --saida meu-caso/derived/extracao.json
 python scripts/validate.py meu-caso/derived/facts.json --extracoes meu-caso/derived/extracao.json
 python scripts/auditar.py auditar --help
 ```
@@ -100,7 +105,7 @@ python scripts/auditar.py auditar --help
 | `redline_docx.py ORIG.docx EDICOES.json SAIDA.docx` | alterações rastreadas; o original não muda |
 | `preencher.py lint\|gerar` | preenche `{{campo}}` com seis estados de procedência |
 | `regras.py gerar\|validar\|listar` | pacotes `rules/br` (serviços/SaaS e LGPD, com texto literal do Planalto), todos inativos |
-| `revisar_skill.py skills/*/SKILL.md` | estrutura, atualidade e superfície de confiança das skills |
+| `revisar_skill.py "skills/*/SKILL.md"` | estrutura, atualidade e superfície de confiança das skills |
 
 </details>
 

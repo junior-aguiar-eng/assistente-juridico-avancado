@@ -34,6 +34,7 @@ def idx(doc):
 
 def fonte(**kw):
     base = {"source_id": "s1", "origin": "oficial", "access": "lida", "url": "https://x.gov.br/a",
+            "document_id": "doc-teste",
             "retrieved_at": "2026-10-17", "content_hash": "a" * 64, "text_scope": "texto_legal",
             "pinpoint": {"locator": "art. 1º", "excerpt": "texto da fonte lida pelo revisor"}}
     base.update(kw)

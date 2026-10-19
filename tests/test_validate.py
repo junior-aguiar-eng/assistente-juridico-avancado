@@ -71,6 +71,7 @@ def claims(doc):
 
 def fonte(**kw):
     base = {"source_id": "s1", "origin": "oficial", "access": "lida", "url": "https://x.gov.br/a",
+            "document_id": "doc-teste",
             "retrieved_at": "2026-10-17", "content_hash": "a" * 64, "text_scope": "texto_legal",
             "pinpoint": {"locator": "art. 1º", "excerpt": "texto da fonte lida pelo revisor"}}
     base.update(kw)
@@ -263,7 +264,7 @@ def test_claim_tese_central_parcial_gera_aviso():
 def test_claim_fonte_lida_exige_url_data_hash_escopo_e_pinpoint():
     c = claim(sources=[{"source_id": "s1", "origin": "oficial", "access": "lida"}])
     cods = [(e["caminho"].rsplit(".", 1)[-1]) for e in validate.validar_claims(c).erros]
-    assert {"url", "retrieved_at", "content_hash", "text_scope", "pinpoint"} <= set(cods)
+    assert {"document_id", "url", "retrieved_at", "content_hash", "text_scope", "pinpoint"} <= set(cods)
     c = claim(sources=[fonte(content_hash="XYZ", retrieved_at="ontem")])
     assert set(codigos(validate.validar_claims(c))) == {"hash_invalido", "data_invalida"}
 

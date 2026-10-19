@@ -22,10 +22,11 @@ URL_CC = "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm"
 
 
 @pytest.fixture(scope="module")
-def base(tmp_path_factory):
+def base(tmp_path_factory, claims_stj_reconferiveis):
     pasta = tmp_path_factory.mktemp("caso")
     shutil.copytree(VERIF / "fontes", pasta / "fontes")
-    shutil.copy(VERIF / "claims.json", pasta / "claims.json")
+    # Os fluxos positivos usam um subconjunto; o caso histórico completo segue bloqueado.
+    (pasta / "claims.json").write_text(json.dumps(claims_stj_reconferiveis), encoding="utf-8")
     shutil.copy(FACTS, pasta / "facts.json")
     shutil.copy(MATTER, pasta / "matter.json")
     r = subprocess.run([sys.executable, "-P", str(RAIZ / "scripts" / "extract.py"), "fontes/stj_inteiro_teor.pdf",

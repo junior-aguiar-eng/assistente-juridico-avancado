@@ -17,4 +17,4 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-por
       - run: pip install -r requirements.txt -r requirements-dev.txt
       - run: python -m pytest -q
-      - run: python scripts/revisar_skill.py skills/br-*/SKILL.md
+      - run: python scripts/revisar_skill.py "skills/br-*/SKILL.md"

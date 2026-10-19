@@ -37,9 +37,13 @@ def claims():
     return json.loads((CASO / "claims.json").read_text(encoding="utf-8"))
 
 
-def test_claims_do_caso_real_validos_contra_as_fontes_lidas(claims, idx):
+def test_claims_historicos_bloqueados_por_fontes_sem_document_id(claims, idx):
     r = validate.validar_claims(claims, idx)
-    assert r.erros == [] and r.avisos == []
+    assert [(e["codigo"], e["caminho"]) for e in r.erros] == [
+        ("campo_obrigatorio", "$.claims[0].sources[1].document_id"),
+        ("campo_obrigatorio", "$.claims[4].sources[0].document_id"),
+    ]
+    assert r.avisos == []
     estados = {c["id"]: c["status"] for c in claims["claims"]}
     assert estados == {"c001": "supported", "c002": "unsupported", "c003": "unverified",
                        "c004": "supported", "c005": "partial"}
@@ -52,8 +56,8 @@ def test_mesmo_acordao_baixado_duas_vezes_tem_bytes_diferentes_e_texto_igual(pdf
     assert [b["text"] for b in antigo["blocks"]] == [b["text"] for b in pdf["blocks"]]
 
 
-def test_hash_do_texto_serve_de_identidade_quando_o_arquivo_difere(claims, idx, pdf):
-    c = copy.deepcopy(claims)
+def test_hash_do_texto_serve_de_identidade_quando_o_arquivo_difere(claims_stj_reconferiveis, idx, pdf):
+    c = copy.deepcopy(claims_stj_reconferiveis)
     c["claims"][0]["sources"][0]["content_hash"] = pdf["text_sha256"]
     assert validate.validar_claims(c, idx).erros == []
     c["claims"][0]["sources"][0]["content_hash"] = extract.extrair(PDF_ANTIGO)[0]["sha256"]
@@ -67,8 +71,8 @@ def test_ementa_em_itens_inteiros_nas_duas_copias_do_pdf(pdf):
     assert any(b["locator"] == "p.1-2" for b in itens)  # item 2 atravessa a quebra de página
 
 
-def test_tese_falsa_nao_passa_como_apoiada(claims, idx):
-    c = copy.deepcopy(claims)
+def test_tese_falsa_nao_passa_como_apoiada(claims_stj_reconferiveis, idx):
+    c = copy.deepcopy(claims_stj_reconferiveis)
     c["claims"][0]["sources"][0]["pinpoint"]["excerpt"] = "se submete ao prazo decenal do art. 205 do CC/2002"
     erros = validate.validar_claims(c, idx).erros
     assert [e["codigo"] for e in erros] == ["trecho_nao_encontrado"]
