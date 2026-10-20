@@ -65,6 +65,30 @@ def _post(url: str, chave: str, corpo: dict, timeout: int = 40):
         return r.status, json.loads(r.read().decode("utf-8"))
 
 
+def _resultados(status: int, obj: dict, numero: str) -> list[dict]:
+    """Só normaliza buscas válidas; falha/timeout parcial nunca equivale a ausência."""
+    if status != 200 or not isinstance(obj, dict) or "error" in obj:
+        raise ValueError("resposta DataJud inválida: esperado objeto de busca HTTP 200")
+    shards = obj.get("_shards", {})
+    if obj.get("timed_out", False) is not False or not isinstance(shards, dict) or shards.get("failed", 0) != 0:
+        raise ValueError("busca DataJud incompleta: timeout ou falha de shards; não conclua ausência")
+    envelope = obj.get("hits")
+    if not isinstance(envelope, dict) or not isinstance(envelope.get("hits"), list):
+        raise ValueError("resposta DataJud inválida: lista hits.hits ausente ou malformada")
+    saida = []
+    for h in envelope["hits"]:
+        s = h.get("_source") if isinstance(h, dict) else None
+        if not isinstance(s, dict) or not isinstance(s.get("numeroProcesso"), str) \
+                or re.sub(r"\D", "", s["numeroProcesso"]) != re.sub(r"\D", "", numero):
+            raise ValueError("resposta DataJud inválida: resultado sem identificação do processo consultado")
+        saida.append({"numeroProcesso": s.get("numeroProcesso"), "classe": (s.get("classe") or {}).get("nome"),
+                      "tribunal": s.get("tribunal"), "grau": s.get("grau"), "orgaoJulgador": (s.get("orgaoJulgador") or {}).get("nome"),
+                      "dataAjuizamento": s.get("dataAjuizamento"), "assuntos": [a.get("nome") for a in s.get("assuntos", []) if isinstance(a, dict)],
+                      "nivelSigilo": s.get("nivelSigilo"), "movimentos": len(s.get("movimentos", [])),
+                      "dataHoraUltimaAtualizacao": s.get("dataHoraUltimaAtualizacao")})
+    return saida
+
+
 def consultar(numero: str, chave: str | None = None) -> dict:
     n = cnj.parse(numero)
     if n is None:
@@ -79,23 +103,15 @@ def consultar(numero: str, chave: str | None = None) -> dict:
     try:
         status, obj = _post(f"{BASE}/api_publica_{idx}/_search", chave or chave_publica(),
                             {"query": {"match": {"numeroProcesso": re.sub(r"\D", "", n.formatado)}}, "size": 5})
+        saida = _resultados(status, obj, n.formatado)
     except urllib.error.HTTPError as e:
         return {"status": "erro_http", "numero": n.formatado, "http": e.code,
                 "motivo": "401 costuma indicar chave trocada pelo CNJ: confira a wiki" if e.code == 401 else str(e)}
     except Exception as e:  # noqa: BLE001 - relato exato da falha
         return {"status": "erro_de_acesso", "numero": n.formatado, "motivo": f"{type(e).__name__}: {e}"}
-    hits = obj.get("hits", {}).get("hits", [])
-    if not hits:
+    if not saida:
         return {"status": "nao_encontrado", "numero": n.formatado, "indice": idx,
                 "aviso": "ausência no DataJud não prova que o processo não existe (sigilo, atraso de envio, outro tribunal)"}
-    saida = []
-    for h in hits:
-        s = h.get("_source", {})
-        saida.append({"numeroProcesso": s.get("numeroProcesso"), "classe": (s.get("classe") or {}).get("nome"),
-                      "tribunal": s.get("tribunal"), "grau": s.get("grau"), "orgaoJulgador": (s.get("orgaoJulgador") or {}).get("nome"),
-                      "dataAjuizamento": s.get("dataAjuizamento"), "assuntos": [a.get("nome") for a in s.get("assuntos", []) if isinstance(a, dict)],
-                      "nivelSigilo": s.get("nivelSigilo"), "movimentos": len(s.get("movimentos", [])),
-                      "dataHoraUltimaAtualizacao": s.get("dataHoraUltimaAtualizacao")})
     return {"status": "encontrado", "numero": n.formatado, "indice": idx, "resultados": saida,
             "aviso": "metadados do DataJud: não é inteiro teor nem fonte de tese"}
 

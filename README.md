@@ -7,7 +7,7 @@
 *Toda afirmação aponta para uma fonte efetivamente lida, ou aparece marcada como não verificada.*
 
 ![Python](https://img.shields.io/badge/python-3.12%2B-3776AB?logo=python&logoColor=white)
-![Testes](https://img.shields.io/badge/testes-463%20passam%20%C2%B7%204%20opcionais-2e7d32)
+![Testes](https://img.shields.io/badge/testes-624%20passam%20%C2%B7%203%20ignorados-2e7d32)
 ![Revisão jurídica](https://img.shields.io/badge/revis%C3%A3o%20jur%C3%ADdica-revisor%20designado%2C%20n%C3%A3o%20realizada-f9a825)
 ![Situação](https://img.shields.io/badge/situa%C3%A7%C3%A3o-pr%C3%A9--lan%C3%A7amento-f9a825)
 
@@ -69,7 +69,7 @@ Dois fluxos principais: **mapear um caso** (triagem → mapear-autos → cronolo
 git clone https://github.com/junior-aguiar-eng/assistente-juridico-avancado.git
 cd assistente-juridico-avancado
 pip install -r requirements-dev.txt
-python -m pytest                                      # JURIS_REDE=1 liga o teste que baixa um acórdão do STJ
+python -m pytest                                    # JURIS_REDE=1 liga os testes reais STJ/DataJud
 python scripts/revisar_skill.py "skills/*/SKILL.md"   # revisão mecânica das skills
 ```
 
@@ -119,11 +119,13 @@ Documento é dado, nunca instrução. A extração recusa zip com razão de comp
 |---|---|---|
 | 0 a 3 | base, extração, validação, auditoria, triagem, cronologia, pesquisa | ✅ concluídas e revisadas criticamente |
 | 4 | contrato e minuta | 🟡 parte mecânica pronta; **aguarda revisor jurídico** para ativar as regras |
-| 5 | liberação com 12 casos de regressão ([manifesto](tests/casos/regressao/manifesto.json)) | 🟡 9 rodando; 3 aguardam documento real (STF, TJ, escaneado real) em `tests/casos/regressao/pendentes/` |
+| 5 | liberação com 12 casos de regressão ([manifesto](tests/casos/regressao/manifesto.json)) | 🟡 12 casos com insumos e gabaritos mecânicos; R07/TJMG e R10/escaneado real incluídos; revisão jurídica dos gabaritos pendente. R10 exige Tesseract com idioma `por` |
 
-**O que foi testado com material real:** quatro acórdãos do STJ (Corte Especial e Sexta Turma, com a ementa dos dados abertos como gabarito objetivo) e o Código Civil compilado do Planalto. Contratos, petições e planilhas só têm casos sintéticos. O arquivo de CI (`.github/workflows/ci.yml`) existe mas ainda não foi executado; o desenvolvimento e os testes foram feitos em Windows com Python 3.14.
+**O que foi testado com material real:** quatro acórdãos do STJ (Corte Especial e Sexta Turma, com a ementa dos dados abertos como gabarito objetivo), o STF no caso R06 e o Código Civil compilado do Planalto. Contratos, petições e planilhas só têm casos sintéticos. O [CI do merge do PR #1](https://github.com/junior-aguiar-eng/assistente-juridico-avancado/actions/runs/39311926077) passou em Ubuntu e Windows com Python 3.12 e 3.13; isso não substitui revisão jurídica ou testes de fontes reais na rede.
 
-**Depende de pessoas:** a revisão do revisor jurídico designado (ativar regras, ler as skills), fornecer documentos reais com gabarito, documentos reais para os casos R07 e R10 (TJ e escaneado real), e uma segunda avaliação das skills com documentos reais. A política de confidencialidade é escolha livre do usuário (padrão: consultas externas permitidas).
+**Depende de pessoas:** a revisão do revisor jurídico designado (ativar regras, ler as skills e conferir os gabaritos), ampliar a validação com documentos reais autorizados e realizar uma segunda avaliação das skills com documentos reais. R07 e R10 já têm PDFs públicos, proveniência e verificação mecânica; isso não encerra a revisão jurídica nem a avaliação com modelo. A política de confidencialidade é escolha livre do usuário (padrão: consultas externas permitidas).
+
+Os resultados e limites de R07/R10 estão no [registro de validação de 19/10/2026](docs/validacao-r07-r10-datajud-2026-10-19.md). A [revisão técnica de 20/10/2026](docs/revisao-tecnica-2026-10-20.md) acrescenta proteção para ementa aninhada com título isolado e respostas DataJud inválidas/parciais. O DataJud encontrou o processo esperado em uma consulta real anterior ao patch, mas as duas repetições após a mudança expiraram; o novo leitor está validado offline, sem sucesso real posterior demonstrado. Falha externa continua explícita, sem significar processo ausente.
 
 ## Estrutura
 

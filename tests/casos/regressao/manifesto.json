@@ -1,5 +1,5 @@
 {
-  "descricao": "Fase 5: 12 casos de regressão da extração. 'pronto' roda sempre; 'aguardando' espera um documento real que só o usuário pode fornecer. Entregue o arquivo em tests/casos/regressao/pendentes/ com o nome indicado: enquanto não houver gabarito, só valem as invariantes gerais (não falhar, todo bloco com localizador, seção e status honesto).",
+  "descricao": "Fase 5: 12 casos de regressão da extração. Casos públicos R07/R10 têm proveniência e gabarito mecânico de extração, sem revisão jurídica. O caso R10 exige Tesseract com idioma por; ausência da ferramenta ou idioma é informada como teste ignorado.",
   "casos": [
     {
       "id": "R01",
@@ -93,14 +93,15 @@
       "arquivo": "tests/casos/regressao/R06_stf_are_1563128_rg.pdf",
       "origem": "https://redir.stf.jus.br/paginadorpub/paginador.jsp?docTP=TP&docID=801173345, baixado em 2026-10-18 pelo navegador do app (sessão comum, sem contornar desafio)",
       "esperado": {
-        "status": "ok",
+        "status": "partial",
         "paginas": 11,
         "secoes": [
           "ementa",
           "decisao"
         ],
         "avisos": [
-          "glifos_duplicados_removidos"
+          "glifos_duplicados_removidos",
+          "secao_aninhada_ambigua"
         ],
         "contem": [
           "Supremo Tribunal Federal",
@@ -115,12 +116,28 @@
     },
     {
       "id": "R07",
-      "titulo": "Tribunal de Justiça estadual, acórdão ou sentença em PDF",
-      "tribunal": "TJ",
+      "titulo": "TJMG, Agravo de Instrumento-Cv 1.0000.25.176803-2/002, títulos com letras espaçadas",
+      "tribunal": "TJMG",
       "tipo": "acordao_pdf",
-      "situacao": "aguardando",
-      "arquivo_esperado": "tests/casos/regressao/pendentes/R07_tj_decisao.pdf",
-      "o_que_falta": "PDF de decisão pública de um TJ (formato próprio do e-SAJ ou do PJe)"
+      "situacao": "pronto",
+      "arquivo": "tests/casos/regressao/R07_tjmg_ai_176803.pdf",
+      "proveniencia": "tests/casos/regressao/proveniencia-r07-r10.json",
+      "esperado": {
+        "status": "partial",
+        "paginas": 12,
+        "secoes": [
+          "ementa",
+          "acordao",
+          "voto"
+        ],
+        "contem": [
+          "DAR PROVIMENTO AO RECURSO",
+          "Trata-se de agravo de instrumento"
+        ],
+        "avisos": [
+          "secao_aninhada_ambigua"
+        ]
+      }
     },
     {
       "id": "R08",
@@ -167,12 +184,27 @@
     },
     {
       "id": "R10",
-      "titulo": "Documento escaneado real (carta, procuração ou petição)",
+      "titulo": "Ofício público 106/2022 PGM de Picos, imagem real sem camada textual",
       "tribunal": null,
       "tipo": "escaneado_pdf",
-      "situacao": "aguardando",
-      "arquivo_esperado": "tests/casos/regressao/pendentes/R10_escaneado_real.pdf",
-      "o_que_falta": "PDF digitalizado real, sem dados de cliente (documento seu ou de domínio público); com o idioma 'por' no Tesseract o OCR fica utilizável"
+      "situacao": "pronto",
+      "arquivo": "tests/casos/regressao/R10_picos_oficio_106_2022.pdf",
+      "proveniencia": "tests/casos/regressao/proveniencia-r07-r10.json",
+      "requer": "tesseract",
+      "idioma_ocr": "por",
+      "esperado": {
+        "status": "partial",
+        "paginas": 1,
+        "avisos": [
+          "ocr_aplicado"
+        ],
+        "tag": "ocr",
+        "contem": [
+          "106/2022 PGM",
+          "Centro Especializado",
+          "Ministério da Saúde"
+        ]
+      }
     },
     {
       "id": "R11",

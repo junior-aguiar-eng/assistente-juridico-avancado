@@ -47,3 +47,9 @@ Repetir com documentos reais (STF, TJ, escaneado real: casos R06, R07 e R10 do m
 ## Atualização: política de consultas externas
 
 Depois desta avaliação o titular decidiu que a política de confidencialidade é **livre escolha do usuário, no próprio ambiente e na própria conta de IA**. O pacote deixou de exigir `consultas_externas` (padrão `permitidas`) e de mandar "parar e perguntar"; continua respeitando a política quando o usuário a registra restritiva. Os achados sobre "busca aberta na web" valem, portanto, só para casos em que o usuário escolheu `proibidas` ou `somente_termos_genericos`.
+
+## Atualização técnica em 20/10/2026
+
+A tabela de achados não corrigidos acima é histórica. A conferência do código atual mostra duas ressalvas já tratadas mecanicamente: `validate.py` emite `documentado_em_narrativa`/`documentado_em_citacao` quando a extração permite identificar esses contextos; e a CX-01 exige vínculo documental para fontes lidas e confere trecho/hash contra a extração fornecida. O hash não comprova correção jurídica nem autentica o original, e o aviso de narrativa não determina sozinho a natureza probatória do fato.
+
+R06/R07/R10 já têm documentos públicos e regressões de extração; isso fornece insumos para a próxima avaliação, sem constituir uma nova execução das oito skills com modelo. Permanecem a avaliação com documentos reais, a revisão jurídica humana e as limitações de julgamento semântico/autenticidade da aprovação. Contratos/minutas não foram modificados nesta revisão técnica.

@@ -112,6 +112,8 @@ def conferir(doc, esp):
 def test_caso_pronto(caso, tmp_path):
     if caso.get("requer") == "tesseract" and ocr.localizar_tesseract() is None:
         pytest.skip("Tesseract não instalado")
+    if caso.get("idioma_ocr") and caso["idioma_ocr"] not in ocr.idiomas(ocr.localizar_tesseract()):
+        pytest.skip(f"caso exige idioma OCR {caso['idioma_ocr']}")
     if caso["tipo"] == "download_recusado":
         reg = json.loads((RAIZ / caso["registro"]).read_text(encoding="utf-8"))["fontes"]
         achados = [x for x in reg if caso["numero_registro"] in x["url"]]

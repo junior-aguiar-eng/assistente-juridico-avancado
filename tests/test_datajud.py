@@ -72,9 +72,61 @@ def test_401_aponta_para_a_troca_de_chave(monkeypatch):
     assert r["status"] == "erro_http" and r["http"] == 401 and "wiki" in r["motivo"]
 
 
+@pytest.mark.parametrize("obj", [None, [], {}, {"error": "falha remota"}, {"hits": None},
+                                 {"hits": {}}, {"hits": {"hits": None}}, {"hits": {"hits": {}}},
+                                 {"hits": {"hits": [None]}}, {"hits": {"hits": [{"_source": None}]}},
+                                 {"hits": {"hits": [{"_source": {}}]}},
+                                 {"hits": {"hits": [{"_source": {"numeroProcesso": "outro"}}]}}])
+def test_resposta_invalida_nao_vira_processo_ausente_ou_encontrado(monkeypatch, obj):
+    monkeypatch.setattr(datajud, "_post", lambda *a, **k: (200, obj))
+    res = datajud.consultar(VALIDO, chave="chave-sintetica")
+    assert res["status"] == "erro_de_acesso"
+    assert res["motivo"] and "resultados" not in res
+    assert "chave-sintetica" not in json.dumps(res)
+
+
+@pytest.mark.parametrize("sinal", [{"timed_out": True}, {"_shards": {"failed": 1}}])
+@pytest.mark.parametrize("hits", [[], [{"_source": {"numeroProcesso": "10002846720218260547"}}]])
+def test_busca_incompleta_nao_vira_resultado_conclusivo(monkeypatch, sinal, hits):
+    obj = {"hits": {"hits": hits}, **sinal}
+    monkeypatch.setattr(datajud, "_post", lambda *a, **k: (200, obj))
+    res = datajud.consultar(VALIDO, chave="chave-sintetica")
+    assert res["status"] == "erro_de_acesso" and "resultados" not in res
+
+
+def test_busca_valida_vazia_nao_confunde_zero_com_falha(monkeypatch):
+    obj = {"timed_out": False, "_shards": {"total": 1, "successful": 1, "failed": 0},
+           "hits": {"total": {"value": 0, "relation": "eq"}, "hits": []}}
+    monkeypatch.setattr(datajud, "_post", lambda *a, **k: (200, obj))
+    res = datajud.consultar(VALIDO, chave="chave-sintetica")
+    assert res["status"] == "nao_encontrado" and "não prova" in res["aviso"]
+
+
+def test_cli_resposta_invalida_sai_com_erro_e_json(monkeypatch, capsys):
+    monkeypatch.setattr(datajud, "chave_publica", lambda: "chave-sintetica")
+    monkeypatch.setattr(datajud, "_post", lambda *a, **k: (200, {}))
+    assert datajud.main(["consultar", VALIDO]) == 1
+    obj = json.loads(capsys.readouterr().out)
+    assert obj["status"] == "erro_de_acesso" and "resultados" not in obj
+
+
 def test_chave_vem_do_ambiente_antes_da_wiki(monkeypatch):
     monkeypatch.setenv("DATAJUD_API_KEY", " abc ")
     assert datajud.chave_publica() == "abc"
+
+
+@pytest.mark.parametrize("erro", [TimeoutError("The read operation timed out"),
+                                 urllib.error.URLError("timed out")])
+def test_timeout_de_transporte_e_falha_nunca_processo_ausente(monkeypatch, erro):
+    def falhar(*a, **k):
+        raise erro
+
+    monkeypatch.setattr(datajud, "_post", falhar)
+    res = datajud.consultar(VALIDO, chave="chave-sintetica")
+    assert res["status"] == "erro_de_acesso"
+    assert "timed out" in res["motivo"]
+    assert "resultados" not in res
+    assert "chave-sintetica" not in json.dumps(res)
 
 
 def test_chave_nunca_aparece_no_repositorio():
@@ -82,6 +134,19 @@ def test_chave_nunca_aparece_no_repositorio():
         assert ("cDZHYzlZ" + "a0Jad") not in arq.read_text(encoding="utf-8", errors="ignore"), arq
 
 
-@pytest.mark.skipif(not os.environ.get("JURIS_REDE"), reason="JURIS_REDE não definida")
+@pytest.mark.parametrize("valor", [None, "0", "", "false"])
+def test_rede_desligada_nao_consulta_datajud(monkeypatch, valor):
+    if valor is None:
+        monkeypatch.delenv("JURIS_REDE", raising=False)
+    else:
+        monkeypatch.setenv("JURIS_REDE", valor)
+    monkeypatch.setattr(datajud, "consultar", lambda *a, **k: pytest.fail("rede não autorizada"))
+    with pytest.raises(pytest.skip.Exception):
+        test_consulta_real_ao_tjsp()
+
+
 def test_consulta_real_ao_tjsp():
-    assert datajud.consultar(VALIDO)["status"] == "encontrado"
+    if os.environ.get("JURIS_REDE") != "1":
+        pytest.skip("teste de rede: defina JURIS_REDE=1")
+    res = datajud.consultar(VALIDO)
+    assert res["status"] == "encontrado", res
