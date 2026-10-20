@@ -154,6 +154,71 @@ def test_pdf_sem_texto_e_no_text(tmp_path):
     assert [a["pagina"] for a in doc["warnings"] if a["codigo"] == "pagina_sem_texto"] == [1, 2]
 
 
+def test_pdf_sem_paginas_falha_inclusive_na_cli(tmp_path):
+    from pypdf import PdfWriter
+
+    f = tmp_path / "sem_paginas.pdf"
+    PdfWriter().write(f)
+    doc, _ = extract.extrair(f)
+    assert doc["status"] == "failed"
+    assert doc["warnings"][0]["codigo"] == "erro_de_leitura"
+    cod, obj, _ = _cli(f, "--no-cache")
+    assert cod == 2 and obj["documents"][0]["status"] == "failed"
+
+
+@pytest.mark.parametrize("titulo, esperado", [("A C Ó R D Ã O", "acordao"), ("V O T O", "voto"),
+                                               ("R E L A T Ó R I O", "relatorio"),
+                                               ("RELATÓRIO E VOTO", "relatorio_e_voto")])
+def test_titulos_com_letras_espacadas_preservam_geometria(titulo, esperado):
+    assert extract._titulo(titulo, {"x0": 250, "x1": 350}, 600, 40) == esperado
+    assert extract._titulo(titulo, {"x0": 410, "x1": 550}, 600, 40) is None
+
+
+@pytest.mark.parametrize("texto", ["V O T O de acordo", "A C Ó R D Ã O citado", "A C A S O", "E M E N T A: texto"])
+def test_titulo_espacado_nao_transforma_frase_ou_palavra_desconhecida_em_secao(texto):
+    assert extract._titulo(texto, {"x0": 250, "x1": 350}, 600, 40) is None
+
+
+def test_ementa_inline_dentro_do_voto_nao_troca_a_secao_do_voto():
+    def linha(texto, topo):
+        return {"text": texto, "x0": 40, "x1": 400, "top": topo, "bottom": topo + 10}
+
+    paginas = [(600, 842, [linha("VOTO", 100), linha("O relator cita outro julgamento.", 125),
+                            linha("EMENTA: precedente transcrito, não é a ementa deste voto.", 150),
+                            linha("À luz dessas considerações, acolho o recurso.", 180)])]
+    blocos = extract._montar_blocos_pdf(paginas)
+    assert blocos and {b["section"] for b in blocos} == {"voto"}
+
+
+@pytest.mark.parametrize("titulo", ["EMENTA", "E M E N T A", "EMENTA: precedente citado."])
+@pytest.mark.parametrize("contexto", ["VOTO", "DECISAO"])
+def test_ementa_aninhada_isolada_preserva_contexto_texto_e_partial(tmp_path, titulo, contexto):
+    from test_extract_formatos import pdf_texto
+
+    f = tmp_path / "ementa_aninhada.pdf"
+    pdf_texto(f, [[(40, 700, contexto), (40, 675, "O relator transcreve outro julgado."),
+                   (40, 650, titulo), (40, 625, "Texto do precedente."),
+                   (40, 600, "Prossegue o julgamento do recurso.")]])
+    doc, _ = extract.extrair(f)
+    assert doc["status"] == "partial"
+    assert {b["section"] for b in doc["blocks"]} == {contexto.lower()}
+    assert any(a["codigo"] == "secao_aninhada_ambigua" and a["pagina"] == 1 for a in doc["warnings"])
+    assert titulo in " ".join(b["text"] for b in doc["blocks"])
+    assert all(b["locator"] == "p.1" for b in doc["blocks"])
+
+
+@pytest.mark.parametrize("titulo", ["EMENTA", "E M E N T A"])
+def test_ementa_principal_isolada_continua_reconhecida(tmp_path, titulo):
+    from test_extract_formatos import pdf_texto
+
+    f = tmp_path / "ementa_principal.pdf"
+    pdf_texto(f, [[(40, 700, titulo), (40, 675, "Texto da ementa principal.")]])
+    doc, _ = extract.extrair(f)
+    assert doc["status"] == "ok"
+    assert {b["section"] for b in doc["blocks"]} == {"ementa"}
+    assert not any(a["codigo"] == "secao_aninhada_ambigua" for a in doc["warnings"])
+
+
 def test_pdf_corrompido_e_truncado_nao_levantam_excecao(tmp_path):
     f = tmp_path / "corrompido.pdf"
     f.write_bytes(b"%PDF-1.4\n1 0 obj << /Type /Catalog >> endobj\n")

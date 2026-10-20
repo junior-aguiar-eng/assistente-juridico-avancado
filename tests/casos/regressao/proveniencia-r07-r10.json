@@ -1,0 +1,44 @@
+{
+  "documentos": [
+    {
+      "url": "https://www5.tjmg.jus.br/jurisprudencia/relatorioEspelhoAcordao.do?ano=25&codigoOrigem=0000&inteiroTeor=true&numero=176803&sequencial=002&sequencialAcordao=0&ttriCodigo=1",
+      "final_url": "https://www5.tjmg.jus.br/jurisprudencia/relatorioEspelhoAcordao.do?ano=25&codigoOrigem=0000&inteiroTeor=true&numero=176803&sequencial=002&sequencialAcordao=0&ttriCodigo=1",
+      "http": 200,
+      "bytes": 24994,
+      "retrieved_at": "2026-10-19T22:40:20.450541+00:00",
+      "sha256": "e47df36b255c5000c00d58a1f9cedb46c5ed30ddb70b21b44536f08d09aaf27c",
+      "id": "R07",
+      "arquivo": "tests/casos/regressao/R07_tjmg_ai_176803.pdf",
+      "nota": "Relatório oficial de inteiro teor do TJMG, sem afirmar formato e-SAJ/PJe. Conferência visual das 12 páginas e das fronteiras ementa/acórdão/voto; não é gabarito de mérito. Títulos espaçados tratados e ementa transcrita dentro do voto sinalizada como secao_aninhada_ambigua; resultado partial preserva incerteza.",
+      "gabarito": "mecanico_de_extracao",
+      "revisao_juridica": "nao_realizada"
+    },
+    {
+      "url": "https://www2.picos.pi.gov.br/secretarias/saude/sms-esclarece-que-ministerio-da-saude-oficializa-suspensao-de-recursos-do-centro-de-reabilitacao-santa-ana/attachment/camscanner-05-26-2022-09-39/",
+      "final_url": "https://www2.picos.pi.gov.br/wp-content/uploads/2022/05/CamScanner-05-26-2022-09.39.pdf",
+      "http": 200,
+      "bytes": 332319,
+      "retrieved_at": "2026-10-19T22:41:35.367065+00:00",
+      "sha256": "9277cc0309549906f57d2ded428c6ccd358d7c3deee89344fe92cee7ecd7b720",
+      "id": "R10",
+      "arquivo": "tests/casos/regressao/R10_picos_oficio_106_2022.pdf",
+      "nota": "Ofício público em uma página com imagem, assinatura e anotações manuscritas; zero caracteres nativos. Conferido visualmente. OCR parcial não transcreve fielmente assinatura/manuscrito e contém omissões e erros; sem inferência sobre mérito ou documentos citados não anexados.",
+      "gabarito": "mecanico_de_extracao",
+      "revisao_juridica": "nao_realizada"
+    },
+    {
+      "url": "https://www.taquaral.sp.gov.br/editais/ofício_n_38_2025_-_digitalizado_10025315.pdf",
+      "final_url": "https://www.taquaral.sp.gov.br/editais/ofi%CC%81cio_n_38_2025_-_digitalizado_10025315.pdf",
+      "http": 200,
+      "retrieved_at": "2026-10-19T22:37:46.020969+00:00",
+      "bytes": 432397,
+      "sha256": "91ff084269ab3204c8647326992974b9048dc3fd5545b916bb681f75ed5251a2",
+      "id": "negativo_xref",
+      "arquivo": "tests/casos/regressao/taquaral_oficio_38_2025_xref.pdf",
+      "nota": "Ofício público de duas páginas, conferido visualmente com PDFium. Xref clássico começa em 1 embora a primeira entrada seja o objeto livre 0; pdfminer.six devolve catálogo vazio. Original preservado sem reparo. Regressão negativa: falha explícita, não no_text.",
+      "gabarito": "mecanico_de_extracao",
+      "revisao_juridica": "nao_realizada"
+    }
+  ],
+  "limite": "SHA-256 registra consistência dos bytes coletados; não autentica autoria, assinatura digital nem correção jurídica. Arquivos públicos usados somente para regressão documental, sem ampliar módulos jurídicos."
+}

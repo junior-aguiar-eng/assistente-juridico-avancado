@@ -1,5 +1,7 @@
-Documentos reais entregues pelo titular para os casos R07 e R10 do manifesto.
+R07 e R10 foram preenchidos com PDFs públicos em 19/10/2026; R06 já estava pronto.
+Veja ../manifesto.json e ../proveniencia-r07-r10.json para arquivos, URLs, hashes e limites.
+O gabarito é mecânico de extração e não tem revisão jurídica humana.
+R10 exige Tesseract com idioma por e permanece partial quando lido por OCR.
 
-Use apenas documento público ou seu. Nada de dado de cliente: este repositório pode ser compartilhado.
-Nomes esperados: R07_tj_decisao.pdf e R10_escaneado_real.pdf.
-(R06, o inteiro teor do STF, já foi recebido e virou caso pronto.)
+Esta pasta continua reservada para eventual novo documento autorizado.
+Não incluir dados de cliente; documento público não implica aprovação jurídica.

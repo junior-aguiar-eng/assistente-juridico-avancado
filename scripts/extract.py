@@ -33,7 +33,7 @@ from cli_caminhos import expandir_argumentos  # noqa: E402
 import injecao  # noqa: E402
 import ocr  # noqa: E402
 
-EXTRACTOR_VERSION = "0.4.0"
+EXTRACTOR_VERSION = "0.4.2"
 SCHEMA_VERSION = "1"
 IDIOMA = "pt-BR"  # assumido, não detectado
 EXTENSOES = {".pdf", ".docx", ".txt", ".md", ".eml", ".html", ".htm", ".csv", ".tsv", ".xlsx"}
@@ -150,6 +150,10 @@ def _titulo(txt, ln, largura, margem):
     if not t or t != t.upper():
         return None
     chave = _sem_acento(t)
+    # Letras separadas por espaços são comuns em títulos de decisões. Só
+    # colapsa uma linha inteira de letras isoladas; preserva texto e geometria.
+    if re.fullmatch(r"(?:[A-Z]\s+)+[A-Z]", chave):
+        chave = re.sub(r"\s+", "", chave)
     if chave not in TITULOS:
         return None
     centrado = abs((ln["x0"] + ln["x1"]) / 2 - largura / 2) < 30
@@ -186,6 +190,8 @@ def _ler_pdf(path: Path):
     inicio = time.monotonic()
     with pdfplumber.open(path) as pdf:
         total = len(pdf.pages)
+        if total == 0:
+            raise ValueError("PDF sem páginas legíveis: estrutura vazia ou catálogo/xref inválido; confira o original")
         for i, page in enumerate(pdf.pages[:MAX_PAGES], 1):
             if i > 1 and time.monotonic() - inicio > MAX_SEGUNDOS:
                 avisos.append(_aviso("tempo_excedido", f"leitura interrompida após {MAX_SEGUNDOS} s: lidas {i - 1} de {total} páginas"))
@@ -274,7 +280,7 @@ def _salto_de_paragrafo(ln, ant, passo_no_bloco) -> bool:
     return d > 1.6 * max(ln["bottom"] - ln["top"], 1.0)
 
 
-def _montar_blocos_pdf(paginas):
+def _montar_blocos_pdf(paginas, avisos=None):
     xs = sorted(ln["x0"] for _, _, ls in paginas for ln in ls)
     margem = xs[int(len(xs) * 0.15)] if xs else 0.0
     blocos, atual, secao = [], None, "cabecalho"
@@ -290,14 +296,23 @@ def _montar_blocos_pdf(paginas):
         for ln in linhas:
             txt = ln["text"].strip()
             titulo = _titulo(txt, ln, w, margem)
-            if titulo:
+            inline = _secao_inline(txt)
+            if (titulo or inline) == "ementa" and secao in SECOES_NARRATIVAS:
+                # Ementas transcritas podem ter título isolado ou inline. Sem
+                # fronteira segura, conserva contexto e texto e explicita a dúvida.
+                fechar()
+                if avisos is not None:
+                    avisos.append(_aviso("secao_aninhada_ambigua",
+                                         f"título EMENTA dentro de {secao}; contexto preservado, "
+                                         "confira no original os limites da transcrição", pn))
+                ant = None
+            elif titulo:
                 fechar()
                 secao, ant = titulo, ln
                 continue
-            if (inline := _secao_inline(txt)):
+            elif inline:
                 fechar()
-                secao = inline
-                ant = None
+                secao, ant = inline, None
             recuo = ln["x0"] - margem
             quote = recuo >= LIMIAR_CITACAO and secao in SECOES_NARRATIVAS
             novo = atual is None or quote != atual["_q"]
@@ -394,7 +409,7 @@ def extrair_pdf(path: Path) -> dict:
         ocr_paginas = _aplicar_ocr(path, paginas, sorted(sem_corpo_antes), avisos)
         if ocr_paginas:
             texto_bruto = _hash_texto(ln["text"] for _, _, ls in paginas for ln in ls)
-    blocos = _montar_blocos_pdf(paginas)
+    blocos = _montar_blocos_pdf(paginas, avisos)
     for b in blocos:
         if ocr_paginas and b["page"] in ocr_paginas and (b.get("page_end") or b["page"]) in ocr_paginas:
             b["tags"] = sorted(set(b.get("tags", [])) | {"ocr"})
@@ -408,7 +423,7 @@ def extrair_pdf(path: Path) -> dict:
                        "is_quote": False, "quote_basis": None})
     sem_corpo = (set(sem_texto) | set(digitalizadas)) - ocr_paginas
     codigos_parciais = ("truncado", "pagina_ilegivel", "codificacao_suspeita", "tempo_excedido", "layout_em_colunas_ou_tabela",
-                        "ocr_aplicado")
+                        "ocr_aplicado", "secao_aninhada_ambigua")
     if len(sem_corpo) == len(paginas):
         status = "no_text"
     elif sem_corpo or any(a["codigo"] in codigos_parciais for a in avisos):
