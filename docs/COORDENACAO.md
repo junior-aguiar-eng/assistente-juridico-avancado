@@ -2,16 +2,26 @@
 
 Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia as correções ou expansões listadas abaixo.
 
-## Estado atual — pós-merge do PR #3, 20/10/2026
+## Estado atual — pós-merge do PR #4, 20/10/2026
 
-Esta seção atualiza as pendências R07/R10/DataJud e a integração do PR #3; os registros de execução abaixo são históricos. O CI específico do merge foi concluído com sucesso nos quatro jobs, conforme a nova conferência abaixo.
+Esta seção atualiza as pendências R07/R10/DataJud e a integração dos PRs #3 e #4; os registros de execução abaixo são históricos. Os CIs específicos dos dois merges foram concluídos com sucesso nos quatro jobs de cada execução.
 
-- Entrega dos 18 arquivos: e3dff29282c108645b498eac74396c3e791d8dc4, publicada e integrada em main pelo usuário no PR #3. Merge 9363524651e13d98493ccd2d623299785d419486, em 20/10/2026 às 12:48:10 UTC. Worktree do Codex já sincronizado por fast-forward nessa base, na branch codex/organizacao-colaboracao; checkout do Claude preservado. Oito checks anteriores de push/PR passaram; o CI do merge é uma execução separada.
+- Entrega dos 18 arquivos: e3dff29282c108645b498eac74396c3e791d8dc4, publicada e integrada em main pelo usuário no PR #3. Merge 9363524651e13d98493ccd2d623299785d419486, em 20/10/2026 às 12:48:10 UTC. Oito checks de push/PR e os quatro jobs do CI desse merge passaram.
+- Atualização documental posterior: ac12882cf061261cdfd742c0e176c21b966a973c integrada pelo PR #4, merge 7394606a7097dfa8430e2acea15ff7561b50bcba, em 20/10/2026 às 13:10:53 UTC, após oito checks aprovados. O Codex foi sincronizado por fast-forward nessa base, na branch codex/organizacao-colaboracao; checkout do Claude preservado. O CI específico desse merge também passou, conforme o registro abaixo.
 - R07/R10 têm PDFs públicos, proveniência e gabaritos mecânicos. R07 usa publicação oficial do TJMG, sem afirmar cobertura de todos os layouts e-SAJ/PJe. R10 é uma imagem real, lida com Tesseract/por; OCR continua partial e sujeito a erros/omissões. Não são gabaritos jurídicos humanos.
 - Extrator 0.4.2: além das correções R07/R10 anteriores, ementa aninhada com título isolado/espaçado também conserva contexto/texto e sinaliza ambiguidade, sem alterar a ementa principal. Zero páginas legíveis continua erro explícito; originais preservados, sem dependências ou mudanças de schema/estados.
 - DataJud: consulta real em 20/10 encontrou o processo esperado (29,45 s), mas as duas repetições após a correção terminaram em timeout de leitura (42,65 s e 42,40 s). Há oscilação observada, sem causa remota/intermediária comprovada; não houve sucesso real após o patch. O leitor local agora rejeita corpo inválido, identificação incompatível e busca parcial, em vez de indicar ausência/sucesso indevidos. Endpoint, chave, timeout e teste real permanecem os mesmos. Testes de rede exigem JURIS_REDE=1.
 - Verificação em 20/10: base focada 60 aprovados e 1 ignorado; 26 regressões novas aprovadas; oito skills PRONTA; pip check sem conflitos. Suíte integral offline: 624 aprovados e 3 ignorados em 742,40 s, sem falhas, JURIS_REDE ausente. R06/R07/R10 executados; ignorados dois testes de rede e o marcador vazio de casos aguardando. Detalhes atuais em docs/revisao-tecnica-2026-10-20.md; registro histórico em docs/validacao-r07-r10-datajud-2026-10-19.md.
 - Continuam pendentes revisão jurídica humana e dos gabaritos, segunda avaliação das skills com documentos reais e fechamento formal CL-01/CL-02 pelo responsável. As 19 regras permanecem inativas. O DataJud teve sucesso real, mas não demonstrou estabilidade. R07/R10 não dependem mais de o usuário fornecer PDFs para os casos mecânicos escolhidos. A entrega técnica está integrada e o CI do merge aprovado; a fase de liberação não foi declarada concluída.
+
+## Conferência do CI do merge do PR #4 — 20/10/2026
+
+- Pedido autorizado: conferir o CI, registrar o resultado e fazer commit/push somente desta atualização documental na branch codex/organizacao-colaboracao, preservando o checkout/índice do Claude e as regras inativas. Base da etapa: 7394606a7097dfa8430e2acea15ff7561b50bcba; nenhum outro arquivo modificado.
+- PR #4 confirmada como MERGED em main: https://github.com/junior-aguiar-eng/assistente-juridico-avancado/pull/4. Commit documental integrado ac12882; merge 7394606a7097dfa8430e2acea15ff7561b50bcba. A aprovação do CI deste merge é separada dos oito checks anteriores de push/PR.
+- CI específico: https://github.com/junior-aguiar-eng/assistente-juridico-avancado/actions/runs/39428218263, evento push, headSha 7394606a7097dfa8430e2acea15ff7561b50bcba. Conferido em **2026-10-20 13:18:29 UTC**: execução **completed**, conclusão **success**. Os quatro jobs de Ubuntu/Windows com Python 3.12/3.13 passaram; em cada job, pytest e revisão mecânica das skills terminaram com sucesso. Último job concluído em **2026-10-20 13:17:24 UTC**.
+- O log contém anotações não bloqueantes do GitHub Actions sobre Node.js e a imagem ubuntu-latest. Nenhuma mudança incidental no workflow foi feita. O sucesso do CI não equivale a revisão jurídica nem comprova disponibilidade real do DataJud.
+- Verificação documental: diff restrito a docs/COORDENACAO.md e git diff --check sem erros. Testes locais e consultas DataJud não foram repetidos, pois não houve mudança funcional. As 19 regras permanecem inativas; arquivos do Claude, seu índice/HEAD, skills e corpus preservados por hashes. A atualização terá commit próprio e push na branch do Codex, sem outra integração nesta etapa.
+- Baseline e evidência: C:/Users/Boni Jr/AppData/Local/Temp/juris-ci-pr4-commit-push-wqe0neq3 (baseline.json, ci-final.json e ci-watch.txt). A referência exata do commit é entregue na conversa, evitando hash autorreferente neste registro.
 
 ## Conferência do CI do merge do PR #3 — 20/10/2026
 
