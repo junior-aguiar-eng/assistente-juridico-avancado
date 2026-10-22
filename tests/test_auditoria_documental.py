@@ -66,6 +66,28 @@ def gates(q):
     return {g["id"]: g["resultado"] for g in q["gates"]}
 
 
+def test_relatorio_real_de_redline_com_issues_nao_e_outro_conjunto(pacote):
+    import redline_docx
+    ips = json.loads(pacote['issues'].read_text(encoding='utf-8'))
+    original = pacote['base']/'contrato.docx'
+    saida = pacote['base']/'contrato-redline.docx'
+    edicoes = [{'acao':'substituir','de':ips['issues'][0]['clause_text'],
+                'para':'Cláusula 1. Prazo sujeito a negociação.','issue_id':'i1'}]
+    r = redline_docx.aplicar(original,edicoes,saida,issues=pacote['issues'])
+    assert r['aplicadas'] == 1 and r['recusadas'] == 0
+    rp = gravar(pacote['base']/'relatorio-redline.json',r)
+    q = executar(pacote,extras=[rp])
+    assert gates(q)['G14_apontamentos_contratuais'] == 'alerta'
+    assert q['documentos']['apontamentos']['entregavel'] is False
+    assert 'relatorio-redline.json' in {a['caminho'] for a in q['artefatos']}
+
+
+def test_issues_malformado_com_string_continua_reprovado(pacote):
+    ip = gravar(pacote['base']/'malformado.json',{'issues':'arquivo.json'})
+    q = executar(pacote,issues=ip)
+    assert gates(q)['G14_apontamentos_contratuais'] == 'reprovado'
+
+
 def test_consolida_validadores_e_preserva_pendencias_sem_aprovar(pacote):
     q = executar(pacote)
     assert q["estado_tecnico"] == "revisao_pronta" and q["faixa"] == "mista"

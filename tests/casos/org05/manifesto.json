@@ -1,0 +1,148 @@
+{
+  "schema_version": "1",
+  "base_produto": "a3848b1c5443cc72d9a00346c5f661e69a52b558",
+  "produto_sha256": {
+    "scripts/extract.py": "b2677ea69ea8dac919f815a4b7bb1d48026d65ca42f9cbf1fbf41b964dcf5d22",
+    "scripts/ocr.py": "5ea81fe208f34c81ff92fd1f915163b85dd14cd4e69252d61abbb39a8a3ecaca",
+    "scripts/pecas.py": "7d23284fadc78796973b669c5192460db9b07cdc0fc57986dc2d1975535868b9",
+    "scripts/pecas_proposta.py": "81f26e4ccade83e598ec96dd853e148428255e5ed755ed14777e2fed04301f5c",
+    "scripts/pecas_validacao.py": "ffe5ba5431ef6644303b1c917b6cee3eefae15f9f9f7dc31d8bf89b4c01902eb",
+    "scripts/pecas_historico.py": "2ff3b2f4542aab94ed2626befa21d2c662e3ceb85f8969244d0d32235159c6fe",
+    "scripts/pecas_uso.py": "157b3d73d0e3f1e4b6f6a400cd18b1c095b199e8f6a852eee5322e87a4c400d0",
+    "scripts/validate.py": "ab7bee107aaaf81c6aedc78af3c4544ec5729fb176541782e80a7d4c94581d3e",
+    "scripts/cronologia.py": "01ee8a934882a8f7906804d7fd067b3f05512d5931089c5012b5450ab3ce66a0",
+    "scripts/triagem.py": "44925dbc58ebfbdfa5f39f1177b094cb3f23b8fc999f93a7d1ba68c68cdded78",
+    "scripts/auditar.py": "cfbe5150e3be1fb9e5dc686693b0af038b1629fb37059429b241d302f4de2407",
+    "scripts/auditoria_documental.py": "bb732111a06703133d7795207e6842d87972d73f84914d521ef637bd10ce862c"
+  },
+  "limite": "Regressão posterior à avaliação congelada de a3848b1; mesmos processos, não nova coorte independente. Gabaritos P01/P02 conferidos pelo titular em 22/10/2026, conforme registro vinculado; desenvolvimento permanece técnico. Heurística de classificação não ajustada. Aprovação dos gabaritos não confere inventários propostos ou uso material.",
+  "casos": [
+    {
+      "id": "ORG05-P01",
+      "processo_id": "tjmg:1.0000.25.012630-7/001",
+      "natureza": "processo",
+      "grupo": "avaliacao",
+      "modalidade": "nativo",
+      "arquivo": "tests/casos/org05/ORG05-P01.pdf",
+      "sha256": "7d0f8bedb58268b89425fffd5ef1c9e3b83355e28c04b6c074bc1721fe5ff19e",
+      "url": "https://www5.tjmg.jus.br/jurisprudencia/relatorioEspelhoAcordao.do?ano=25&codigoOrigem=0000&inteiroTeor=true&numero=012630&sequencial=001&sequencialAcordao=0&ttriCodigo=1",
+      "referencia": {
+        "origem": "humano_identificado",
+        "conferencia_humana": true,
+        "paginas": 16,
+        "pecas": [
+          {
+            "inicio": 1,
+            "fim": 16,
+            "tipo": "acordao"
+          }
+        ],
+        "nota": "Referência proposta por leitura independente dos PDFs e posteriormente revisada e aprovada pelo titular nesta conversa. Uma peça acórdão; Acórdão, Voto e transcrições são seções internas. Aprovação restrita ao gabarito estrutural.",
+        "revisor": "Titular do projeto, identificado por sua participação nesta conversa",
+        "registro_conferencia": "tests/casos/org05/conferencia-humana.json"
+      }
+    },
+    {
+      "id": "ORG05-P02",
+      "processo_id": "tjmg:1.0000.24.455292-3/001",
+      "natureza": "processo",
+      "grupo": "avaliacao",
+      "modalidade": "nativo",
+      "arquivo": "tests/casos/org05/ORG05-P02.pdf",
+      "sha256": "a8e3bb498ccf6feae4b0461574bda1351869ee59249ed13c0ba651daadf2edd6",
+      "url": "https://www5.tjmg.jus.br/jurisprudencia/relatorioEspelhoAcordao.do?ano=24&codigoOrigem=0000&inteiroTeor=true&numero=455292&sequencial=001&sequencialAcordao=0&ttriCodigo=1",
+      "referencia": {
+        "origem": "humano_identificado",
+        "conferencia_humana": true,
+        "paginas": 14,
+        "pecas": [
+          {
+            "inicio": 1,
+            "fim": 14,
+            "tipo": "acordao"
+          }
+        ],
+        "nota": "Referência proposta por leitura independente dos PDFs e posteriormente revisada e aprovada pelo titular nesta conversa. Uma peça acórdão; Acórdão, Voto e transcrições são seções internas. Aprovação restrita ao gabarito estrutural.",
+        "revisor": "Titular do projeto, identificado por sua participação nesta conversa",
+        "registro_conferencia": "tests/casos/org05/conferencia-humana.json"
+      }
+    },
+    {
+      "id": "ORG05-D07-nativo",
+      "processo_id": "tjmg:1.0000.25.176803-2/002",
+      "natureza": "processo",
+      "grupo": "desenvolvimento",
+      "modalidade": "nativo",
+      "arquivo": "tests/casos/regressao/R07_tjmg_ai_176803.pdf",
+      "sha256": "e47df36b255c5000c00d58a1f9cedb46c5ed30ddb70b21b44536f08d09aaf27c",
+      "referencia": {
+        "origem": "modelo_tecnico",
+        "conferencia_humana": false,
+        "paginas": 12,
+        "pecas": [
+          {
+            "inicio": 1,
+            "fim": 12,
+            "tipo": "acordao"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ORG05-D10-sem_ocr",
+      "processo_id": "picos:oficio106-2022-pgm",
+      "natureza": "documento",
+      "grupo": "desenvolvimento",
+      "modalidade": "sem_ocr",
+      "arquivo": "tests/casos/regressao/R10_picos_oficio_106_2022.pdf",
+      "sha256": "9277cc0309549906f57d2ded428c6ccd358d7c3deee89344fe92cee7ecd7b720",
+      "referencia": {
+        "origem": "modelo_tecnico",
+        "conferencia_humana": false,
+        "paginas": 1,
+        "pecas": [
+          {
+            "inicio": 1,
+            "fim": 1,
+            "tipo": "nao_identificada"
+          }
+        ],
+        "amostras": [
+          "106/2022 PGM",
+          "Centro Especializado",
+          "Ministério da Saúde"
+        ],
+        "tipo_fora_taxonomia": "oficio"
+      }
+    },
+    {
+      "id": "ORG05-D10-ocr",
+      "processo_id": "picos:oficio106-2022-pgm",
+      "natureza": "documento",
+      "grupo": "desenvolvimento",
+      "modalidade": "ocr",
+      "arquivo": "tests/casos/regressao/R10_picos_oficio_106_2022.pdf",
+      "sha256": "9277cc0309549906f57d2ded428c6ccd358d7c3deee89344fe92cee7ecd7b720",
+      "referencia": {
+        "origem": "modelo_tecnico",
+        "conferencia_humana": false,
+        "paginas": 1,
+        "pecas": [
+          {
+            "inicio": 1,
+            "fim": 1,
+            "tipo": "nao_identificada"
+          }
+        ],
+        "amostras": [
+          "106/2022 PGM",
+          "Centro Especializado",
+          "Ministério da Saúde"
+        ],
+        "tipo_fora_taxonomia": "oficio"
+      }
+    }
+  ],
+  "fase": "regressao_pos_avaliacao",
+  "produto_normalizacao": "lf"
+}

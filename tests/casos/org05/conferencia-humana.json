@@ -1,0 +1,50 @@
+{
+  "schema_version": "1",
+  "id": "ORG05-CONFERENCIA-P01-P02-2026-10-22",
+  "data": "2026-10-22",
+  "fuso": "America/Fortaleza",
+  "revisor": "Titular do projeto, identificado por sua participação nesta conversa",
+  "fonte": "Confirmação expressa do usuário nesta conversa do Codex",
+  "declaracao": "P01/P02 revisados e aprovados. proceda com a finalização da pendência, commit as alterações",
+  "escopo": "Gabaritos estruturais: uma peça acórdão em cada PDF integral; Acórdão, Voto e transcrições são seções internas",
+  "limites": [
+    "Registro da confirmação recebida, sem autenticação externa ou assinatura digital",
+    "Não aprova mérito jurídico, aplicabilidade, texto integral de OCR ou regras contratuais",
+    "Não cria eventos de conferência nos inventários propostos nem libera entregas materiais",
+    "Não amplia a aprovação aos casos de desenvolvimento ou aos originais privados ausentes"
+  ],
+  "casos": [
+    {
+      "id": "ORG05-P01",
+      "arquivo": "tests/casos/org05/ORG05-P01.pdf",
+      "sha256": "7d0f8bedb58268b89425fffd5ef1c9e3b83355e28c04b6c074bc1721fe5ff19e",
+      "gabarito": {
+        "paginas": 16,
+        "pecas": [
+          {
+            "inicio": 1,
+            "fim": 16,
+            "tipo": "acordao"
+          }
+        ]
+      },
+      "gabarito_sha256": "bb3c6dae8c54b87fa93895585b7edd7964ed2a452bd2ac9bb6e1ab3d736e8422"
+    },
+    {
+      "id": "ORG05-P02",
+      "arquivo": "tests/casos/org05/ORG05-P02.pdf",
+      "sha256": "a8e3bb498ccf6feae4b0461574bda1351869ee59249ed13c0ba651daadf2edd6",
+      "gabarito": {
+        "paginas": 14,
+        "pecas": [
+          {
+            "inicio": 1,
+            "fim": 14,
+            "tipo": "acordao"
+          }
+        ]
+      },
+      "gabarito_sha256": "7fa827446fe412f8d4f16edebbc6edb58e723f5be4db6ede7d413bd31d01b721"
+    }
+  ]
+}

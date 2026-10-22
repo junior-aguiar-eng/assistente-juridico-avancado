@@ -20,6 +20,17 @@ FALHAS_DOCUMENTO = (OSError, ValueError, TypeError, KeyError, AttributeError, Ba
                    PackageNotFoundError, XMLSyntaxError)
 
 
+def _relatorio_redline(obj):
+    """O produtor referencia issues por caminho; não contém outro conjunto."""
+    return (not {'schema_version','posicao_da_parte'} & obj.keys()
+            and all(isinstance(obj.get(k),str) and obj[k] for k in ('issues','original','saida','autor_das_alteracoes','aviso'))
+            and all(isinstance(obj.get(k),str) and len(obj[k]) == 64
+                    and all(c in '0123456789abcdef' for c in obj[k])
+                    for k in ('issues_sha256','original_sha256','saida_sha256'))
+            and all(type(obj.get(k)) is int and obj[k] >= 0 for k in ('aplicadas','recusadas'))
+            and isinstance(obj.get('edicoes'),list))
+
+
 def identificar(issues, campos, extras):
     """Um conjunto por tipo; artefato JSON reconhecido pelo conteúdo, não pelo nome."""
     candidatos = {"issues": set(), "campos": set()}
@@ -41,7 +52,8 @@ def identificar(issues, campos, extras):
                     and isinstance(obj.get("erros"), list) and isinstance(obj.get("avisos"), list)
                     and isinstance(obj.get("rascunho"), bool) and isinstance(obj.get("entregavel"), bool)
                     and "schema_version" not in obj and "posicao_da_parte" not in obj)
-                if nome in obj and not resultado_do_validador:
+                resultado_do_redline = nome == 'issues' and _relatorio_redline(obj)
+                if nome in obj and not resultado_do_validador and not resultado_do_redline:
                     candidatos[nome].add(p)
     for nome, paths in candidatos.items():
         if len(paths) > 1:

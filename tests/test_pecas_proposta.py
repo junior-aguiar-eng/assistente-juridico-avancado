@@ -1,4 +1,6 @@
 import importlib
+import copy
+import hashlib
 import json
 from pathlib import Path
 
@@ -10,6 +12,22 @@ from test_pecas import RAIZ, caso, codigos, validar
 def propor(ext, sha, **kw):
     assert (RAIZ / 'scripts/pecas_proposta.py').exists(), 'Falta a proposta conservadora de peças'
     return importlib.import_module('pecas_proposta').propor_inventario(ext, arquivo_sha256=sha, **kw)
+
+
+def test_pacote_multidocumento_produz_identidades_distintas_sem_mudar_caso_unico():
+    _, ext, sha = caso('CT01')
+    unico = propor(ext,sha)
+    assert unico['inventario_id'] == 'inv-' + hashlib.sha256(ext).hexdigest()[:24]
+    pacote = json.loads(ext)
+    outro = copy.deepcopy(pacote['documents'][0])
+    outro['document_id'] = 'doc-outro'; outro['sha256'] = 'b'*64
+    pacote['documents'].append(outro)
+    combinado = json.dumps(pacote,ensure_ascii=False).encode('utf-8')
+    a = propor(combinado,sha,document_id=pacote['documents'][0]['document_id'])
+    b = propor(combinado,outro['sha256'],document_id=outro['document_id'])
+    assert a['inventario_id'] != b['inventario_id']
+    assert validar(a,combinado,sha)['valido'] and validar(b,combinado,outro['sha256'])['valido']
+    assert all(e['ator']['tipo'] != 'humano' for inv in (a,b) for e in inv['eventos'])
 
 
 @pytest.mark.parametrize('cid,tipos', [('CT01', ['sentenca', 'acordao']), ('CT03', ['nao_identificada']), ('CT04', ['nao_identificada']), ('CT05', [])])

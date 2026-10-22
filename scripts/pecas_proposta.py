@@ -75,7 +75,8 @@ def propor_inventario(extracao_bytes: bytes, *, arquivo_sha256: str, document_id
     from json import dumps
     config = None if 'params' not in pacote.get('run', {}) else _sha(dumps(params, ensure_ascii=False, sort_keys=True, separators=(',', ':'), allow_nan=False).encode())
     versoes = doc.get('extractor_versions', {})
-    inv = {'schema_version': '1', 'inventario_id': 'inv-' + _sha(extracao_bytes)[:24], 'revisao': 1, 'anterior_sha256': None,
+    identidade = extracao_bytes if len(docs) == 1 else extracao_bytes + b'\0' + document_id.encode('utf-8')
+    inv = {'schema_version': '1', 'inventario_id': 'inv-' + _sha(identidade)[:24], 'revisao': 1, 'anterior_sha256': None,
            'origem': {'document_id': document_id, 'arquivo_sha256': arquivo_sha256,
                       'extracao_sha256': _sha(extracao_bytes), 'total_paginas': doc['page_count'],
                       'extrator': {'nome': versoes.get('nome', 'extract'), 'versao': versoes.get('extractor', 'desconhecido')},
