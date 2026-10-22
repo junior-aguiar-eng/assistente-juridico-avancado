@@ -113,3 +113,27 @@ Alegação não vira fato: o documento que mostra a alegação a sustenta como a
 `document_id` é obrigatório em **toda** fonte `lida`, inclusive secundária e em estado `partial`. Registros anteriores sem esse campo são inválidos até recuperar o documento real, gerar sua extração e registrar o vínculo correto; não invente um identificador para liberar o pacote. Sem `--extracoes`, a validação é estrutural: informar um ID não comprova que o trecho foi conferido.
 
 `existence` diferente de `confirmada` só combina com `unverified`: busca vazia ou fonte inacessível nunca prova que a autoridade não existe. Em `supported` de `tipo=norma` sem `legal_time`, o aviso lembra que apoio ao texto não prova vigência.
+
+## Apontamentos contratuais e auditoria documental
+
+`issues.json` usa `schema_version: "1"`, `posicao_da_parte` e uma lista `issues`. Cada item tem
+`id`, `titulo`, `descricao`, `clausula`, `clause_text` integral, `document_id`, `locator` (ou
+`locators`), `severidade_juridica`, `severidade_negocial` e lista `base`, conforme `contrato.py`.
+
+`severidade_juridica` aceita `nao_avaliada`, `baixa`, `media`, `alta` ou `critica`.
+`nao_avaliada` exige `motivo_nao_avaliada` textual não vazio e não implica baixo risco.
+`severidade_negocial` continua `baixa`, `media` ou `alta`; não a use como avaliação jurídica.
+Uma base exclusivamente `pratica_do_cliente` não sustenta graduação jurídica; registre a
+avaliação pendente. Fontes e regras continuam sujeitas à leitura e revisão exigidas pelas skills;
+os metadados de uma base `fonte` não provam, sozinhos, que ela apoia a conclusão.
+
+O validador informa `avaliacao_juridica_pendente` com os IDs e `entregavel: false` enquanto
+essa avaliação faltar. Registros históricos que usaram graduação só comercial devem ser
+revisados em nova versão, sem reescrever o histórico nem inventar fonte para liberar o registro.
+Referência a regra sem conferir o pacote sinaliza `base_juridica_nao_conferida: true` e também
+mantém `entregavel: false`; a presença de um `rule_id` não comprova base jurídica.
+
+A auditoria executa o validador contratual e o lint/preenchimento da minuta. `qc.json.documentos`
+reúne os resultados; `status` também mostra `documentos` e `pendencias`. Não muda os quatro
+estados de claims nem a aprovação humana. `documentos.minuta.completo: false` permanece falso
+mesmo com `estado_tecnico: revisao_pronta`; conteúdo conferido não comprova aparência ou mérito.

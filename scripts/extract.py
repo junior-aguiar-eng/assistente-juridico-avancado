@@ -33,7 +33,7 @@ from cli_caminhos import expandir_argumentos  # noqa: E402
 import injecao  # noqa: E402
 import ocr  # noqa: E402
 
-EXTRACTOR_VERSION = "0.4.2"
+EXTRACTOR_VERSION = "0.4.3"
 SCHEMA_VERSION = "1"
 IDIOMA = "pt-BR"  # assumido, não detectado
 EXTENSOES = {".pdf", ".docx", ".txt", ".md", ".eml", ".html", ".htm", ".csv", ".tsv", ".xlsx"}
@@ -162,7 +162,7 @@ def _titulo(txt, ln, largura, margem):
     return None
 
 
-_INICIO_INLINE = re.compile(r"^(?:(EMENTA\b[^:]{0,60}:)|(Decis[ãa]o:))\s*\S")
+_INICIO_INLINE = re.compile(r"^(?:(EMENTA\b[^:]{0,60}:)|(Decis[ãa]o:))\s*\S", re.I)
 
 
 def _secao_inline(txt: str) -> str | None:
@@ -177,6 +177,66 @@ def _maior_vao(chars) -> float:
     """Maior espaço horizontal entre caracteres consecutivos de uma linha (colunas e células deixam vãos grandes)."""
     pos = sorted((c for c in chars if str(c.get("text", "")).strip()), key=lambda c: c["x0"])
     return max((b["x0"] - a["x1"] for a, b in zip(pos, pos[1:])), default=0.0)
+
+
+_EMENTA_TRANSCRITA = re.compile(r"^E\s*M\s*E\s*N\s*T\s*A\b", re.I)
+_RELATORIA = re.compile(r"\brelator(?:a)?\b", re.I)
+_DATA_REFERENCIA = re.compile(r"\b(?:julgamento|julgad[oa]|publica[cç][aã]o|DJe|DJEN)\b", re.I)
+
+
+def _fim_referencia(texto):
+    """Fecha parênteses bibliográficos, inclusive os internos de 'Relator(a)'.
+
+    Relatoria, marcador de julgamento/publicação e ano são sinais conjuntos;
+    parênteses comuns ou um resultado do recurso não delimitam a transcrição.
+    """
+    abertos, fim = [], None
+    for i, ch in enumerate(texto):
+        if ch == "(":
+            abertos.append(i)
+        elif ch == ")" and abertos:
+            inicio = abertos.pop()
+            ref = texto[inicio + 1:i]
+            if not abertos and _RELATORIA.search(ref) and _DATA_REFERENCIA.search(ref) and re.search(r"\b\d{4}\b", ref):
+                fim = i + 1
+    return fim
+
+
+def _atribuir_transcricoes(blocos):
+    """Delimita ementas citadas pela sequência, não pelo recuo de cada linha.
+
+    Só uma referência bibliográfica fechada permite confirmar o intervalo e
+    voltar ao texto próprio. Sem ela, conserva as marcas geométricas e explicita
+    a atribuição incerta nos blocos, inclusive após quebra de página.
+    """
+    pendentes, texto = [], ""
+
+    def marcar(ambiguo):
+        for b in pendentes:
+            if ambiguo:
+                if "atribuicao_ambigua" not in b["tags"]:
+                    b["tags"].append("atribuicao_ambigua")
+            else:
+                b["is_quote"], b["quote_basis"] = True, "contexto_ementa"
+
+    for b in blocos:
+        inicia = b["section"] in SECOES_NARRATIVAS and _EMENTA_TRANSCRITA.match(b["text"])
+        if inicia:
+            marcar(True)  # outra ementa não resolve o fim da anterior
+            pendentes, texto = [], ""
+        if not pendentes and not inicia:
+            continue
+        pendentes.append(b)
+        texto += " " + b["text"]
+        fim = _fim_referencia(texto)
+        if fim is not None:
+            # Se a fronteira cai dentro de um bloco com texto posterior, não
+            # atribui o bloco inteiro à citação nem inventa onde o autor retorna.
+            if not texto[fim:].strip(" .;\"'”"):
+                marcar(False)
+                pendentes, texto = [], ""
+    marcar(True)
+    return blocos
 
 
 def _ler_pdf(path: Path):
@@ -339,7 +399,7 @@ def _montar_blocos_pdf(paginas, avisos=None):
             atual["_ux"] = ln["x0"]
             ant = ln
     fechar()
-    return _finalizar_blocos(blocos)
+    return _atribuir_transcricoes(_finalizar_blocos(blocos))
 
 
 _OCR = False

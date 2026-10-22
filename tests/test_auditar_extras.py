@@ -29,6 +29,8 @@ def base(tmp_path_factory, claims_stj_reconferiveis):
     (pasta / "claims.json").write_text(json.dumps(claims_stj_reconferiveis), encoding="utf-8")
     shutil.copy(FACTS, pasta / "facts.json")
     shutil.copy(MATTER, pasta / "matter.json")
+    (pasta / "relatorio.md").write_text("# Relatório\n\n" +
+                                       (RAIZ / "shared/aviso-padrao.md").read_text(encoding="utf-8"), encoding="utf-8")
     r = subprocess.run([sys.executable, "-P", str(RAIZ / "scripts" / "extract.py"), "fontes/stj_inteiro_teor.pdf",
                         "fontes/cc_compilado.md", "--no-cache", "--saida", "extracao.json"], cwd=pasta,
                        capture_output=True, stdin=subprocess.DEVNULL)
@@ -87,7 +89,8 @@ def test_faixa_alta_so_para_entrega_interna_sem_nenhuma_ressalva(base):
 @pytest.mark.parametrize("tipo", ["cliente", "peticao", "contrato"])
 def test_entrega_externa_nunca_fica_na_faixa_alta_e_exige_aprovacao_humana(base, tipo):
     limpo = escrever(base, "claims_limpo.json", claims_de(base, manter={"c001", "c004"}))
-    qc = aud(base, limpo, matter=str(base / "matter.json"), tipo_entrega=tipo)
+    qc = aud(base, limpo, matter=str(base / "matter.json"), tipo_entrega=tipo,
+             relatorios=[str(base / "relatorio.md")])
     assert qc["estado_tecnico"] == "revisao_pronta" and qc["faixa"] == "mista"
     assert qc["aprovacao_humana_obrigatoria"] is True
 
@@ -105,7 +108,8 @@ def test_status_so_libera_uso_com_aprovacao_quando_ela_e_obrigatoria(base, tmp_p
     qc = aud(base, limpo, matter=str(base / "matter.json"))
     (base / "qc_interna.json").write_text(json.dumps(qc, ensure_ascii=False), encoding="utf-8")
     assert auditar.status(base / "qc_interna.json")["liberado_para_uso"] is True
-    ext = aud(base, limpo, matter=str(base / "matter.json"), tipo_entrega="cliente")
+    ext = aud(base, limpo, matter=str(base / "matter.json"), tipo_entrega="cliente",
+              relatorios=[str(base / "relatorio.md")])
     (base / "qc_cliente.json").write_text(json.dumps(ext, ensure_ascii=False), encoding="utf-8")
     assert auditar.status(base / "qc_cliente.json")["liberado_para_uso"] is False
     ap = auditar.aprovar(base / "qc_cliente.json", "Dra. Maria", "OAB/AL 1", "Revisei.")

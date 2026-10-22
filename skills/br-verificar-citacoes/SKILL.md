@@ -52,6 +52,7 @@ Além de [escalacao.md](../../shared/escalacao.md): proposição **central contr
 - **Existir não é apoiar.** Confirmar o número do processo não valida a tese atribuída a ele. Distinga **existência**, **acerto do que se diz que foi decidido** e **aplicabilidade** (órgão, classe, fatos, fase).
 - **Ementa não é inteiro teor.** Proposição sobre fundamentos do acórdão exige o voto.
 - **Citação dentro do voto.** O relator pode transcrever precedentes ou a decisão recorrida; confira `is_quote`.
+- **Atribuição ambígua.** A tag `atribuicao_ambigua` impede `supported`, inclusive com `cited_text=true`; confira a fronteira no original e mantenha `partial` enquanto não resolvida. Se o mesmo trecho tiver autorias diferentes na página citada, use o `block_id` conferido. Para aplicar a delimitação contextual do extrator `0.4.3`, gere nova extração e reaudite; não edite a extração ou o QC histórico para retirar o bloqueio.
 - **Hash identifica o arquivo lido, não o julgado.** O mesmo acórdão baixado duas vezes teve bytes diferentes e texto idêntico; use `text_sha256`.
 - **Vigência é à parte.** `supported` em norma não prova vigência: registre `legal_time` só com a versão compilada lida, sem trecho tachado (`~~`), e confira as alterações com `fontes.py anotacoes`.
 - **Busca vazia não conclui nada.** NOT_FOUND no ForgeLex é falha de localização.

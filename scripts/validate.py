@@ -185,9 +185,12 @@ def _blocos_do_trecho(doc, bid, excerpt):
             if _contem(a["text"] + " " + b["text"], excerpt):
                 fim = max(x for x in (a.get("page_end"), b.get("page_end"), a.get("page"), b.get("page")) if x) \
                     if (a.get("page") or b.get("page")) else None
+                tags = set(a.get("tags", [])) | set(b.get("tags", []))
+                if bool(a.get("is_quote")) != bool(b.get("is_quote")):
+                    tags.add("atribuicao_ambigua")
                 ach.append({**a, "text": a["text"] + " " + b["text"], "page_end": fim,
                             "is_quote": bool(a.get("is_quote") and b.get("is_quote")),
-                            "tags": sorted(set(a.get("tags", [])) | set(b.get("tags", [])))})
+                            "tags": sorted(tags)})
     return ach
 
 
@@ -229,13 +232,19 @@ def _conferir_trecho(r, caminho, ref, locator, excerpt, idx, kind=None):
                 "protocolo, assinatura) e não um fato material narrado")
 
 
-def _so_em_citacao(idx, s):
-    """True se o pinpoint da fonte só existe em passagem transcrita; None se não dá para saber."""
+def _contexto_do_pinpoint(idx, s):
+    """Atribuição no local citado, sem aproveitar outra ocorrência do texto."""
     pin = s.get("pinpoint") or {}
-    if (idx is None or not isinstance(s.get("document_id"), str)
+    if (not isinstance(pin, dict) or idx is None or not isinstance(s.get("document_id"), str)
             or s["document_id"] not in idx or not isinstance(pin.get("excerpt"), str)):
-        return None
+        return []
     ach = _blocos_do_trecho(idx[s["document_id"]], s.get("block_id"), pin["excerpt"])
+    return [b for b in (ach or []) if not _localizador_incoerente(pin.get("locator"), [b])]
+
+
+def _so_em_citacao(idx, s):
+    """True se o pinpoint só existe em passagem transcrita; None se não dá para saber."""
+    ach = _contexto_do_pinpoint(idx, s)
     return bool(ach) and all(b.get("is_quote") for b in ach) if ach else None
 
 
@@ -456,7 +465,15 @@ def validar_claims(obj, idx=None) -> Resultado:
         oficiais = [s for s in lidas if s.get("origin") == "oficial"]
         if cl.get("cited_text") is not None and not isinstance(cl["cited_text"], bool):
             r.erro("tipo_invalido", f"{c}.cited_text", "'cited_text' deve ser verdadeiro ou falso")
-        em_citacao = [_so_em_citacao(idx, s) for s in lidas]
+        contextos = [_contexto_do_pinpoint(idx, s) for s in lidas]
+        if any(any("atribuicao_ambigua" in b.get("tags", []) for b in ach)
+               or len({bool(b.get("is_quote")) for b in ach}) > 1 for ach in contextos):
+            registrar = r.erro if status == "supported" else r.aviso
+            registrar("atribuicao_ambigua", f"{c}.sources",
+                      "o trecho tem fronteira incerta ou autorias distintas no local citado: confira a atribuição "
+                      "no original e restrinja o registro; cited_text=true não resolve uma fronteira incerta")
+        # Uma fonte secundária não substitui fundamento próprio da fonte oficial.
+        em_citacao = [_so_em_citacao(idx, s) for s in (oficiais if status == "supported" else lidas)]
         if em_citacao and all(x is True for x in em_citacao):
             if status == "supported" and tipo in ("precedente", "tema", "sumula") and cl.get("cited_text") is not True:
                 r.erro("trecho_so_em_citacao", f"{c}.sources",

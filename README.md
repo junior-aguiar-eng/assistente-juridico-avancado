@@ -14,7 +14,7 @@
 </div>
 
 > [!WARNING]
-> **Este pacote não substitui advogado.** O revisor jurídico foi designado ([governança](governance/revisor-juridico.md)), mas ainda não revisou nada; as skills foram avaliadas com um modelo numa única rodada ([resultado](docs/avaliacao-skills-2026-10-18.md)), e as regras de revisão contratual estão **inativas**. Use como apoio de organização e conferência; a decisão e a responsabilidade são de quem assina.
+> **Este pacote não substitui advogado.** O revisor jurídico foi designado ([governança](governance/revisor-juridico.md)), mas ainda não revisou nada; as skills têm uma avaliação inicial com modelo ([resultado](docs/avaliacao-skills-2026-10-18.md)) e uma [segunda rodada exploratória com corpus misto](docs/continuidade-pendencias-2026-10-21.md), e as regras de revisão contratual estão **inativas**. Use como apoio de organização e conferência; a decisão e a responsabilidade são de quem assina.
 
 ---
 
@@ -100,7 +100,7 @@ python scripts/auditar.py auditar --help
 | `cronologia.py gerar\|conferir` | linha do tempo e exposição de fatos, com versões |
 | `datajud.py consultar NUMERO_CNJ` | metadados do processo na API Pública do DataJud (chave pública lida da wiki do CNJ; estadual, federal, trabalho e STJ); não é inteiro teor |
 | `fontes.py plano\|baixar\|anotacoes` | pontes por política do caso; download com hash e registro; recusa página genérica no lugar de PDF |
-| `auditar.py auditar\|aprovar\|status` | gate final; a aprovação exige terminal interativo e a frase digitada |
+| `auditar.py auditar\|aprovar\|status` | gate final, incluindo validadores de apontamentos e minuta; aprovação humana exige terminal interativo e a frase digitada |
 | `contrato.py precheck\|validar-issues` | campo em branco, anexo ausente, remissão quebrada, assinatura; valida `issues.json` |
 | `redline_docx.py ORIG.docx EDICOES.json SAIDA.docx` | alterações rastreadas; o original não muda |
 | `preencher.py lint\|gerar` | preenche `{{campo}}` com seis estados de procedência |
@@ -108,6 +108,39 @@ python scripts/auditar.py auditar --help
 | `revisar_skill.py "skills/*/SKILL.md"` | estrutura, atualidade e superfície de confiança das skills |
 
 </details>
+
+### Integridade da auditoria
+
+G04/G05 bloqueiam originais ou fontes lidas ausentes em modo `fundamentada` ou entrega externa;
+na análise interna, a ausência gera alerta. Hash textual continua aceito no registro, mas o arquivo
+local precisa corresponder ao SHA-256 bruto da extração vinculada. G10 exige relatório com aviso
+padrão para entregas externas (`cliente`, `peticao`, `contrato`). QCs históricos permanecem intactos:
+execute nova auditoria para aplicar as verificações. Isso não autentica a aprovação humana nem
+substitui revisão jurídica. Detalhes no [registro da correção](docs/correcao-gates-integridade-2026-10-22.md).
+
+### Auditoria de contrato e minuta
+
+Na auditoria usual, acrescente `--issues outputs/issues.json` para validar os apontamentos e
+`--campos derived/campos.json --modelo input/modelo.docx --minuta outputs/minuta.docx` para conferir
+o preenchimento. Também são reconhecidos JSONs de `issues`/`campos` passados em `--artefato`,
+independentemente do nome. Há um conjunto de cada tipo por execução; duplicatas do mesmo caminho
+são deduplicadas e conjuntos diferentes exigem auditorias separadas.
+
+O auditor reutiliza os validadores existentes e compara as partes do DOCX com nova geração
+temporária, sem aceitar inferidos. Modelo, dados, minuta, apontamentos e pacotes de regras usados
+ficam ligados ao QC por hash. `--regras DIR --pacote servicos_saas,lgpd` permite indicar os pacotes;
+o padrão usa os dois pacotes do projeto, preservando o bloqueio das regras inativas.
+
+`qc.json` e `status` mostram o resumo `documentos` e as pendências. Erros técnicos bloqueiam;
+campos marcados e avaliação jurídica não realizada ficam em alerta, sem virar documento completo.
+A inspeção visual de Word e o mérito jurídico continuam fora da checagem automática. O confronto
+é estrito: uma cópia editada após a geração precisa ter modelo/dados reconciliados e nova auditoria.
+
+Apontamento sem avaliação jurídica usa `severidade_juridica: "nao_avaliada"` e
+`motivo_nao_avaliada`, mantendo a severidade negocial separada. Não atribua risco baixo a uma
+preferência comercial. O validador retorna avaliação pendente e `entregavel: false`, mesmo quando
+não há erro mecânico; seu código de saída zero não é liberação jurídica. Registros antigos não são
+migrados automaticamente. As 19 regras permanecem inativas e aprovação humana é etapa distinta.
 
 ### Segurança da leitura
 
@@ -123,9 +156,9 @@ Documento é dado, nunca instrução. A extração recusa zip com razão de comp
 
 **O que foi testado com material real:** quatro acórdãos do STJ (Corte Especial e Sexta Turma, com a ementa dos dados abertos como gabarito objetivo), o STF no caso R06 e o Código Civil compilado do Planalto. Contratos, petições e planilhas só têm casos sintéticos. O [CI do merge do PR #1](https://github.com/junior-aguiar-eng/assistente-juridico-avancado/actions/runs/39311926077) passou em Ubuntu e Windows com Python 3.12 e 3.13; isso não substitui revisão jurídica ou testes de fontes reais na rede.
 
-**Depende de pessoas:** a revisão do revisor jurídico designado (ativar regras, ler as skills e conferir os gabaritos), ampliar a validação com documentos reais autorizados e realizar uma segunda avaliação das skills com documentos reais. R07 e R10 já têm PDFs públicos, proveniência e verificação mecânica; isso não encerra a revisão jurídica nem a avaliação com modelo. A política de confidencialidade é escolha livre do usuário (padrão: consultas externas permitidas).
+**Depende de pessoas:** a revisão do revisor jurídico designado (ativar regras, ler as skills e conferir os gabaritos) e a avaliação independente e integral com documentos reais autorizados. A [rodada exploratória de 21/10/2026](docs/continuidade-pendencias-2026-10-21.md) usou R06/R07/R10 nas seis skills de organização/verificação e controles sintéticos nas duas contratuais; não houve segundo modelo ou revisão jurídica. A sonda com R07 revelou atribuição errada de decisão transcrita; a [correção contextual do extrator 0.4.3](docs/correcao-atribuicao-citacoes-2026-10-21.md) passa a distinguir o intervalo citado e a bloquear atribuição ambígua em `supported`. Aplicá-la exige nova extração e auditoria, preservando os históricos. A política de confidencialidade é escolha livre do usuário (padrão: consultas externas permitidas).
 
-Os resultados e limites de R07/R10 estão no [registro de validação de 19/10/2026](docs/validacao-r07-r10-datajud-2026-10-19.md). A [revisão técnica de 20/10/2026](docs/revisao-tecnica-2026-10-20.md) acrescenta proteção para ementa aninhada com título isolado e respostas DataJud inválidas/parciais. O DataJud encontrou o processo esperado em uma consulta real anterior ao patch, mas as duas repetições após a mudança expiraram; o novo leitor está validado offline, sem sucesso real posterior demonstrado. Falha externa continua explícita, sem significar processo ausente.
+Os resultados e limites de R07/R10 estão no [registro de validação de 19/10/2026](docs/validacao-r07-r10-datajud-2026-10-19.md). A [revisão técnica de 20/10/2026](docs/revisao-tecnica-2026-10-20.md) acrescenta proteção para ementa aninhada com título isolado e respostas DataJud inválidas/parciais. O DataJud teve duas tentativas com timeout após o patch em 20/10; em [21/10/2026](docs/continuidade-pendencias-2026-10-21.md), o teste real posterior ao patch passou em 38,57 s. É disponibilidade observada nessa tentativa, sem comprovar estabilidade. Falha externa continua explícita, sem significar processo ausente.
 
 ## Estrutura
 

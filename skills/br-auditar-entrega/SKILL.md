@@ -33,6 +33,8 @@ Para o advogado responsável e para quem prepara o pacote para ele. Trabalho de 
 
 1. **Reúna o pacote** no diretório do caso.
 2. **Rode a checagem técnica:** `python scripts/auditar.py auditar --facts derived/facts.json --claims derived/claims.json --extracoes derived/extracao.json --matter matter.json --timeline outputs/timeline.json --relatorio outputs/cronologia.md --relatorio outputs/verification.md --tipo-entrega cliente --saida outputs/qc.json` (a flag é obrigatória e é o uso pretendido: `interna`, `cliente`, `peticao` ou `contrato`). Use `--modo fundamentada` quando a entrega apresentar a fundamentação como verificada. `--reverificar N` baixa de novo até N fontes oficiais (teses centrais primeiro) e compara o texto com o lido.
+   - **Fontes e relatório:** mantenha disponíveis os originais e cada `local_file` lido; ausência bloqueia em `fundamentada` ou entrega externa e gera alerta na análise interna. O hash textual no registro exige arquivo local com o SHA-256 bruto da extração vinculada; texto normalizado não substitui os bytes originais. Para entrega externa, informe ao menos um `--relatorio` com o aviso padrão. QCs antigos exigem nova auditoria; não os edite para incorporar estas verificações.
+   - **Contrato/minuta:** acrescente `--issues outputs/issues.json` e/ou `--campos derived/campos.json --modelo input/modelo.docx --minuta outputs/minuta.docx`. O auditor reutiliza os validadores; JSONs de apontamentos/campos em `--artefato` também são reconhecidos. Um conjunto de cada tipo por auditoria; campos exigem modelo e minuta. `--regras DIR --pacote servicos_saas,lgpd` seleciona os pacotes (padrão: ambos em `rules/br`). O QC/status mostra `documentos` e pendências: `revisao_pronta` não torna `completo: false` em documento concluído. A regeneração temporária não aceita inferidos; confere as partes do DOCX, não sua aparência. Edição posterior, mesmo por Word, exige reconciliar modelo/dados e reauditar.
 3. **Se vier `bloqueado`,** pare e relate o gate. Corrija na origem (skill anterior) e rode de novo; não edite o `qc.json`. No máximo **duas rodadas** de correção por gate: se não passar, declare o gate **não superado**, de forma visível.
 4. **Faça a revisão crítica** (abaixo) sobre o pacote e as pendências do `qc.json`.
 5. **Escreva `revisao-final.md`** com os três blocos, a faixa e o tipo de entrega.
@@ -46,15 +48,17 @@ Para o advogado responsável e para quem prepara o pacote para ele. Trabalho de 
 | G00 | sem extração: nada foi conferido contra o texto lido (em `fundamentada` ou entrega externa; em `analise` é alerta) |
 | G01, G02 | `facts.json` ou `claims.json` violam as regras ou não batem com o texto extraído |
 | G03 | documento `no_text`, `partial` ou `failed` sem fato `lacuna` que o nomeie |
-| G04 | arquivo de origem mudou desde a extração |
-| G05 | fonte lida não confere com o `content_hash`; em `fundamentada`, `supported` oficial sem `local_file` (leitura que não se refaz) |
+| G04 | arquivo de origem mudou desde a extração; original ausente em `fundamentada` ou entrega externa (alerta na análise interna) |
+| G05 | arquivo da fonte diverge dos bytes da extração vinculada ou do hash registrado; fonte lida ausente, ou `supported` oficial sem `local_file`, em `fundamentada` ou entrega externa (alerta na análise interna) |
 | G06 | tese `central` sem `supported` (em `fundamentada`; em `analise` é alerta) |
 | G07, G08 | alertas: proposição refutada (contraditas marcadas para escalar), argumentos que dependem de proposição sem apoio, avisos do validador |
 | G09 | cronologia desatualizada em relação ao `facts.json` |
-| G10 | relatório de entrega sem o aviso padrão (em `fundamentada` ou entrega externa) |
+| G10 | entrega externa sem relatório; relatório informado sem o aviso padrão em `fundamentada` ou entrega externa (alerta na análise interna) |
 | G11 | conflito de interesses `pending` ou `not-run` sem bypass (em `fundamentada` ou entrega externa); sem `matter.json` em entrega externa |
 | G12 | fontes `nao_triado` quanto a sigilo (em `fundamentada` ou entrega externa); triagem `misto` e segredo de justiça geram alerta |
 | G13 | texto de fonte oficial relida diferente do lido (em `fundamentada` ou entrega externa); falha de acesso é alerta |
+| G14 | apontamento contratual inválido ou apoiado em regra inativa; `nao_avaliada` com motivo é pendência/alerta, nunca risco baixo |
+| G15 | erro de campos, falta de modelo/minuta ou partes do DOCX diferentes da geração; campos marcados ficam pendentes e `completo: false` |
 
 Alerta não bloqueia, mas vira pendência para o revisor.
 
