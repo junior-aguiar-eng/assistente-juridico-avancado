@@ -158,7 +158,7 @@ Documento é dado, nunca instrução. A extração recusa zip com razão de comp
 | 0 a 3 | base, extração, validação, auditoria, triagem, cronologia, pesquisa | ✅ concluídas e revisadas criticamente |
 | 4 | contrato e minuta | 🟡 parte mecânica pronta; **aguarda revisor jurídico** para ativar as regras |
 | 4A | organização de peças e integração por uso | ORG-01 a ORG-05 concluídas no escopo assistido medido; gabaritos P01/P02 conferidos, classificador com abstenções |
-| 5 | validação para liberação assistida | Validação técnica local concluída: 1019 aprovados/5 ignorados; [matriz de evidências](docs/validacao-fase5.md). Fase global aberta: conferência humana de uso material e CI da revisão publicada pendentes |
+| 5 | validação para liberação assistida | Validação local: 1019 aprovados/5 ignorados; CI da proposta com quatro jobs aprovados e integração acompanhada na [PR #5](https://github.com/junior-aguiar-eng/assistente-juridico-avancado/pull/5). Conferência humana de uso material pendente; [evidências e limites](docs/validacao-fase5.md) |
 
 **O que foi testado com material real:** acórdãos STJ/STF/TJMG, incluindo os novos P01/P02, o ofício escaneado de Picos e textos legais oficiais. O manifesto de regressão mantém 12 casos locais; os privados ORG-R07/ORG-R10 têm IDs próprios e originais ausentes, sem substituição pelos públicos. Contratos, petições e planilhas têm controles sintéticos. O histórico de CI não valida a revisão local atual; Windows/Python 3.14.6 e os resultados de cada rodada são registrados separadamente em [ORG-05](docs/validacao-org05.md) e [fase 5](docs/validacao-fase5.md).
 

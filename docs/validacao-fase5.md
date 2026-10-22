@@ -65,9 +65,9 @@ Esta matriz aplica os critérios existentes, sem reduzir o escopo por declaraç�
 | Segunda avaliação das skills com documentos reais | Executada na ORG-05, em oito skills/16 cenários, documentos públicos reais nas skills de autos/pesquisa/auditoria e sintéticos nas contratuais; não é validação jurídica integral |
 | Compatibilidade e migração | Controles legados/integrados na suíte; atualização explícita documentada, sem migrador geral ou mudança de originais |
 | Licenças, modelos, custos e configuração | Distribuições existentes conferidas; sem nova adoção, custo de API ou promessa de inferência local; avisos atualizados |
-| CI da revisão publicada | **Não executado:** sem autorização de publicação/push. CI histórico não valida esta revisão |
+| CI da revisão publicada | **Executado:** quatro jobs aprovados na [PR #5, execução 39865227437](https://github.com/junior-aguiar-eng/assistente-juridico-avancado/actions/runs/39865227437), head `aba3dcb`; resultado abaixo. O registro documental tem CI própria, conferida no HEAD final da PR antes do merge |
 
-A fase 5 **não está encerrada como liberação material ou publicada**. Concluir a validação técnica local não autoriza marcar o fluxo real conferido por pessoa ou CI remoto como aprovados. A confirmação estrutural de P01/P02 não será solicitada novamente; a pendência é a conferência dos inventários/trechos realmente utilizados e a aprovação da entrega correspondente, além da etapa remota quando autorizada. Não criar aprovação pelo agente, ativar regras, publicar ou instalar para contornar esses gates.
+A fase 5 **não está encerrada como liberação material**. A validação técnica local e a CI publicada não autorizam marcar o fluxo real como conferido por pessoa. A confirmação estrutural de P01/P02 não será solicitada novamente; a pendência é a conferência dos inventários/trechos realmente utilizados e a aprovação da entrega correspondente. A publicação/integração tem autorização própria registrada abaixo. Não criar aprovação pelo agente, ativar regras ou instalar para contornar esses gates.
 
 ## Suíte integral e preservação
 
@@ -82,3 +82,18 @@ Logs/JUnit/saída do runner, aceitação, oito CLIs, metadados de licenças, rev
 ## Autorização posterior de integração
 
 Após a validação local, o titular autorizou “commit, push, pr e merge após”. A integração da branch Codex será destinada explicitamente a `main`, com merge condicionado à revisão da proposta e à CI da revisão publicada. A conferência humana de uso material e as 19 regras inativas continuam inalteradas. [Registro F5-I01](COORDENACAO.md) e evidências de integração em `C:/Users/Boni Jr/Documents/Codex/assistente-juridico-evidencias/integracao-fase5-2026-10-22-gr45seb6`; os resultados de ausência de publicação acima descrevem a etapa local anterior.
+
+## CI da proposta publicada
+
+Commit documental `aba3dcb56359cab6a7846ef915c41491c84eb74f`, [PR #5](https://github.com/junior-aguiar-eng/assistente-juridico-avancado/pull/5) para `main`. A revisão independente do diff completo de integração não encontrou P1/P2/P3 e aprovou 252 testes focados em 45,26 s, com JUnit conferido; não repetiu a suíte integral. Scripts/testes/regras/skills/fixtures permanecem iguais aos da validação local. O checkout Claude continua preservado.
+
+[CI 39865227437](https://github.com/junior-aguiar-eng/assistente-juridico-avancado/actions/runs/39865227437): quatro jobs concluídos com sucesso, incluindo testes e revisão mecânica. Os logs confirmam o merge de teste `d976360e81123aede70d9a34fa9abc94070cf3b6`, source `aba3dcb` e base `7394606`. Os resultados são próprios de cada ambiente:
+
+| Ambiente | Testes aprovados | Ignorados | Revisão mecânica |
+|---|---:|---:|---|
+| Ubuntu/Python 3.12 | 1015 | 5 | 8 PRONTA |
+| Ubuntu/Python 3.13 | 1015 | 5 | 8 PRONTA |
+| Windows/Python 3.12 | 1008 | 16 | 8 PRONTA |
+| Windows/Python 3.13 | 1008 | 16 | 8 PRONTA |
+
+A quantidade coletada depende dos shells disponíveis; o workflow instala Tesseract/português somente em Linux. Os logs desta execução usam pytest sem `-ra` e não discriminam todos os motivos dos skips: registrar as contagens observadas, sem atribuir validação aos ignorados. Os motivos da rodada local com JUnit estão registrados separadamente. Este commit registra uma execução anterior identificada; sua CI própria e o estado de integração ficam vinculados à PR e serão conferidos antes do merge. Nenhuma regra, aprovação humana ou instalação foi promovida por esses resultados.
