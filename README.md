@@ -176,8 +176,16 @@ tests/         testes e casos (tests/casos)
 
 [Garantias](shared/garantias.md) · [Estados](shared/estados.md) · [Formatos de dados](shared/dados.md) · [Fontes BR](shared/fontes-br.md) · [Falhas jurídicas](shared/falhas-juridicas.md) · [Escalação](shared/escalacao.md) · [Aviso padrão](shared/aviso-padrao.md)
 
-[Planejamento v2](docs/planejamento-juris-skills-br-v2.md) · [Revisão crítica da Fase 2](docs/revisao-critica-fase2.md) · [Comparação com os repositórios de referência](docs/comparacao-repositorios-modelo.md) · [Sondagem das fontes](docs/sondagem-pontes.md) · [Avaliação das skills com modelo](docs/avaliacao-skills-2026-10-18.md) · [Governança](governance/skill-review-checklist.md) · [Avisos de terceiros](THIRD_PARTY_NOTICES.md)
+[Planejamento v2](docs/plano-principal.md) · [Revisão crítica da Fase 2](docs/revisao-critica-fase2.md) · [Comparação com os repositórios de referência](docs/comparacao-repositorios-modelo.md) · [Sondagem das fontes](docs/sondagem-pontes.md) · [Avaliação das skills com modelo](docs/avaliacao-skills-2026-10-18.md) · [Governança](governance/skill-review-checklist.md) · [Avisos de terceiros](THIRD_PARTY_NOTICES.md)
 
 ## Licença
 
 **Proprietária, todos os direitos reservados** ([LICENSE](LICENSE)): não é permitido copiar, modificar ou distribuir sem autorização escrita do titular. O repositório é privado. Os documentos públicos em `tests/casos` mantêm o regime de origem; dependências seguem [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## Organização de peças e OCR — reconciliação local
+
+ORG-01 a ORG-03 foram recuperadas e conciliadas com as correções locais de auditoria, integridade e atribuição de citações. O [plano principal](docs/plano-principal.md) é o registro único de prioridades; ORG-04/05 permanecem pendentes. O [relatório RC-01](docs/reconciliacao-org-2026-10-22.md) distingue execução atual e resultados históricos.
+
+O inventário usa [contrato v1](docs/contratos/pecas-v1.md), validador semântico, histórico e propostas assistidas ([uso](docs/inventario-pecas-uso.md)); não integra automaticamente as oito skills. Docling continua piloto opcional. O OCR oferece diagnóstico, limite de raster, perfil mediana e resolução explícita ([uso e limites](docs/ocr-uso-e-limites.md)); texto parcial e conferências pendentes não viram liberação material. A versão conciliada do extrator é `0.5.1`, sem reaproveitar identidades dos snapshots anteriores.
+
+As **19 regras permanecem inativas**. R07/TJMG e R10/Picos públicos não foram substituídos pelos privados recuperados: estes agora são `ORG-R07-PRIVADO` e `ORG-R10-PRIVADO`, com gabaritos próprios e arquivos ausentes ([mapa do corpus](docs/corpus-reconciliado.md)).

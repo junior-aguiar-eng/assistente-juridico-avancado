@@ -6,7 +6,7 @@ Leia também [a coordenação e as tarefas](docs/COORDENACAO.md) antes de editar
 ## Propósito e escopo
 
 - Preservar o desenho enxuto: skills Markdown, scripts Python e revisão humana.
-- Usar `docs/planejamento-juris-skills-br-v2.md` como plano vigente; o blueprint original é referência histórica. Em divergência, prevalecem o escopo e as decisões expressamente autorizados pelo usuário.
+- Usar `docs/plano-principal.md` como plano vigente; o planejamento v2 e o blueprint original são referências históricas. Em divergência, prevalecem o escopo e as decisões expressamente autorizados pelo usuário.
 - Manter o recorte documental cível e os módulos previstos de NDA, serviços/SaaS e preenchimento de modelos. Código presente não comprova que um fluxo foi validado.
 - Não adicionar frameworks, infraestrutura persistente, serviços pagos, APIs, integrações ou novos ramos jurídicos sem autorização específica.
 - Regras contratuais inativas continuam inativas até revisão jurídica identificada. Um modelo não assume a identidade de revisor humano.

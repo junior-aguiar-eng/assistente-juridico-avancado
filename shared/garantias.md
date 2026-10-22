@@ -23,7 +23,7 @@ Todas as skills deste pacote obedecem a estas regras. Cada `SKILL.md` aponta par
 - Na dúvida, **sinalize**: um alerta a mais se corrige na revisão; um alerta a menos pode passar para o cliente. Vale para sigilo, para fato documentado versus alegado e para vigência.
 - O pacote auxilia o profissional jurídico; "passou nos gates" não é aprovação humana. Ver [falhas-juridicas.md](falhas-juridicas.md) e [escalacao.md](escalacao.md).
 - Máximo de duas rodadas de correção por gate. Se não passar, declare o gate **não superado**, de forma visível.
-- Fora de escopo por ora: prazos, cálculos, protocolo, envio a terceiros, OCR, DOCX/redline.
+- Fora de escopo: prazos, cálculos, protocolo e envio a terceiros. OCR e DOCX/redline já existem como recursos auxiliares com os limites das respectivas skills; sua existência não garante leitura completa nem aprovação da edição. A organização de autos completos ainda depende da etapa 4A do [plano principal](../docs/plano-principal.md).
 
 ## Vocabulário
 

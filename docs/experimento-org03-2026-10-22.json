@@ -1,0 +1,354 @@
+{
+  "padrao300": {
+    "execucao": "concluida",
+    "arquivo_sha256": "ac187d53278c1c860a3cd49ce9dcf2f398155faebfee775d4fdabe48b26b1dd6",
+    "configuracao": {
+      "bibliotecas": {
+        "Pillow": "13.0.0",
+        "pypdfium2": "5.14.0"
+      },
+      "perfil": "padrao",
+      "dpi": 300,
+      "max_pixels": 10000000,
+      "max_lado": 4000,
+      "psm": 3,
+      "motor_versao": "tesseract 5.5.0",
+      "motor_sha256": "74b76a5b994adcc18be362bf64ed5118082b2401d5d9a35242e92fc4c62e2b4b",
+      "idioma": "por",
+      "modelo_sha256": "c4932b937207a9514b7514d518b931a99938c02a28a5a5a553f8599ed58b7deb",
+      "cache_verificavel": true
+    },
+    "idioma_degradado": false,
+    "segundos": 7.1674,
+    "status_leitura": "partial",
+    "paginas": [
+      {
+        "pagina": 1,
+        "confianca": 75.2,
+        "palavras": 192,
+        "palavras_baixa_confianca": 45,
+        "palavras_descartadas": 0,
+        "linhas": 27,
+        "raster": {
+          "bbox_pdf": [
+            0,
+            0,
+            2513,
+            2932
+          ],
+          "largura": 2927,
+          "altura": 3415,
+          "dpi_efetivo": 83.83724786978722,
+          "perfil": "padrao"
+        }
+      },
+      {
+        "pagina": 2,
+        "confianca": 61.1,
+        "palavras": 242,
+        "palavras_baixa_confianca": 111,
+        "palavras_descartadas": 0,
+        "linhas": 62,
+        "raster": {
+          "bbox_pdf": [
+            0,
+            0,
+            2935,
+            3018
+          ],
+          "largura": 3117,
+          "altura": 3206,
+          "dpi_efetivo": 76.46304165957282,
+          "perfil": "padrao"
+        }
+      }
+    ],
+    "amostra": {
+      "total": 6,
+      "acertos": 1,
+      "conferencia_humana_da_amostra": true,
+      "uso_material_liberado": false,
+      "correspondencias": [
+        {
+          "id": "r10-a1",
+          "pagina": 1,
+          "presente": false
+        },
+        {
+          "id": "r10-a2",
+          "pagina": 1,
+          "presente": false
+        },
+        {
+          "id": "r10-a3",
+          "pagina": 1,
+          "presente": true
+        },
+        {
+          "id": "r10-a4",
+          "pagina": 2,
+          "presente": false
+        },
+        {
+          "id": "r10-a5",
+          "pagina": 2,
+          "presente": false
+        },
+        {
+          "id": "r10-a6",
+          "pagina": 2,
+          "presente": false
+        }
+      ]
+    },
+    "limites": [
+      "Correspondência normalizada de trechos curtos não mede exatidão integral, acentos ou pontuação.",
+      "Confiança do motor não é probabilidade de acerto nem aprovação humana.",
+      "Nomes, números, datas e mérito exigem conferência própria."
+    ]
+  },
+  "mediana300": {
+    "execucao": "concluida",
+    "arquivo_sha256": "ac187d53278c1c860a3cd49ce9dcf2f398155faebfee775d4fdabe48b26b1dd6",
+    "configuracao": {
+      "bibliotecas": {
+        "Pillow": "13.0.0",
+        "pypdfium2": "5.14.0"
+      },
+      "perfil": "mediana",
+      "dpi": 300,
+      "max_pixels": 10000000,
+      "max_lado": 4000,
+      "psm": 3,
+      "motor_versao": "tesseract 5.5.0",
+      "motor_sha256": "74b76a5b994adcc18be362bf64ed5118082b2401d5d9a35242e92fc4c62e2b4b",
+      "idioma": "por",
+      "modelo_sha256": "c4932b937207a9514b7514d518b931a99938c02a28a5a5a553f8599ed58b7deb",
+      "cache_verificavel": true
+    },
+    "idioma_degradado": false,
+    "segundos": 11.4892,
+    "status_leitura": "partial",
+    "paginas": [
+      {
+        "pagina": 1,
+        "confianca": 73.8,
+        "palavras": 418,
+        "palavras_baixa_confianca": 120,
+        "palavras_descartadas": 0,
+        "linhas": 55,
+        "raster": {
+          "bbox_pdf": [
+            0,
+            0,
+            2513,
+            2932
+          ],
+          "largura": 2927,
+          "altura": 3415,
+          "dpi_efetivo": 83.83724786978722,
+          "perfil": "mediana"
+        }
+      },
+      {
+        "pagina": 2,
+        "confianca": 70.0,
+        "palavras": 306,
+        "palavras_baixa_confianca": 99,
+        "palavras_descartadas": 0,
+        "linhas": 75,
+        "raster": {
+          "bbox_pdf": [
+            0,
+            0,
+            2935,
+            3018
+          ],
+          "largura": 3117,
+          "altura": 3206,
+          "dpi_efetivo": 76.46304165957282,
+          "perfil": "mediana"
+        }
+      }
+    ],
+    "amostra": {
+      "total": 6,
+      "acertos": 5,
+      "conferencia_humana_da_amostra": true,
+      "uso_material_liberado": false,
+      "correspondencias": [
+        {
+          "id": "r10-a1",
+          "pagina": 1,
+          "presente": true
+        },
+        {
+          "id": "r10-a2",
+          "pagina": 1,
+          "presente": false
+        },
+        {
+          "id": "r10-a3",
+          "pagina": 1,
+          "presente": true
+        },
+        {
+          "id": "r10-a4",
+          "pagina": 2,
+          "presente": true
+        },
+        {
+          "id": "r10-a5",
+          "pagina": 2,
+          "presente": true
+        },
+        {
+          "id": "r10-a6",
+          "pagina": 2,
+          "presente": true
+        }
+      ]
+    },
+    "limites": [
+      "Correspondência normalizada de trechos curtos não mede exatidão integral, acentos ou pontuação.",
+      "Confiança do motor não é probabilidade de acerto nem aprovação humana.",
+      "Nomes, números, datas e mérito exigem conferência própria."
+    ]
+  },
+  "mediana72": {
+    "execucao": "concluida",
+    "arquivo_sha256": "ac187d53278c1c860a3cd49ce9dcf2f398155faebfee775d4fdabe48b26b1dd6",
+    "configuracao": {
+      "bibliotecas": {
+        "Pillow": "13.0.0",
+        "pypdfium2": "5.14.0"
+      },
+      "perfil": "mediana",
+      "dpi": 72.0,
+      "max_pixels": 10000000,
+      "max_lado": 4000,
+      "psm": 3,
+      "motor_versao": "tesseract 5.5.0",
+      "motor_sha256": "74b76a5b994adcc18be362bf64ed5118082b2401d5d9a35242e92fc4c62e2b4b",
+      "idioma": "por",
+      "modelo_sha256": "c4932b937207a9514b7514d518b931a99938c02a28a5a5a553f8599ed58b7deb",
+      "cache_verificavel": true
+    },
+    "idioma_degradado": false,
+    "segundos": 8.396,
+    "status_leitura": "partial",
+    "paginas": [
+      {
+        "pagina": 1,
+        "confianca": 83.8,
+        "palavras": 376,
+        "palavras_baixa_confianca": 49,
+        "palavras_descartadas": 0,
+        "linhas": 42,
+        "raster": {
+          "bbox_pdf": [
+            0,
+            0,
+            2513,
+            2932
+          ],
+          "largura": 2513,
+          "altura": 2932,
+          "dpi_efetivo": 72.0,
+          "perfil": "mediana"
+        }
+      },
+      {
+        "pagina": 2,
+        "confianca": 73.0,
+        "palavras": 279,
+        "palavras_baixa_confianca": 82,
+        "palavras_descartadas": 0,
+        "linhas": 63,
+        "raster": {
+          "bbox_pdf": [
+            0,
+            0,
+            2935,
+            3018
+          ],
+          "largura": 2935,
+          "altura": 3018,
+          "dpi_efetivo": 72.0,
+          "perfil": "mediana"
+        }
+      }
+    ],
+    "amostra": {
+      "total": 6,
+      "acertos": 6,
+      "conferencia_humana_da_amostra": true,
+      "uso_material_liberado": false,
+      "correspondencias": [
+        {
+          "id": "r10-a1",
+          "pagina": 1,
+          "presente": true
+        },
+        {
+          "id": "r10-a2",
+          "pagina": 1,
+          "presente": true
+        },
+        {
+          "id": "r10-a3",
+          "pagina": 1,
+          "presente": true
+        },
+        {
+          "id": "r10-a4",
+          "pagina": 2,
+          "presente": true
+        },
+        {
+          "id": "r10-a5",
+          "pagina": 2,
+          "presente": true
+        },
+        {
+          "id": "r10-a6",
+          "pagina": 2,
+          "presente": true
+        }
+      ]
+    },
+    "limites": [
+      "Correspondência normalizada de trechos curtos não mede exatidão integral, acentos ou pontuação.",
+      "Confiança do motor não é probabilidade de acerto nem aprovação humana.",
+      "Nomes, números, datas e mérito exigem conferência própria."
+    ]
+  },
+  "baseline_historico": {
+    "extrator": "0.4.0",
+    "origem": "snapshot local anterior; não reexecutado em raster excessivo",
+    "confianca_paginas": [
+      41.7,
+      37.9
+    ],
+    "raster_teorico_300_dpi": [
+      [
+        10471,
+        12217
+      ],
+      [
+        12230,
+        12575
+      ]
+    ],
+    "comparavel_em_tempo": false,
+    "modelo_motor_nao_identificados_no_snapshot": true,
+    "extracao_sha256": "bf314f7e959d3e26143b90d57bb6395caa347786a818143e813637de4b698d20"
+  },
+  "derivado_privado": {
+    "extracao_sha256": "78a487d6c478a44ea09bd3dc81820c854ae80699a07018dab86c14594f08e1f8",
+    "nome": "ORG-R10-PRIVADO-0.5.0-mediana72-78a487d6c478.json",
+    "status": "partial",
+    "fora_do_git": true,
+    "transcricao_integral_conferida": false
+  }
+}

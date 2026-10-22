@@ -130,7 +130,7 @@ def test_timeout_de_transporte_e_falha_nunca_processo_ausente(monkeypatch, erro)
 
 
 def test_chave_nunca_aparece_no_repositorio():
-    for arq in list((RAIZ / "scripts").glob("*.py")) + list((RAIZ / "tests").glob("*.py")) + list((RAIZ / "docs").glob("*")):
+    for arq in list((RAIZ / "scripts").glob("*.py")) + list((RAIZ / "tests").glob("*.py")) + [p for p in (RAIZ / "docs").rglob("*") if p.is_file()]:
         assert ("cDZHYzlZ" + "a0Jad") not in arq.read_text(encoding="utf-8", errors="ignore"), arq
 
 

@@ -1,0 +1,22 @@
+{
+  "schema_gabarito": "1",
+  "caso_id": "ORG-R10-PRIVADO",
+  "arquivo_sha256": "ac187d53278c1c860a3cd49ce9dcf2f398155faebfee775d4fdabe48b26b1dd6",
+  "total_paginas": 2,
+  "conferencia": {
+    "estado": "conferido",
+    "ator_tipo": "humano",
+    "ator": "titular do projeto",
+    "data": "2026-10-22",
+    "origem": "confirmação expressa nesta conversa",
+    "escopo": "apenas os seis trechos e páginas; não confirma transcrição integral, dados pessoais ou mérito"
+  },
+  "amostras": [
+    {"id": "r10-a1", "pagina": 1, "trecho": "Câmara Criminal"},
+    {"id": "r10-a2", "pagina": 1, "trecho": "RELATÓRIO"},
+    {"id": "r10-a3", "pagina": 1, "trecho": "Processo Penal"},
+    {"id": "r10-a4", "pagina": 2, "trecho": "É o relatório."},
+    {"id": "r10-a5", "pagina": 2, "trecho": "VOTO"},
+    {"id": "r10-a6", "pagina": 2, "trecho": "art. 593"}
+  ]
+}

@@ -21,9 +21,12 @@ Nenhum desses projetos endossa este pacote.
 | Pacote | Versão | Licença |
 |---|---|---|
 | pdfplumber | 0.11.10 | MIT |
+| Pillow | 13.0.0 | MIT-CMU; raster e filtro opcional de mediana do OCR |
 | pdfminer.six | 20260107 | MIT |
 | python-docx | 1.2.0 | MIT |
 | lxml | 6.1.1 | BSD-3-Clause |
+| jsonschema | 4.26.0 | MIT; esquema do inventário opcional de peças |
+| rfc3339-validator | 0.1.4 | MIT; datas RFC 3339 dos eventos do inventário |
 
 Dependências transitivas relevantes (instaladas com as acima): pypdfium2 (BSD-3-Clause e Apache-2.0), Pillow (MIT-CMU), charset-normalizer (MIT), cryptography (Apache-2.0 ou BSD-3-Clause), typing_extensions (PSF-2.0).
 
@@ -33,6 +36,8 @@ Dependências transitivas relevantes (instaladas com as acima): pypdfium2 (BSD-3
 |---|---|---|
 | pytest | 9.1.1 | MIT |
 | pypdf | 6.19.0 | BSD-3-Clause |
+
+O validador passou a dependência de execução em ORG-02. Dependências transitivas do validador de esquema nesta instalação: attrs, referencing, jsonschema-specifications e rpds-py, todas MIT conforme os metadados das distribuições instaladas. O rfc3339-validator usa ainda six (MIT). Nenhum modelo ou motor de extração foi adicionado por essa dependência de desenvolvimento.
 
 PyMuPDF (AGPL-3.0) **não** é dependência e não deve ser adicionada sem decisão sobre a licença do pacote.
 
@@ -46,3 +51,9 @@ PyMuPDF (AGPL-3.0) **não** é dependência e não deve ser adicionada sem decis
 ## Documentos de teste
 
 `tests/casos/` traz o inteiro teor de acórdãos públicos do STJ (AREsp 2.432.194/SP e três do corpus em `stj_corpus`, baixados em 17/10/2026), as ementas dos conjuntos de dados abertos do STJ usadas como gabarito, e as versões compiladas do Código Civil e da Lei 13.709/2018 (LGPD) obtidas do Planalto, usados como fixtures. São atos e textos oficiais; a redistribuição não foi objeto de parecer.
+
+## Piloto opcional de peças (`requirements-piloto-pecas.txt`)
+
+Docling Parse 7.23.0 e Docling Core 2.104.0 são MIT, conforme documentação do projeto e metadados das distribuições instaladas. Usados somente em ambiente virtual separado para o [piloto ORG-02](docs/piloto-org02-2026-10-22.md); não houve instalação de modelos de layout/OCR, uso do pipeline completo Docling ou cópia de código/dados/pesos do VICTOR. O adaptador é código próprio, apoiado na API pública documentada.
+
+Dependências adicionais relevantes instaladas no piloto: pydantic/pydantic-core/pydantic-settings (MIT), pandas (BSD-3-Clause), NumPy (BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0, expressão da distribuição), doclang (Apache-2.0), defusedxml (PSFL), jsonref e latex2mathml (MIT), rich/typer/tabulate (MIT). As ferramentas e seus dados não são redistribuídos neste repositório; fontes e versões diretas ficam fixadas no arquivo opcional. Licenças de modelos futuros exigem avaliação própria.

@@ -7,3 +7,10 @@ lxml==6.1.1
 requests==2.34.2
 beautifulsoup4==4.15.0
 markdownify==1.2.3
+
+# integridade do inventário de peças (ORG-02)
+jsonschema==4.26.0
+rfc3339-validator==0.1.4
+
+# processamento local do raster OCR (antes transitiva de pdfplumber)
+Pillow==13.0.0

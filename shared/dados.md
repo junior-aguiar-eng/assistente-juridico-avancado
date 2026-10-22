@@ -25,7 +25,7 @@ Produzido pela `br-triagem`. Estrutura `{"schema_version": "1", "matter": {...}}
 | `conflicts` | resultado da checagem de conflito de interesses, **registrada, não executada**: `status` `cleared` (exige `method`, `cleared_by`, `cleared_date`, `checked_against`), `pending` (exige `owner`), `waived` (exige `waiver_rationale`), `nao_aplicavel` (exige `motivo`) ou `not-run` (só passa sem aviso com `override` completo: `by`, `date`, `rationale`). Ausente: aviso |
 | `partes` | lista de `{nome, papel, representada_por?, source?}`; `papel`: `autor`, `reu`, `terceiro`, `advogado`, `juizo`, `perito`, `testemunha`, `outro`. `source` (documento, localizador, trecho) é conferida contra a extração; sem fonte, aviso |
 | `processos` | números CNJ (com dígito verificador conferido) |
-| `capabilities` | verdadeiro ou falso por capacidade; OCR é sempre falso |
+| `capabilities` | verdadeiro ou falso por capacidade, confirmado por `triagem.py capacidades`; disponibilidade de OCR não significa leitura conferida ou completa |
 | `documentos`, `lacunas_iniciais` | listas de texto |
 
 ## facts.json

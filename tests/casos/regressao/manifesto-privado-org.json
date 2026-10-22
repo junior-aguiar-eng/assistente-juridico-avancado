@@ -1,0 +1,64 @@
+{
+  "schema_version": "1",
+  "origem": "ff225a7b3c228e50d71f1c56439575b44b16834c",
+  "casos": [
+    {
+      "id": "ORG-R07-PRIVADO",
+      "titulo": "TJAL: sentença e acórdão no mesmo PDF, corpus privado",
+      "tribunal": "TJ",
+      "tipo": "acordao_pdf",
+      "situacao": "privado_local",
+      "arquivo_esperado": "tests/casos/regressao/pendentes/ORG-R07-PRIVADO.pdf",
+      "o_que_falta": "Restaurar o arquivo privado local fornecido pelo titular; não distribuído com o repositório",
+      "recebido_em": "2026-10-22",
+      "distribuicao": "Arquivo privado local, excluído do Git",
+      "sha256": "d5431d9144779f04f2d5e7d455332a5a640fc1f2bf413d75ea67bfa42597933b",
+      "esperado": {
+        "status": "ok",
+        "paginas": 38,
+        "avisos": [
+          "cabecalho_rodape_removido"
+        ],
+        "secoes": [
+          "sentenca"
+        ]
+      },
+      "limite": "Títulos com letras espaçadas do acórdão não segmentam as seções corretamente; o resultado ainda agrupa texto como sentença.",
+      "proveniencia_reconciliacao": {
+        "commit": "ff225a7b3c228e50d71f1c56439575b44b16834c",
+        "id_na_origem": "R07",
+        "identidade": "arquivo identificado por sha256; distinto do caso público local"
+      }
+    },
+    {
+      "id": "ORG-R10-PRIVADO",
+      "titulo": "Trecho escaneado real, duas páginas",
+      "tribunal": null,
+      "tipo": "escaneado_pdf",
+      "situacao": "privado_local",
+      "arquivo_esperado": "tests/casos/regressao/pendentes/ORG-R10-PRIVADO.pdf",
+      "o_que_falta": "Restaurar o arquivo privado local fornecido pelo titular; não distribuído com o repositório",
+      "recebido_em": "2026-10-22",
+      "distribuicao": "Arquivo privado local, excluído do Git",
+      "sha256": "ac187d53278c1c860a3cd49ce9dcf2f398155faebfee775d4fdabe48b26b1dd6",
+      "esperado": {
+        "status": "partial",
+        "paginas": 2,
+        "avisos": [
+          "ocr_aplicado",
+          "ocr_baixa_confianca"
+        ],
+        "secoes": [
+          "cabecalho"
+        ],
+        "tag": "ocr"
+      },
+      "limite": "OCR parcial com ruído: seis amostras genéricas conferidas pelo titular em ORG-03; perfil experimental mediana/72 dpi recupera a amostra, sem aprovar texto integral ou uso material. Ver docs/experimento-org03-2026-10-22.md.",
+      "proveniencia_reconciliacao": {
+        "commit": "ff225a7b3c228e50d71f1c56439575b44b16834c",
+        "id_na_origem": "R10",
+        "identidade": "arquivo identificado por sha256; distinto do caso público local"
+      }
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 """Fase 5: casos de regressão da extração (manifesto em tests/casos/regressao/manifesto.json)."""
 import json
+import hashlib
 import sys
 from pathlib import Path
 
@@ -13,7 +14,8 @@ from test_extract_formatos import xlsx  # noqa: E402
 from test_ocr import pdf_escaneado  # noqa: E402
 
 MANIFESTO = json.loads((RAIZ / "tests" / "casos" / "regressao" / "manifesto.json").read_text(encoding="utf-8"))
-CASOS = MANIFESTO["casos"]
+PRIVADOS = json.loads((RAIZ / "tests/casos/regressao/manifesto-privado-org.json").read_text(encoding="utf-8"))
+CASOS = MANIFESTO["casos"] + PRIVADOS["casos"]
 
 
 def cods(doc):
@@ -124,19 +126,22 @@ def test_caso_pronto(caso, tmp_path):
     conferir(doc, caso["esperado"])
 
 
-@pytest.mark.parametrize("caso", [c for c in CASOS if c["situacao"] == "aguardando"], ids=lambda c: c["id"])
+@pytest.mark.parametrize("caso", [c for c in CASOS if c["situacao"] in ("aguardando", "privado_local")], ids=lambda c: c["id"])
 def test_caso_aguardando_so_com_invariantes_quando_o_arquivo_chega(caso):
     arq = RAIZ / caso["arquivo_esperado"]
     if not arq.is_file():
         pytest.skip(f"aguardando: {caso['o_que_falta']} -> {caso['arquivo_esperado']}")
+    if caso.get("sha256"):
+        assert hashlib.sha256(arq.read_bytes()).hexdigest() == caso["sha256"], "corpus diferente do documento conferido"
     doc, _ = extract.extrair(arq, ocr=caso["tipo"] == "escaneado_pdf")
     invariantes(doc)
     assert doc["status"] in ("ok", "partial", "no_text")  # sem gabarito: só o estado honesto
 
 
-def test_manifesto_tem_12_casos_com_ids_unicos_e_situacao_valida():
-    assert len(CASOS) == 12 and len({c["id"] for c in CASOS}) == 12
-    assert {c["situacao"] for c in CASOS} <= {"pronto", "aguardando"}
+def test_manifesto_preserva_publicos_e_separa_privados_com_ids_unicos():
+    assert len(CASOS) == 14 and len({c["id"] for c in CASOS}) == 14
+    assert {f"R{i:02}" for i in range(1, 13)} <= {c["id"] for c in CASOS}
+    assert {c["situacao"] for c in CASOS} <= {"pronto", "aguardando", "privado_local"}
     for c in CASOS:
         if c["situacao"] == "pronto" and "arquivo" in c:
             assert (RAIZ / c["arquivo"]).is_file(), c["arquivo"]

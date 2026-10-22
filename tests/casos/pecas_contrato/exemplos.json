@@ -1,0 +1,1168 @@
+{
+  "descricao": "Simulações anônimas de contrato; não são PDFs extraídos nem resultados de segmentação.",
+  "exemplos": [
+    {
+      "id": "CT01",
+      "natureza": "simulacao_de_contrato",
+      "origem_simulada_utf8": "Origem artificial CT01; sem documento de cliente.",
+      "extracao_json_utf8": "{\"documents\":[{\"blocks\":[{\"id\":\"b0001\",\"is_quote\":false,\"locator\":\"p.1\",\"page\":1,\"page_end\":1,\"section\":\"sentenca\",\"tags\":[],\"text\":\"SENTENÇA. Julgo o pedido.\"},{\"id\":\"b0002\",\"is_quote\":false,\"locator\":\"p.2\",\"page\":2,\"page_end\":2,\"section\":\"sentenca\",\"tags\":[],\"text\":\"A C Ó R D Ã O\"},{\"id\":\"b0003\",\"is_quote\":false,\"locator\":\"p.2\",\"page\":2,\"page_end\":2,\"section\":\"sentenca\",\"tags\":[],\"text\":\"RELATÓRIO. Síntese.\"},{\"id\":\"b0004\",\"is_quote\":false,\"locator\":\"p.2\",\"page\":2,\"page_end\":2,\"section\":\"sentenca\",\"tags\":[],\"text\":\"VOTO. Fundamentos.\"}],\"document_id\":\"doc-e8319cfc4e80\",\"extractor_versions\":{\"extractor\":\"1\",\"nome\":\"simulado\"},\"page_count\":2,\"sha256\":\"e8319cfc4e80229fece2d167cd143330285ff43b97595ab2592a9f30bdd79f24\",\"status\":\"ok\",\"warnings\":[]}],\"run\":{\"params\":{\"simulado\":true}},\"schema_version\":\"1\"}",
+      "inventario": {
+        "schema_version": "1",
+        "inventario_id": "inv-CT01",
+        "revisao": 1,
+        "anterior_sha256": null,
+        "origem": {
+          "document_id": "doc-e8319cfc4e80",
+          "arquivo_sha256": "e8319cfc4e80229fece2d167cd143330285ff43b97595ab2592a9f30bdd79f24",
+          "extracao_sha256": "42fc189ada55a07257c779e188998380264d8f270472b547651729ab7acee264",
+          "total_paginas": 2,
+          "extrator": {
+            "nome": "simulado",
+            "versao": "1"
+          },
+          "configuracao_sha256": "6ffea6867005b7968af13120e9ad8eb7b0519e71ecf665b6b6c615cfacafdff9"
+        },
+        "metodo": {
+          "nome": "exemplo_de_contrato",
+          "versao": "1"
+        },
+        "paginas": [
+          {
+            "numero": 1,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          },
+          {
+            "numero": 2,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          }
+        ],
+        "fragmentos": [
+          {
+            "id": "f001",
+            "block_id": "b0001",
+            "inicio": 0,
+            "fim": 25,
+            "paginas": {
+              "inicio": 1,
+              "fim": 1,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p001"
+            }
+          },
+          {
+            "id": "f002",
+            "block_id": "b0002",
+            "inicio": 0,
+            "fim": 13,
+            "paginas": {
+              "inicio": 2,
+              "fim": 2,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p002"
+            }
+          },
+          {
+            "id": "f003",
+            "block_id": "b0003",
+            "inicio": 0,
+            "fim": 19,
+            "paginas": {
+              "inicio": 2,
+              "fim": 2,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p002"
+            }
+          },
+          {
+            "id": "f004",
+            "block_id": "b0004",
+            "inicio": 0,
+            "fim": 18,
+            "paginas": {
+              "inicio": 2,
+              "fim": 2,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p002"
+            }
+          }
+        ],
+        "pecas": [
+          {
+            "id": "p001",
+            "ordem": 1,
+            "tipo_proposto": "sentenca",
+            "inicio": "f001",
+            "fim": "f001",
+            "proposta_evento_id": "ev-1",
+            "limites": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "tipo": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "evidencias": [
+              {
+                "sinal": "outro",
+                "fragmentos": [
+                  "f001"
+                ],
+                "observacao": "Gabarito artificial do contrato; não é predição nem conferência humana"
+              }
+            ]
+          },
+          {
+            "id": "p002",
+            "ordem": 2,
+            "tipo_proposto": "acordao",
+            "inicio": "f002",
+            "fim": "f004",
+            "proposta_evento_id": "ev-1",
+            "limites": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "tipo": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "evidencias": [
+              {
+                "sinal": "outro",
+                "fragmentos": [
+                  "f002",
+                  "f003",
+                  "f004"
+                ],
+                "observacao": "Gabarito artificial do contrato; não é predição nem conferência humana"
+              }
+            ]
+          }
+        ],
+        "secoes": [
+          {
+            "id": "sec-1",
+            "piece_id": "p002",
+            "tipo_proposto": "relatorio",
+            "fragmentos": [
+              "f003"
+            ],
+            "conferencia": {
+              "estado": "proposto",
+              "evento_id": null
+            }
+          },
+          {
+            "id": "sec-2",
+            "piece_id": "p002",
+            "tipo_proposto": "voto",
+            "fragmentos": [
+              "f004"
+            ],
+            "conferencia": {
+              "estado": "proposto",
+              "evento_id": null
+            }
+          }
+        ],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "instante": "2026-10-22T00:00:00Z",
+            "ator": {
+              "tipo": "sistema",
+              "identificador": "gerador-de-fixtures-sinteticas"
+            },
+            "acao": "propor",
+            "alvos": [
+              "p001",
+              "p002"
+            ],
+            "motivo": "Simulação de contrato; data e identidades artificiais, sem valor de aprovação"
+          }
+        ],
+        "pendencias": []
+      }
+    },
+    {
+      "id": "CT02",
+      "natureza": "simulacao_de_contrato",
+      "origem_simulada_utf8": "Origem artificial CT02; sem documento de cliente.",
+      "extracao_json_utf8": "{\"documents\":[{\"blocks\":[{\"id\":\"b0001\",\"is_quote\":false,\"locator\":\"p.1\",\"page\":1,\"page_end\":1,\"section\":\"corpo\",\"tags\":[],\"text\":\"PETIÇÃO A. PETIÇÃO B.\"}],\"document_id\":\"doc-4804a33e6e08\",\"extractor_versions\":{\"extractor\":\"1\",\"nome\":\"simulado\"},\"page_count\":1,\"sha256\":\"4804a33e6e080446c38a3366f210a1cd87f660f2e78a205d8d82abb0e6c0ccc6\",\"status\":\"ok\",\"warnings\":[]}],\"run\":{\"params\":{\"simulado\":true}},\"schema_version\":\"1\"}",
+      "inventario": {
+        "schema_version": "1",
+        "inventario_id": "inv-CT02",
+        "revisao": 1,
+        "anterior_sha256": null,
+        "origem": {
+          "document_id": "doc-4804a33e6e08",
+          "arquivo_sha256": "4804a33e6e080446c38a3366f210a1cd87f660f2e78a205d8d82abb0e6c0ccc6",
+          "extracao_sha256": "13eec0d1c8561a309ec94f14383578cf4ffe8e74c67e65e60157322ecdb2fd6c",
+          "total_paginas": 1,
+          "extrator": {
+            "nome": "simulado",
+            "versao": "1"
+          },
+          "configuracao_sha256": "6ffea6867005b7968af13120e9ad8eb7b0519e71ecf665b6b6c615cfacafdff9"
+        },
+        "metodo": {
+          "nome": "exemplo_de_contrato",
+          "versao": "1"
+        },
+        "paginas": [
+          {
+            "numero": 1,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          }
+        ],
+        "fragmentos": [
+          {
+            "id": "f001",
+            "block_id": "b0001",
+            "inicio": 0,
+            "fim": 11,
+            "paginas": {
+              "inicio": 1,
+              "fim": 1,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p001"
+            }
+          },
+          {
+            "id": "f002",
+            "block_id": "b0001",
+            "inicio": 11,
+            "fim": 21,
+            "paginas": {
+              "inicio": 1,
+              "fim": 1,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p002"
+            }
+          }
+        ],
+        "pecas": [
+          {
+            "id": "p001",
+            "ordem": 1,
+            "tipo_proposto": "peticao",
+            "inicio": "f001",
+            "fim": "f001",
+            "proposta_evento_id": "ev-1",
+            "limites": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "tipo": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "evidencias": [
+              {
+                "sinal": "outro",
+                "fragmentos": [
+                  "f001"
+                ],
+                "observacao": "Gabarito artificial do contrato; não é predição nem conferência humana"
+              }
+            ]
+          },
+          {
+            "id": "p002",
+            "ordem": 2,
+            "tipo_proposto": "peticao",
+            "inicio": "f002",
+            "fim": "f002",
+            "proposta_evento_id": "ev-1",
+            "limites": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "tipo": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "evidencias": [
+              {
+                "sinal": "outro",
+                "fragmentos": [
+                  "f002"
+                ],
+                "observacao": "Gabarito artificial do contrato; não é predição nem conferência humana"
+              }
+            ]
+          }
+        ],
+        "secoes": [],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "instante": "2026-10-22T00:00:00Z",
+            "ator": {
+              "tipo": "sistema",
+              "identificador": "gerador-de-fixtures-sinteticas"
+            },
+            "acao": "propor",
+            "alvos": [
+              "p001",
+              "p002"
+            ],
+            "motivo": "Simulação de contrato; data e identidades artificiais, sem valor de aprovação"
+          }
+        ],
+        "pendencias": []
+      }
+    },
+    {
+      "id": "CT03",
+      "natureza": "simulacao_de_contrato",
+      "origem_simulada_utf8": "Origem artificial CT03; sem documento de cliente.",
+      "extracao_json_utf8": "{\"documents\":[{\"blocks\":[{\"id\":\"b0001\",\"is_quote\":false,\"locator\":\"p.1\",\"page\":1,\"page_end\":1,\"section\":\"corpo\",\"tags\":[],\"text\":\"PETIÇÃO UM.\"},{\"id\":\"b0002\",\"is_quote\":false,\"locator\":\"p.2\",\"page\":2,\"page_end\":2,\"section\":\"corpo\",\"tags\":[],\"text\":\"PETIÇÃO DOIS.\"}],\"document_id\":\"doc-f2d7e0cead87\",\"extractor_versions\":{\"extractor\":\"1\",\"nome\":\"simulado\"},\"page_count\":2,\"sha256\":\"f2d7e0cead87c7aa6a46e07e0fd0bf9caa1761f86b1b10290d17402cbc01efd2\",\"status\":\"ok\",\"warnings\":[]}],\"run\":{\"params\":{\"simulado\":true}},\"schema_version\":\"1\"}",
+      "inventario": {
+        "schema_version": "1",
+        "inventario_id": "inv-CT03",
+        "revisao": 1,
+        "anterior_sha256": null,
+        "origem": {
+          "document_id": "doc-f2d7e0cead87",
+          "arquivo_sha256": "f2d7e0cead87c7aa6a46e07e0fd0bf9caa1761f86b1b10290d17402cbc01efd2",
+          "extracao_sha256": "efbc0293a976ec5be574b2a248075f686b0e623917630c178b816650b0447294",
+          "total_paginas": 2,
+          "extrator": {
+            "nome": "simulado",
+            "versao": "1"
+          },
+          "configuracao_sha256": "6ffea6867005b7968af13120e9ad8eb7b0519e71ecf665b6b6c615cfacafdff9"
+        },
+        "metodo": {
+          "nome": "exemplo_de_contrato",
+          "versao": "1"
+        },
+        "paginas": [
+          {
+            "numero": 1,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          },
+          {
+            "numero": 2,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          }
+        ],
+        "fragmentos": [
+          {
+            "id": "f001",
+            "block_id": "b0001",
+            "inicio": 0,
+            "fim": 11,
+            "paginas": {
+              "inicio": 1,
+              "fim": 1,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p001"
+            }
+          },
+          {
+            "id": "f002",
+            "block_id": "b0002",
+            "inicio": 0,
+            "fim": 13,
+            "paginas": {
+              "inicio": 2,
+              "fim": 2,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p002"
+            }
+          }
+        ],
+        "pecas": [
+          {
+            "id": "p001",
+            "ordem": 1,
+            "tipo_proposto": "peticao",
+            "inicio": "f001",
+            "fim": "f001",
+            "proposta_evento_id": "ev-1",
+            "limites": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "tipo": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "evidencias": [
+              {
+                "sinal": "outro",
+                "fragmentos": [
+                  "f001"
+                ],
+                "observacao": "Gabarito artificial do contrato; não é predição nem conferência humana"
+              }
+            ]
+          },
+          {
+            "id": "p002",
+            "ordem": 2,
+            "tipo_proposto": "peticao",
+            "inicio": "f002",
+            "fim": "f002",
+            "proposta_evento_id": "ev-1",
+            "limites": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "tipo": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "evidencias": [
+              {
+                "sinal": "outro",
+                "fragmentos": [
+                  "f002"
+                ],
+                "observacao": "Gabarito artificial do contrato; não é predição nem conferência humana"
+              }
+            ]
+          }
+        ],
+        "secoes": [],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "instante": "2026-10-22T00:00:00Z",
+            "ator": {
+              "tipo": "sistema",
+              "identificador": "gerador-de-fixtures-sinteticas"
+            },
+            "acao": "propor",
+            "alvos": [
+              "p001",
+              "p002"
+            ],
+            "motivo": "Simulação de contrato; data e identidades artificiais, sem valor de aprovação"
+          }
+        ],
+        "pendencias": []
+      }
+    },
+    {
+      "id": "CT04",
+      "natureza": "simulacao_de_contrato",
+      "origem_simulada_utf8": "Origem artificial CT04; sem documento de cliente.",
+      "extracao_json_utf8": "{\"documents\":[{\"blocks\":[{\"id\":\"b0001\",\"is_quote\":false,\"locator\":\"p.1\",\"page\":1,\"page_end\":1,\"section\":\"corpo\",\"tags\":[],\"text\":\"Acórdão cita a palavra SENTENÇA de outro julgado.\"},{\"id\":\"b0002\",\"is_quote\":false,\"locator\":\"p.2\",\"page\":2,\"page_end\":2,\"section\":\"corpo\",\"tags\":[],\"text\":\"VOTO. A citação não abre outra peça.\"},{\"id\":\"b0003\",\"is_quote\":false,\"locator\":\"p.1-2\",\"page\":1,\"page_end\":2,\"section\":\"rodape\",\"tags\":[],\"text\":\"Rodapé repetido\"}],\"document_id\":\"doc-ce733dec0caa\",\"extractor_versions\":{\"extractor\":\"1\",\"nome\":\"simulado\"},\"page_count\":2,\"sha256\":\"ce733dec0caa314b9e34a0a5fad2883bf06d97320f8d494fd7058aa26f63b335\",\"status\":\"ok\",\"warnings\":[]}],\"run\":{\"params\":{\"simulado\":true}},\"schema_version\":\"1\"}",
+      "inventario": {
+        "schema_version": "1",
+        "inventario_id": "inv-CT04",
+        "revisao": 1,
+        "anterior_sha256": null,
+        "origem": {
+          "document_id": "doc-ce733dec0caa",
+          "arquivo_sha256": "ce733dec0caa314b9e34a0a5fad2883bf06d97320f8d494fd7058aa26f63b335",
+          "extracao_sha256": "4595f6e45a8dd82f14e6e3b6edb45e12df45a26283c677052ea7145619484e73",
+          "total_paginas": 2,
+          "extrator": {
+            "nome": "simulado",
+            "versao": "1"
+          },
+          "configuracao_sha256": "6ffea6867005b7968af13120e9ad8eb7b0519e71ecf665b6b6c615cfacafdff9"
+        },
+        "metodo": {
+          "nome": "exemplo_de_contrato",
+          "versao": "1"
+        },
+        "paginas": [
+          {
+            "numero": 1,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          },
+          {
+            "numero": 2,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          }
+        ],
+        "fragmentos": [
+          {
+            "id": "f001",
+            "block_id": "b0001",
+            "inicio": 0,
+            "fim": 49,
+            "paginas": {
+              "inicio": 1,
+              "fim": 1,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p001"
+            }
+          },
+          {
+            "id": "f002",
+            "block_id": "b0002",
+            "inicio": 0,
+            "fim": 36,
+            "paginas": {
+              "inicio": 2,
+              "fim": 2,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p001"
+            }
+          },
+          {
+            "id": "f003",
+            "block_id": "b0003",
+            "inicio": 0,
+            "fim": 15,
+            "paginas": {
+              "inicio": 1,
+              "fim": 2,
+              "precisao": "intervalo",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "auxiliar",
+              "motivo": "Rodapé repetido, separado do corpo"
+            }
+          }
+        ],
+        "pecas": [
+          {
+            "id": "p001",
+            "ordem": 1,
+            "tipo_proposto": "acordao",
+            "inicio": "f001",
+            "fim": "f002",
+            "proposta_evento_id": "ev-1",
+            "limites": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "tipo": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "evidencias": [
+              {
+                "sinal": "outro",
+                "fragmentos": [
+                  "f001",
+                  "f002"
+                ],
+                "observacao": "Gabarito artificial do contrato; não é predição nem conferência humana"
+              }
+            ]
+          }
+        ],
+        "secoes": [
+          {
+            "id": "sec-1",
+            "piece_id": "p001",
+            "tipo_proposto": "voto",
+            "fragmentos": [
+              "f002"
+            ],
+            "conferencia": {
+              "estado": "proposto",
+              "evento_id": null
+            }
+          }
+        ],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "instante": "2026-10-22T00:00:00Z",
+            "ator": {
+              "tipo": "sistema",
+              "identificador": "gerador-de-fixtures-sinteticas"
+            },
+            "acao": "propor",
+            "alvos": [
+              "p001"
+            ],
+            "motivo": "Simulação de contrato; data e identidades artificiais, sem valor de aprovação"
+          }
+        ],
+        "pendencias": []
+      }
+    },
+    {
+      "id": "CT05",
+      "natureza": "simulacao_de_contrato",
+      "origem_simulada_utf8": "Origem artificial CT05; sem documento de cliente.",
+      "extracao_json_utf8": "{\"documents\":[{\"blocks\":[{\"id\":\"b0001\",\"is_quote\":false,\"locator\":\"p.1\",\"page\":1,\"page_end\":1,\"section\":\"cabecalho\",\"tags\":[\"ocr\"],\"text\":\"Texto OCR incerto: [ilegível].\"}],\"document_id\":\"doc-e9c829e338ed\",\"extractor_versions\":{\"extractor\":\"1\",\"nome\":\"simulado\"},\"page_count\":1,\"sha256\":\"e9c829e338edf1107ac900637fab5eec6ebb47a8ed4569f0920bb748e240c307\",\"status\":\"partial\",\"warnings\":[{\"codigo\":\"ocr_baixa_confianca\"}]}],\"run\":{\"params\":{\"simulado\":true}},\"schema_version\":\"1\"}",
+      "inventario": {
+        "schema_version": "1",
+        "inventario_id": "inv-CT05",
+        "revisao": 1,
+        "anterior_sha256": null,
+        "origem": {
+          "document_id": "doc-e9c829e338ed",
+          "arquivo_sha256": "e9c829e338edf1107ac900637fab5eec6ebb47a8ed4569f0920bb748e240c307",
+          "extracao_sha256": "768f83d99aa52cbe9d6e6b73d1bd9108c1220ff0ae5b8475c988e28283d56058",
+          "total_paginas": 1,
+          "extrator": {
+            "nome": "simulado",
+            "versao": "1"
+          },
+          "configuracao_sha256": "6ffea6867005b7968af13120e9ad8eb7b0519e71ecf665b6b6c615cfacafdff9"
+        },
+        "metodo": {
+          "nome": "exemplo_de_contrato",
+          "versao": "1"
+        },
+        "paginas": [
+          {
+            "numero": 1,
+            "leitura": "ocr_parcial",
+            "origem": "extracao"
+          }
+        ],
+        "fragmentos": [
+          {
+            "id": "f001",
+            "block_id": "b0001",
+            "inicio": 0,
+            "fim": 30,
+            "paginas": {
+              "inicio": 1,
+              "fim": 1,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "nao_atribuido",
+              "motivo": "OCR insuficiente"
+            }
+          }
+        ],
+        "pecas": [],
+        "secoes": [],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "instante": "2026-10-22T00:00:00Z",
+            "ator": {
+              "tipo": "sistema",
+              "identificador": "gerador-de-fixtures-sinteticas"
+            },
+            "acao": "propor",
+            "alvos": [
+              "inv-CT05"
+            ],
+            "motivo": "Simulação de contrato; data e identidades artificiais, sem valor de aprovação"
+          }
+        ],
+        "pendencias": [
+          {
+            "id": "pend-1",
+            "codigo": "leitura_insuficiente",
+            "referencias": [
+              "f001"
+            ],
+            "mensagem": "Exemplo artificial: não utilizar o OCR como leitura conferida",
+            "material": true
+          },
+          {
+            "id": "pend-2",
+            "codigo": "fragmento_nao_atribuido",
+            "referencias": [
+              "f001"
+            ],
+            "mensagem": "Natureza da peça não identificada",
+            "material": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "CT06",
+      "natureza": "simulacao_de_contrato",
+      "origem_simulada_utf8": "Origem artificial CT06; sem documento de cliente.",
+      "extracao_json_utf8": "{\"documents\":[{\"blocks\":[{\"id\":\"b0001\",\"is_quote\":false,\"locator\":\"p.1-2\",\"page\":1,\"page_end\":2,\"section\":\"sentenca\",\"tags\":[],\"text\":\"Fim da sentença. Início do acórdão.\"}],\"document_id\":\"doc-0a5c7b6b5356\",\"extractor_versions\":{\"extractor\":\"1\",\"nome\":\"simulado\"},\"page_count\":2,\"sha256\":\"0a5c7b6b535655da9424ec5ced53077fadeb91318d1cb95f249f778460baa228\",\"status\":\"ok\",\"warnings\":[]}],\"run\":{\"params\":{\"simulado\":true}},\"schema_version\":\"1\"}",
+      "inventario": {
+        "schema_version": "1",
+        "inventario_id": "inv-CT06",
+        "revisao": 1,
+        "anterior_sha256": null,
+        "origem": {
+          "document_id": "doc-0a5c7b6b5356",
+          "arquivo_sha256": "0a5c7b6b535655da9424ec5ced53077fadeb91318d1cb95f249f778460baa228",
+          "extracao_sha256": "68a05238955b308721c1cd03043224491083f6ded46921c3ef5491901ca414dc",
+          "total_paginas": 2,
+          "extrator": {
+            "nome": "simulado",
+            "versao": "1"
+          },
+          "configuracao_sha256": "6ffea6867005b7968af13120e9ad8eb7b0519e71ecf665b6b6c615cfacafdff9"
+        },
+        "metodo": {
+          "nome": "exemplo_de_contrato",
+          "versao": "1"
+        },
+        "paginas": [
+          {
+            "numero": 1,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          },
+          {
+            "numero": 2,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          }
+        ],
+        "fragmentos": [
+          {
+            "id": "f001",
+            "block_id": "b0001",
+            "inicio": 0,
+            "fim": 17,
+            "paginas": {
+              "inicio": 1,
+              "fim": 1,
+              "precisao": "pagina",
+              "origem": "conferencia_visual"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p001"
+            }
+          },
+          {
+            "id": "f002",
+            "block_id": "b0001",
+            "inicio": 17,
+            "fim": 35,
+            "paginas": {
+              "inicio": 2,
+              "fim": 2,
+              "precisao": "pagina",
+              "origem": "conferencia_visual"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p002"
+            }
+          }
+        ],
+        "pecas": [
+          {
+            "id": "p001",
+            "ordem": 1,
+            "tipo_proposto": "sentenca",
+            "inicio": "f001",
+            "fim": "f001",
+            "proposta_evento_id": "ev-1",
+            "limites": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "tipo": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "evidencias": [
+              {
+                "sinal": "outro",
+                "fragmentos": [
+                  "f001"
+                ],
+                "observacao": "Gabarito artificial do contrato; não é predição nem conferência humana"
+              }
+            ]
+          },
+          {
+            "id": "p002",
+            "ordem": 2,
+            "tipo_proposto": "acordao",
+            "inicio": "f002",
+            "fim": "f002",
+            "proposta_evento_id": "ev-1",
+            "limites": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "tipo": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "evidencias": [
+              {
+                "sinal": "outro",
+                "fragmentos": [
+                  "f002"
+                ],
+                "observacao": "Gabarito artificial do contrato; não é predição nem conferência humana"
+              }
+            ]
+          }
+        ],
+        "secoes": [],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "instante": "2026-10-22T00:00:00Z",
+            "ator": {
+              "tipo": "sistema",
+              "identificador": "gerador-de-fixtures-sinteticas"
+            },
+            "acao": "propor",
+            "alvos": [
+              "p001",
+              "p002"
+            ],
+            "motivo": "Simulação de contrato; data e identidades artificiais, sem valor de aprovação"
+          }
+        ],
+        "pendencias": []
+      }
+    },
+    {
+      "id": "CT07",
+      "natureza": "simulacao_de_contrato",
+      "origem_simulada_utf8": "Origem artificial CT07; sem documento de cliente.",
+      "extracao_json_utf8": "{\"documents\":[{\"blocks\":[{\"id\":\"b0001\",\"is_quote\":false,\"locator\":\"p.1\",\"page\":1,\"page_end\":1,\"section\":\"cabecalho\",\"tags\":[],\"text\":\"CAPA E ÍNDICE.\"},{\"id\":\"b0002\",\"is_quote\":false,\"locator\":\"p.3\",\"page\":3,\"page_end\":3,\"section\":\"corpo\",\"tags\":[],\"text\":\"Continuação sem título identificável.\"}],\"document_id\":\"doc-7f52a142fa26\",\"extractor_versions\":{\"extractor\":\"1\",\"nome\":\"simulado\"},\"page_count\":3,\"sha256\":\"7f52a142fa26f1b08f38c865d8f30f7673305b33013dd729dd195d29d6447c32\",\"status\":\"ok\",\"warnings\":[{\"codigo\":\"pagina_sem_texto\",\"pagina\":2}]}],\"run\":{\"params\":{\"simulado\":true}},\"schema_version\":\"1\"}",
+      "inventario": {
+        "schema_version": "1",
+        "inventario_id": "inv-CT07",
+        "revisao": 1,
+        "anterior_sha256": null,
+        "origem": {
+          "document_id": "doc-7f52a142fa26",
+          "arquivo_sha256": "7f52a142fa26f1b08f38c865d8f30f7673305b33013dd729dd195d29d6447c32",
+          "extracao_sha256": "ceec0372befa3382c19cd40b18e1b73e76d033076693555f89ac8f071c50725a",
+          "total_paginas": 3,
+          "extrator": {
+            "nome": "simulado",
+            "versao": "1"
+          },
+          "configuracao_sha256": "6ffea6867005b7968af13120e9ad8eb7b0519e71ecf665b6b6c615cfacafdff9"
+        },
+        "metodo": {
+          "nome": "exemplo_de_contrato",
+          "versao": "1"
+        },
+        "paginas": [
+          {
+            "numero": 1,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          },
+          {
+            "numero": 2,
+            "leitura": "sem_texto",
+            "origem": "extracao"
+          },
+          {
+            "numero": 3,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          }
+        ],
+        "fragmentos": [
+          {
+            "id": "f001",
+            "block_id": "b0001",
+            "inicio": 0,
+            "fim": 14,
+            "paginas": {
+              "inicio": 1,
+              "fim": 1,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "auxiliar",
+              "motivo": "Capa/índice, sem natureza de peça atribuída"
+            }
+          },
+          {
+            "id": "f002",
+            "block_id": "b0002",
+            "inicio": 0,
+            "fim": 37,
+            "paginas": {
+              "inicio": 3,
+              "fim": 3,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p001"
+            }
+          }
+        ],
+        "pecas": [
+          {
+            "id": "p001",
+            "ordem": 1,
+            "tipo_proposto": "nao_identificada",
+            "inicio": "f002",
+            "fim": "f002",
+            "proposta_evento_id": "ev-1",
+            "limites": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "tipo": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "evidencias": [
+              {
+                "sinal": "outro",
+                "fragmentos": [
+                  "f002"
+                ],
+                "observacao": "Gabarito artificial do contrato; não é predição nem conferência humana"
+              }
+            ]
+          }
+        ],
+        "secoes": [],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "instante": "2026-10-22T00:00:00Z",
+            "ator": {
+              "tipo": "sistema",
+              "identificador": "gerador-de-fixtures-sinteticas"
+            },
+            "acao": "propor",
+            "alvos": [
+              "p001"
+            ],
+            "motivo": "Simulação de contrato; data e identidades artificiais, sem valor de aprovação"
+          }
+        ],
+        "pendencias": [
+          {
+            "id": "pend-1",
+            "codigo": "pagina_sem_texto",
+            "referencias": [
+              "pagina-2"
+            ],
+            "mensagem": "Folha vazia no exemplo artificial",
+            "material": true
+          },
+          {
+            "id": "pend-2",
+            "codigo": "tipo_nao_identificado",
+            "referencias": [
+              "p001"
+            ],
+            "mensagem": "Tipo não conferido",
+            "material": true
+          }
+        ]
+      }
+    }
+  ],
+  "revisoes": [
+    {
+      "id": "RH01",
+      "natureza": "simulacao_de_contrato",
+      "anterior_json_utf8": "{\"anterior_sha256\":null,\"eventos\":[{\"acao\":\"propor\",\"alvos\":[\"p001\",\"p002\"],\"ator\":{\"identificador\":\"gerador-de-fixtures-sinteticas\",\"tipo\":\"sistema\"},\"id\":\"ev-1\",\"instante\":\"2026-10-22T00:00:00Z\",\"motivo\":\"Simulação de contrato; data e identidades artificiais, sem valor de aprovação\"},{\"acao\":\"conferir_limites\",\"alvos\":[\"p001\"],\"ator\":{\"identificador\":\"Pessoa simulada (fixture)\",\"tipo\":\"humano\"},\"id\":\"ev-2\",\"instante\":\"2026-10-22T00:02:00Z\",\"motivo\":\"Conferência fictícia para testar invalidação; sem aprovação humana real\"},{\"acao\":\"conferir_tipo\",\"alvos\":[\"p001\"],\"ator\":{\"identificador\":\"Pessoa simulada (fixture)\",\"tipo\":\"humano\"},\"id\":\"ev-3\",\"instante\":\"2026-10-22T00:03:00Z\",\"motivo\":\"Conferência fictícia para testar invalidação; sem aprovação humana real\"}],\"fragmentos\":[{\"block_id\":\"b0001\",\"destino\":{\"classe\":\"peca\",\"piece_id\":\"p001\"},\"fim\":11,\"id\":\"f001\",\"inicio\":0,\"paginas\":{\"fim\":1,\"inicio\":1,\"origem\":\"extracao\",\"precisao\":\"pagina\"}},{\"block_id\":\"b0002\",\"destino\":{\"classe\":\"peca\",\"piece_id\":\"p002\"},\"fim\":12,\"id\":\"f002\",\"inicio\":0,\"paginas\":{\"fim\":2,\"inicio\":2,\"origem\":\"extracao\",\"precisao\":\"pagina\"}}],\"inventario_id\":\"inv-RH01\",\"metodo\":{\"nome\":\"exemplo_de_contrato\",\"versao\":\"1\"},\"origem\":{\"arquivo_sha256\":\"ddc52bb2728fd864a9456d855bab5b88d8a60555a9295b5fa068f9614bcc2ce8\",\"configuracao_sha256\":\"6ffea6867005b7968af13120e9ad8eb7b0519e71ecf665b6b6c615cfacafdff9\",\"document_id\":\"doc-ddc52bb2728f\",\"extracao_sha256\":\"929879f6fdf2d3a5be297513682956eb1af13e9ff83213d5804734ce05cbed38\",\"extrator\":{\"nome\":\"simulado\",\"versao\":\"1\"},\"total_paginas\":2},\"paginas\":[{\"leitura\":\"texto_nativo\",\"numero\":1,\"origem\":\"extracao\"},{\"leitura\":\"texto_nativo\",\"numero\":2,\"origem\":\"extracao\"}],\"pecas\":[{\"evidencias\":[{\"fragmentos\":[\"f001\"],\"observacao\":\"Gabarito artificial do contrato; não é predição nem conferência humana\",\"sinal\":\"outro\"}],\"fim\":\"f001\",\"id\":\"p001\",\"inicio\":\"f001\",\"limites\":{\"estado\":\"conferido\",\"evento_id\":\"ev-2\"},\"ordem\":1,\"proposta_evento_id\":\"ev-1\",\"tipo\":{\"estado\":\"conferido\",\"evento_id\":\"ev-3\"},\"tipo_proposto\":\"peticao\"},{\"evidencias\":[{\"fragmentos\":[\"f002\"],\"observacao\":\"Gabarito artificial do contrato; não é predição nem conferência humana\",\"sinal\":\"outro\"}],\"fim\":\"f002\",\"id\":\"p002\",\"inicio\":\"f002\",\"limites\":{\"estado\":\"proposto\",\"evento_id\":null},\"ordem\":2,\"proposta_evento_id\":\"ev-1\",\"tipo\":{\"estado\":\"proposto\",\"evento_id\":null},\"tipo_proposto\":\"peticao\"}],\"pendencias\":[],\"revisao\":1,\"schema_version\":\"1\",\"secoes\":[]}",
+      "inventario": {
+        "schema_version": "1",
+        "inventario_id": "inv-RH01",
+        "revisao": 2,
+        "anterior_sha256": "abb0c4bb34a027730e2d36a435949bc3a5a0c126ff7ddb33ff4c5e78201f1a6a",
+        "origem": {
+          "document_id": "doc-ddc52bb2728f",
+          "arquivo_sha256": "ddc52bb2728fd864a9456d855bab5b88d8a60555a9295b5fa068f9614bcc2ce8",
+          "extracao_sha256": "929879f6fdf2d3a5be297513682956eb1af13e9ff83213d5804734ce05cbed38",
+          "total_paginas": 2,
+          "extrator": {
+            "nome": "simulado",
+            "versao": "1"
+          },
+          "configuracao_sha256": "6ffea6867005b7968af13120e9ad8eb7b0519e71ecf665b6b6c615cfacafdff9"
+        },
+        "metodo": {
+          "nome": "exemplo_de_contrato",
+          "versao": "1"
+        },
+        "paginas": [
+          {
+            "numero": 1,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          },
+          {
+            "numero": 2,
+            "leitura": "texto_nativo",
+            "origem": "extracao"
+          }
+        ],
+        "fragmentos": [
+          {
+            "id": "f001",
+            "block_id": "b0001",
+            "inicio": 0,
+            "fim": 11,
+            "paginas": {
+              "inicio": 1,
+              "fim": 1,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p001"
+            }
+          },
+          {
+            "id": "f002",
+            "block_id": "b0002",
+            "inicio": 0,
+            "fim": 12,
+            "paginas": {
+              "inicio": 2,
+              "fim": 2,
+              "precisao": "pagina",
+              "origem": "extracao"
+            },
+            "destino": {
+              "classe": "peca",
+              "piece_id": "p001"
+            }
+          }
+        ],
+        "pecas": [
+          {
+            "id": "p001",
+            "ordem": 1,
+            "tipo_proposto": "peticao",
+            "inicio": "f001",
+            "fim": "f002",
+            "proposta_evento_id": "ev-4",
+            "limites": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "tipo": {
+              "estado": "proposto",
+              "evento_id": null
+            },
+            "evidencias": [
+              {
+                "sinal": "outro",
+                "fragmentos": [
+                  "f001",
+                  "f002"
+                ],
+                "observacao": "Gabarito artificial do contrato; não é predição nem conferência humana"
+              }
+            ]
+          }
+        ],
+        "secoes": [],
+        "eventos": [
+          {
+            "id": "ev-1",
+            "instante": "2026-10-22T00:00:00Z",
+            "ator": {
+              "tipo": "sistema",
+              "identificador": "gerador-de-fixtures-sinteticas"
+            },
+            "acao": "propor",
+            "alvos": [
+              "p001",
+              "p002"
+            ],
+            "motivo": "Simulação de contrato; data e identidades artificiais, sem valor de aprovação"
+          },
+          {
+            "id": "ev-2",
+            "instante": "2026-10-22T00:02:00Z",
+            "ator": {
+              "tipo": "humano",
+              "identificador": "Pessoa simulada (fixture)"
+            },
+            "acao": "conferir_limites",
+            "alvos": [
+              "p001"
+            ],
+            "motivo": "Conferência fictícia para testar invalidação; sem aprovação humana real"
+          },
+          {
+            "id": "ev-3",
+            "instante": "2026-10-22T00:03:00Z",
+            "ator": {
+              "tipo": "humano",
+              "identificador": "Pessoa simulada (fixture)"
+            },
+            "acao": "conferir_tipo",
+            "alvos": [
+              "p001"
+            ],
+            "motivo": "Conferência fictícia para testar invalidação; sem aprovação humana real"
+          },
+          {
+            "id": "ev-4",
+            "instante": "2026-10-22T00:04:00Z",
+            "ator": {
+              "tipo": "sistema",
+              "identificador": "gerador-de-fixtures-sinteticas"
+            },
+            "acao": "corrigir",
+            "alvos": [
+              "p001",
+              "p002"
+            ],
+            "motivo": "Fusão artificial: remove p002, amplia p001 e invalida conferências apoiadas no conteúdo anterior"
+          }
+        ],
+        "pendencias": []
+      }
+    }
+  ]
+}

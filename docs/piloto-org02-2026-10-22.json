@@ -1,0 +1,144 @@
+{
+  "atual": {
+    "execucao": "concluida",
+    "motor": "atual",
+    "versoes": {
+      "extractor": "0.4.0",
+      "pdfplumber": "0.11.10",
+      "docx": "1.2.0"
+    },
+    "arquivo_sha256": "d5431d9144779f04f2d5e7d455332a5a640fc1f2bf413d75ea67bfa42597933b",
+    "extracao_sha256": "7566faa3118ac158105f159cb657264c16f7c40bbb99e1058c4836c9898b11ca",
+    "configuracao_sha256": "51dfbf4f00f971ff94f3ebb7a65cc27a5185322e21b51274470c401599282650",
+    "paginas": 38,
+    "blocos": 1513,
+    "caracteres": 89394,
+    "segundos": 11.331,
+    "contrato_valido": true,
+    "pecas": [
+      {
+        "tipo_proposto": "nao_identificada",
+        "inicio": {
+          "inicio": 1,
+          "fim": 1,
+          "precisao": "pagina",
+          "origem": "extracao"
+        },
+        "fim": {
+          "inicio": 38,
+          "fim": 38,
+          "precisao": "pagina",
+          "origem": "extracao"
+        }
+      }
+    ],
+    "todas_conferencias_propostas": true,
+    "pendencias": [
+      "limite_incerto",
+      "tipo_nao_identificado"
+    ],
+    "avisos_extracao": 3,
+    "limites": [
+      "Sem OCR ou modelos de layout.",
+      "Título é sinal heurístico, sem confirmação de autoria ou natureza.",
+      "Corpus de desenvolvimento; não estima precisão em processos novos."
+    ],
+    "maxrss_kib": 299468
+  },
+  "docling-parse": {
+    "execucao": "concluida",
+    "motor": "docling-parse",
+    "versoes": {
+      "nome": "docling-parse",
+      "extractor": "7.23.0",
+      "docling-core": "2.104.0"
+    },
+    "arquivo_sha256": "d5431d9144779f04f2d5e7d455332a5a640fc1f2bf413d75ea67bfa42597933b",
+    "extracao_sha256": "f8e6be8676750f9a00ebc708dc8583f525784fcbcccf91d89a06e7645faee979",
+    "configuracao_sha256": "fddc0d6adbff8621011f60affe53d27bb84d378ff35f129014f1971c6ab24d92",
+    "paginas": 38,
+    "blocos": 1384,
+    "caracteres": 91583,
+    "segundos": 1.8742,
+    "contrato_valido": true,
+    "pecas": [
+      {
+        "tipo_proposto": "sentenca",
+        "inicio": {
+          "inicio": 1,
+          "fim": 1,
+          "precisao": "pagina",
+          "origem": "extracao"
+        },
+        "fim": {
+          "inicio": 25,
+          "fim": 25,
+          "precisao": "pagina",
+          "origem": "extracao"
+        }
+      },
+      {
+        "tipo_proposto": "acordao",
+        "inicio": {
+          "inicio": 25,
+          "fim": 25,
+          "precisao": "pagina",
+          "origem": "extracao"
+        },
+        "fim": {
+          "inicio": 38,
+          "fim": 38,
+          "precisao": "pagina",
+          "origem": "extracao"
+        }
+      }
+    ],
+    "todas_conferencias_propostas": true,
+    "pendencias": [
+      "limite_incerto"
+    ],
+    "avisos_extracao": 1,
+    "limites": [
+      "Sem OCR ou modelos de layout.",
+      "Título é sinal heurístico, sem confirmação de autoria ou natureza.",
+      "Corpus de desenvolvimento; não estima precisão em processos novos."
+    ],
+    "maxrss_kib": 200084
+  },
+  "revisao_manual": [
+    {
+      "motor": "atual_snapshot",
+      "contrato_valido": true,
+      "modo": "cortes_tecnicos_propostos_com_gabarito_conhecido",
+      "pecas": [
+        {
+          "tipo": "sentenca",
+          "pagina_inicio": 1,
+          "pagina_fim": 24
+        },
+        {
+          "tipo": "acordao",
+          "pagina_inicio": 25,
+          "pagina_fim": 38
+        }
+      ]
+    },
+    {
+      "motor": "docling-parse",
+      "contrato_valido": true,
+      "modo": "cortes_tecnicos_propostos_com_gabarito_conhecido",
+      "pecas": [
+        {
+          "tipo": "sentenca",
+          "pagina_inicio": 1,
+          "pagina_fim": 24
+        },
+        {
+          "tipo": "acordao",
+          "pagina_inicio": 25,
+          "pagina_fim": 38
+        }
+      ]
+    }
+  ]
+}

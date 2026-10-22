@@ -20,6 +20,7 @@ import hashlib
 import io
 import json
 import logging
+import math
 import os
 import re
 import sys
@@ -31,9 +32,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # injecao.py, mesmo com python -P
 from cli_caminhos import expandir_argumentos  # noqa: E402
 import injecao  # noqa: E402
-import ocr  # noqa: E402
+import ocr as _motor_ocr  # noqa: E402
 
-EXTRACTOR_VERSION = "0.4.3"
+EXTRACTOR_VERSION = "0.5.1"
 SCHEMA_VERSION = "1"
 IDIOMA = "pt-BR"  # assumido, não detectado
 EXTENSOES = {".pdf", ".docx", ".txt", ".md", ".eml", ".html", ".htm", ".csv", ".tsv", ".xlsx"}
@@ -405,25 +406,27 @@ def _montar_blocos_pdf(paginas, avisos=None):
 _OCR = False
 
 
-def _aplicar_ocr(path: Path, paginas: list, alvo: list[int], avisos: list) -> set[int]:
+def _aplicar_ocr(path: Path, paginas: list, alvo: list[int], avisos: list, perfil: str = "padrao", dpi: float = _motor_ocr.DPI) -> set[int]:
     """OCR das páginas sem corpo de texto. Devolve as páginas lidas; falhas viram aviso, nunca silêncio."""
-    exe = ocr.localizar_tesseract()
+    exe = _motor_ocr.localizar_tesseract()
     if not exe:
         avisos.append(_aviso("ocr_indisponivel", "OCR pedido, mas o Tesseract não foi encontrado (PATH, JURIS_TESSERACT ou pasta padrão)"))
         return set()
-    lang, aviso_lang = ocr.escolher_idioma(exe)
+    lang, aviso_lang = _motor_ocr.escolher_idioma(exe)
     if not lang:
         avisos.append(_aviso("ocr_indisponivel", aviso_lang))
         return set()
     if aviso_lang:
         avisos.append(_aviso("ocr_idioma_degradado", aviso_lang))
     try:
-        lidas = ocr.ler_paginas(exe, path, alvo, lang)
+        lidas = _motor_ocr.ler_paginas(exe, path, alvo, lang, perfil=perfil, dpi=dpi)
     except Exception as e:  # noqa: BLE001 - OCR é auxiliar; a falha é relatada
         avisos.append(_aviso("ocr_indisponivel", f"{type(e).__name__}: {e}"))
         return set()
     feitas = set()
     for n, r in lidas.items():
+        if r.get("palavras_descartadas", 0):
+            avisos.append(_aviso("ocr_dados_descartados", "palavras com dados inválidos foram descartadas; confira a completude no original", n))
         if not r["linhas"]:
             avisos.append(_aviso("ocr_sem_texto", "o OCR não reconheceu texto na página", n))
             continue
@@ -432,12 +435,13 @@ def _aplicar_ocr(path: Path, paginas: list, alvo: list[int], avisos: list) -> se
         feitas.add(n)
         avisos.append(_aviso("ocr_aplicado", f"texto reconhecido por OCR (idioma {lang}, confiança média {r['confianca']}): "
                                               "confira dígitos, acentos e nomes no original", n))
-        if r["confianca"] < 60:
-            avisos.append(_aviso("ocr_baixa_confianca", f"confiança média {r['confianca']} (< 60): o texto desta página não é confiável", n))
+        fracao_baixa = r.get("palavras_baixa_confianca", 0) / max(r.get("palavras", 0), 1)
+        if r["confianca"] < 60 or fracao_baixa >= .2:
+            avisos.append(_aviso("ocr_baixa_confianca", f"média {r['confianca']}; {fracao_baixa:.0%} das palavras com confiança < 60: confira a leitura no original", n))
     return feitas
 
 
-def extrair_pdf(path: Path) -> dict:
+def extrair_pdf(path: Path, *, ocr_perfil: str = "padrao", ocr_dpi: float = _motor_ocr.DPI) -> dict:
     paginas, avisos, total, cobertura, estrutura = _ler_pdf(path)
     texto_bruto = _hash_texto(ln["text"] for _, _, ls in paginas for ln in ls)
     sem_texto = [i for i, (_, _, ls) in enumerate(paginas, 1) if not ls]
@@ -466,7 +470,7 @@ def extrair_pdf(path: Path) -> dict:
     ocr_paginas: set[int] = set()
     sem_corpo_antes = set(sem_texto) | set(digitalizadas)
     if _OCR and sem_corpo_antes:
-        ocr_paginas = _aplicar_ocr(path, paginas, sorted(sem_corpo_antes), avisos)
+        ocr_paginas = _aplicar_ocr(path, paginas, sorted(sem_corpo_antes), avisos, ocr_perfil, ocr_dpi)
         if ocr_paginas:
             texto_bruto = _hash_texto(ln["text"] for _, _, ls in paginas for ln in ls)
     blocos = _montar_blocos_pdf(paginas, avisos)
@@ -929,7 +933,7 @@ def _versoes():
     return v
 
 
-def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0, ocr: bool = False):
+def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0, ocr: bool = False, *, ocr_perfil: str = "padrao", ocr_dpi: float = _motor_ocr.DPI):
     """Retorna (documento, cache_hit). Nunca levanta exceção por conteúdo do arquivo.
 
     ocr=True tenta o OCR (Tesseract) nas páginas de PDF sem texto ou cobertas por imagem."""
@@ -958,7 +962,14 @@ def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0, ocr: bo
                                 ".eml": "message/rfc822", ".html": "text/html", ".htm": "text/html", ".csv": "text/csv",
                                 ".tsv": "text/tab-separated-values",
                                 ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}[p.suffix.lower()]})
-    arq_cache = Path(cache_dir) / f"{sha[:32]}-{EXTRACTOR_VERSION}-{PARAMS_HASH}{'-ocr' if ocr else ''}.json" if cache_dir else None
+    if ocr and (ocr_perfil not in _motor_ocr.PERFIS or type(ocr_dpi) not in (int, float) or not math.isfinite(ocr_dpi) or ocr_dpi <= 0):
+        return falha("parametro_invalido", "Perfil ou resolução OCR incompatíveis." )
+    cfg_ocr = _motor_ocr.configuracao(ocr_perfil) if ocr else None
+    if cfg_ocr is not None:
+        cfg_ocr["dpi"] = ocr_dpi
+    chave_ocr = "-ocr-" + hashlib.sha256(json.dumps(cfg_ocr, sort_keys=True).encode()).hexdigest()[:16] if ocr else ""
+    cache_permitido = not ocr or cfg_ocr["cache_verificavel"]
+    arq_cache = Path(cache_dir) / f"{sha[:32]}-{EXTRACTOR_VERSION}-{PARAMS_HASH}{chave_ocr}.json" if cache_dir and cache_permitido else None
     if arq_cache and arq_cache.is_file():
         with contextlib.suppress(Exception):
             doc = json.loads(arq_cache.read_text(encoding="utf-8"))
@@ -967,8 +978,9 @@ def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0, ocr: bo
     try:
         with warnings.catch_warnings(), contextlib.redirect_stdout(sys.stderr):
             warnings.simplefilter("ignore")
-            r = {".pdf": extrair_pdf, ".docx": extrair_docx, ".eml": extrair_eml, ".html": extrair_html, ".htm": extrair_html,
-                 ".csv": extrair_csv, ".tsv": extrair_csv, ".xlsx": extrair_xlsx}.get(p.suffix.lower(), extrair_texto)(p)
+            leitor = {".pdf": extrair_pdf, ".docx": extrair_docx, ".eml": extrair_eml, ".html": extrair_html, ".htm": extrair_html,
+                      ".csv": extrair_csv, ".tsv": extrair_csv, ".xlsx": extrair_xlsx}.get(p.suffix.lower(), extrair_texto)
+            r = leitor(p, ocr_perfil=ocr_perfil, ocr_dpi=ocr_dpi) if p.suffix.lower() == ".pdf" else leitor(p)
     except ArquivoSuspeito as e:
         return falha("arquivo_suspeito", str(e))
     except Exception as e:  # noqa: BLE001 - arquivo corrompido ou formato inesperado
@@ -976,6 +988,8 @@ def extrair(caminho, cache_dir: str | None = None, max_mb: float = 60.0, ocr: bo
     # text_sha256 identifica o texto lido, independente do arquivo (o mesmo acórdão baixado duas vezes
     # pode ter bytes diferentes) e da segmentação em blocos; cada leitor o calcula sobre o texto bruto
     doc = {**base, "extractor_versions": _versoes(), **r}
+    if cfg_ocr is not None:
+        doc["ocr_configuracao"] = cfg_ocr
     # texto que parece dirigido ao modelo: só avisa; o conteúdo continua sendo dado
     suspeitas = []
     for b in doc["blocks"]:
@@ -1028,15 +1042,19 @@ def main(argv=None) -> int:
     ap.add_argument("--no-cache", action="store_true")
     ap.add_argument("--max-mb", type=float, default=60.0)
     ap.add_argument("--ocr", action="store_true", help="OCR (Tesseract) nas páginas de PDF sem texto; blocos ficam com a tag 'ocr'")
+    ap.add_argument("--ocr-perfil", choices=_motor_ocr.PERFIS, default="padrao", help="perfil opcional; mediana suaviza ruído sem conferir o texto")
+    ap.add_argument("--ocr-dpi", type=float, default=_motor_ocr.DPI, help="resolução solicitada; raster sempre limitado em pixels")
     a = ap.parse_args(argv)
+    if not math.isfinite(a.ocr_dpi) or a.ocr_dpi <= 0:
+        ap.error("resolução OCR deve ser positiva e finita")
     logging.getLogger("pdfminer").setLevel(logging.ERROR)
     docs, hits = [], 0
     for arq in expandir_argumentos(a.arquivos):
-        d, hit = extrair(arq, None if a.no_cache else a.cache_dir, a.max_mb, a.ocr)
+        d, hit = extrair(arq, None if a.no_cache else a.cache_dir, a.max_mb, a.ocr, ocr_perfil=a.ocr_perfil, ocr_dpi=a.ocr_dpi)
         docs.append(d)
         hits += hit
     saida = {"schema_version": SCHEMA_VERSION, "run": {"extractor_version": EXTRACTOR_VERSION,
-             "params": PARAMS, "cache_hits": hits}, "documents": docs}
+             "params": {**PARAMS, "ocr": a.ocr, "ocr_perfil": a.ocr_perfil, "ocr_dpi": a.ocr_dpi}, "cache_hits": hits}, "documents": docs}
     txt = json.dumps(saida, ensure_ascii=False, indent=2)
     if a.saida:
         Path(a.saida).write_text(txt, encoding="utf-8")

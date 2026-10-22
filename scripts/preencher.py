@@ -50,15 +50,14 @@ def marcadores(modelo: Path) -> list[str]:
     return achados
 
 
-def _bloco(extracoes, document_id, locator):
-    """Bloco do documento; None se o documento não existe, False se o localizador não existe nele."""
+def _blocos(extracoes, document_id, locator):
+    """Candidatos exatos, senão por sufixo; None se o documento não existe."""
     for d in extracoes.get("documents", [extracoes] if "blocks" in extracoes else []):
         if d.get("document_id") == document_id:
-            for b in d["blocks"]:
-                loc = str(b.get("locator", ""))
-                if loc == locator or loc.endswith("." + str(locator)):
-                    return b
-            return False
+            exatos = [b for b in d["blocks"] if b.get("locator") == locator]
+            if exatos:
+                return exatos
+            return [b for b in d["blocks"] if str(b.get("locator", "")).endswith("." + locator)]
     return None
 
 
@@ -123,12 +122,15 @@ def lint(campos: dict, modelo: Path | None = None, extracoes: dict | None = None
             elif isinstance(valor, str) and _ns(valor) not in _ns(f["trecho"]):
                 e("valor_fora_do_trecho", w, "o valor não aparece, literalmente, no trecho citado")
             elif extracoes is not None:
-                b = _bloco(extracoes, f["document_id"], f["locator"])
-                if b is None:
+                blocos = _blocos(extracoes, f["document_id"], f["locator"])
+                if blocos is None:
                     e("documento_desconhecido", w, f"document_id {f['document_id']} não está na extração")
-                elif b is False:
+                elif not blocos:
                     e("localizador_inexistente", w, f"localizador {f['locator']} não existe no documento")
-                elif _ns(f["trecho"]) not in _ns(b["text"]):
+                elif len(blocos) > 1:
+                    e("localizador_ambiguo", w, f"localizador {f['locator']} identifica {len(blocos)} blocos: "
+                      "copie o localizador completo do bloco; se já estiver completo, corrija a extração duplicada")
+                elif _ns(f["trecho"]) not in _ns(blocos[0]["text"]):
                     e("trecho_fora_do_bloco", w, "o trecho não está no bloco indicado da extração")
                 else:
                     _checar_identificadores(extracoes, valor, f, w, a)
