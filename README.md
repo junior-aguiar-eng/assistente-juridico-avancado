@@ -7,14 +7,14 @@
 *Toda afirmação aponta para uma fonte efetivamente lida, ou aparece marcada como não verificada.*
 
 ![Python](https://img.shields.io/badge/python-3.12%2B-3776AB?logo=python&logoColor=white)
-![Testes](https://img.shields.io/badge/testes-624%20passam%20%C2%B7%203%20ignorados-2e7d32)
+![Testes](https://img.shields.io/badge/testes-resultados%20por%20rodada%20na%20documenta%C3%A7%C3%A3o-2e7d32)
 ![Revisão jurídica](https://img.shields.io/badge/revis%C3%A3o%20jur%C3%ADdica-revisor%20designado%2C%20n%C3%A3o%20realizada-f9a825)
 ![Situação](https://img.shields.io/badge/situa%C3%A7%C3%A3o-pr%C3%A9--lan%C3%A7amento-f9a825)
 
 </div>
 
 > [!WARNING]
-> **Este pacote não substitui advogado.** O revisor jurídico foi designado ([governança](governance/revisor-juridico.md)), mas ainda não revisou nada; as skills têm uma avaliação inicial com modelo ([resultado](docs/avaliacao-skills-2026-10-18.md)) e uma [segunda rodada exploratória com corpus misto](docs/continuidade-pendencias-2026-10-21.md), e as regras de revisão contratual estão **inativas**. Use como apoio de organização e conferência; a decisão e a responsabilidade são de quem assina.
+> **Este pacote não substitui advogado.** A revisão jurídica das regras e a aprovação das entregas continuam separadas da validação técnica ([governança](governance/revisor-juridico.md)). As oito skills têm [avaliação ORG-05 com casos reais e sintéticos](docs/avaliacao-skills-org05.md); P01/P02 possuem gabaritos estruturais conferidos pelo titular. Isso não confere os inventários propostos nem o mérito jurídico. As 19 regras contratuais permanecem **inativas**. Use como apoio de organização e conferência; a decisão e a responsabilidade são de quem assina.
 
 ---
 
@@ -59,9 +59,13 @@ Dois fluxos principais: **mapear um caso** (triagem → mapear-autos → cronolo
 | [`br-cronologia`](skills/br-cronologia/SKILL.md) | ordena sem inventar precisão, sem calcular prazo; exposição de fatos com filtro de sigilo | ✅ escrita e testada |
 | [`br-pesquisa-juridica`](skills/br-pesquisa-juridica/SKILL.md) | pontes prévias para Planalto, Senado, STJ, STF etc., conforme a política de confidencialidade do caso | ✅ escrita e testada |
 | [`br-verificar-citacoes`](skills/br-verificar-citacoes/SKILL.md) | confere se a fonte lida realmente apoia cada proposição (`supported`, `partial`, `unsupported`) | ✅ escrita e testada |
-| [`br-auditar-entrega`](skills/br-auditar-entrega/SKILL.md) | gate final com 14 verificações, faixa de confiança e aprovação humana separada | ✅ escrita e testada |
+| [`br-auditar-entrega`](skills/br-auditar-entrega/SKILL.md) | gates G00–G16 conforme os insumos, faixa de confiança e aprovação humana separada | ✅ escrita e testada |
 | [`br-revisar-contrato`](skills/br-revisar-contrato/SKILL.md) | pré-checagem, `issues.json` com dois eixos de severidade, redline com alterações rastreadas | 🟡 rascunho: regras inativas até revisor jurídico |
 | [`br-preencher-minuta`](skills/br-preencher-minuta/SKILL.md) | preenche modelo DOCX; campo sem prova vira marcador amarelo | ✅ escrita e testada com casos sintéticos |
+
+## Uso assistido
+
+O [roteiro de uso e atualização de artefatos](docs/uso-assistido.md) descreve o fluxo, os parâmetros de inventário, a revisão humana, a configuração offline e a migração explícita. A [validação da fase 5](docs/validacao-fase5.md) separa critérios técnicos, revisão material e CI da revisão publicada. A rodada local não equivale a instalação, publicação ou aprovação jurídica. Não há biblioteca de minutas homologadas nem integração JurisExpert neste pacote.
 
 ## Início rápido
 
@@ -69,9 +73,10 @@ Dois fluxos principais: **mapear um caso** (triagem → mapear-autos → cronolo
 git clone https://github.com/junior-aguiar-eng/assistente-juridico-avancado.git
 cd assistente-juridico-avancado
 pip install -r requirements-dev.txt
-python -m pytest                                    # JURIS_REDE=1 liga os testes reais STJ/DataJud
 python scripts/revisar_skill.py "skills/*/SKILL.md"   # revisão mecânica das skills
 ```
+
+Para a suíte offline, configure `JURIS_REDE=0` e temporários próprios conforme o [roteiro reproduzível](docs/uso-assistido.md#ambiente-e-sigilo), antes de executar `python -m pytest`.
 
 `revisar_skill.py` e `extract.py` expandem os curingas no próprio Python. Coloque os padrões entre aspas,
 como `"skills/br-*/SKILL.md"` ou `"meu-caso/input/*"`, para usar o mesmo comando no PowerShell e no Bash.
@@ -152,11 +157,12 @@ Documento é dado, nunca instrução. A extração recusa zip com razão de comp
 |---|---|---|
 | 0 a 3 | base, extração, validação, auditoria, triagem, cronologia, pesquisa | ✅ concluídas e revisadas criticamente |
 | 4 | contrato e minuta | 🟡 parte mecânica pronta; **aguarda revisor jurídico** para ativar as regras |
-| 5 | liberação com 12 casos de regressão ([manifesto](tests/casos/regressao/manifesto.json)) | 🟡 12 casos com insumos e gabaritos mecânicos; R07/TJMG e R10/escaneado real incluídos; revisão jurídica dos gabaritos pendente. R10 exige Tesseract com idioma `por` |
+| 4A | organização de peças e integração por uso | ORG-01 a ORG-05 concluídas no escopo assistido medido; gabaritos P01/P02 conferidos, classificador com abstenções |
+| 5 | validação para liberação assistida | Validação técnica local concluída: 1019 aprovados/5 ignorados; [matriz de evidências](docs/validacao-fase5.md). Fase global aberta: conferência humana de uso material e CI da revisão publicada pendentes |
 
-**O que foi testado com material real:** quatro acórdãos do STJ (Corte Especial e Sexta Turma, com a ementa dos dados abertos como gabarito objetivo), o STF no caso R06 e o Código Civil compilado do Planalto. Contratos, petições e planilhas só têm casos sintéticos. O [CI do merge do PR #1](https://github.com/junior-aguiar-eng/assistente-juridico-avancado/actions/runs/39311926077) passou em Ubuntu e Windows com Python 3.12 e 3.13; isso não substitui revisão jurídica ou testes de fontes reais na rede.
+**O que foi testado com material real:** acórdãos STJ/STF/TJMG, incluindo os novos P01/P02, o ofício escaneado de Picos e textos legais oficiais. O manifesto de regressão mantém 12 casos locais; os privados ORG-R07/ORG-R10 têm IDs próprios e originais ausentes, sem substituição pelos públicos. Contratos, petições e planilhas têm controles sintéticos. O histórico de CI não valida a revisão local atual; Windows/Python 3.14.6 e os resultados de cada rodada são registrados separadamente em [ORG-05](docs/validacao-org05.md) e [fase 5](docs/validacao-fase5.md).
 
-**Depende de pessoas:** a revisão do revisor jurídico designado (ativar regras, ler as skills e conferir os gabaritos) e a avaliação independente e integral com documentos reais autorizados. A [rodada exploratória de 21/10/2026](docs/continuidade-pendencias-2026-10-21.md) usou R06/R07/R10 nas seis skills de organização/verificação e controles sintéticos nas duas contratuais; não houve segundo modelo ou revisão jurídica. A sonda com R07 revelou atribuição errada de decisão transcrita; a [correção contextual do extrator 0.4.3](docs/correcao-atribuicao-citacoes-2026-10-21.md) passa a distinguir o intervalo citado e a bloquear atribuição ambígua em `supported`. Aplicá-la exige nova extração e auditoria, preservando os históricos. A política de confidencialidade é escolha livre do usuário (padrão: consultas externas permitidas).
+**Depende de pessoas:** revisão jurídica das regras, leitura/atribuição e conferências dos inventários usados materialmente, aprovação de entregas e validação contratual real. A [avaliação ORG-05](docs/avaliacao-skills-org05.md) repetiu as oito skills em 16 cenários, com um modelo da sessão e corpus misto; não houve comparação entre famílias de modelos. Os achados históricos e suas correções permanecem registrados, incluindo [atribuição contextual de citações](docs/correcao-atribuicao-citacoes-2026-10-21.md). Nos casos novos ainda há transcrições com `is_quote=false`; a leitura contextual continua necessária. Nova extração ou alteração exige novos derivados e auditoria, preservando os históricos. A política de confidencialidade é escolha do usuário (padrão: consultas externas permitidas); processamento local não garante inferência local.
 
 Os resultados e limites de R07/R10 estão no [registro de validação de 19/10/2026](docs/validacao-r07-r10-datajud-2026-10-19.md). A [revisão técnica de 20/10/2026](docs/revisao-tecnica-2026-10-20.md) acrescenta proteção para ementa aninhada com título isolado e respostas DataJud inválidas/parciais. O DataJud teve duas tentativas com timeout após o patch em 20/10; em [21/10/2026](docs/continuidade-pendencias-2026-10-21.md), o teste real posterior ao patch passou em 38,57 s. É disponibilidade observada nessa tentativa, sem comprovar estabilidade. Falha externa continua explícita, sem significar processo ausente.
 
@@ -176,7 +182,7 @@ tests/         testes e casos (tests/casos)
 
 [Garantias](shared/garantias.md) · [Estados](shared/estados.md) · [Formatos de dados](shared/dados.md) · [Fontes BR](shared/fontes-br.md) · [Falhas jurídicas](shared/falhas-juridicas.md) · [Escalação](shared/escalacao.md) · [Aviso padrão](shared/aviso-padrao.md)
 
-[Planejamento v2](docs/plano-principal.md) · [Revisão crítica da Fase 2](docs/revisao-critica-fase2.md) · [Comparação com os repositórios de referência](docs/comparacao-repositorios-modelo.md) · [Sondagem das fontes](docs/sondagem-pontes.md) · [Avaliação das skills com modelo](docs/avaliacao-skills-2026-10-18.md) · [Governança](governance/skill-review-checklist.md) · [Avisos de terceiros](THIRD_PARTY_NOTICES.md)
+[Plano principal](docs/plano-principal.md) · [Uso assistido e migração](docs/uso-assistido.md) · [Validação da fase 5](docs/validacao-fase5.md) · [Revisão crítica da Fase 2](docs/revisao-critica-fase2.md) · [Comparação com os repositórios de referência](docs/comparacao-repositorios-modelo.md) · [Sondagem das fontes](docs/sondagem-pontes.md) · [Avaliação ORG-05](docs/avaliacao-skills-org05.md) · [Governança](governance/skill-review-checklist.md) · [Avisos de terceiros](THIRD_PARTY_NOTICES.md)
 
 ## Licença
 

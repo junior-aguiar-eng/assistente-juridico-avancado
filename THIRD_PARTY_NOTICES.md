@@ -25,6 +25,9 @@ Nenhum desses projetos endossa este pacote.
 | pdfminer.six | 20260107 | MIT |
 | python-docx | 1.2.0 | MIT |
 | lxml | 6.1.1 | BSD-3-Clause |
+| requests | 2.34.2 | Apache-2.0; obtenção de fontes oficiais |
+| beautifulsoup4 | 4.15.0 | MIT; leitura de HTML oficial |
+| markdownify | 1.2.3 | MIT; conversão de HTML oficial |
 | jsonschema | 4.26.0 | MIT; esquema do inventário opcional de peças |
 | rfc3339-validator | 0.1.4 | MIT; datas RFC 3339 dos eventos do inventário |
 
@@ -51,6 +54,10 @@ PyMuPDF (AGPL-3.0) **não** é dependência e não deve ser adicionada sem decis
 ## Documentos de teste
 
 `tests/casos/` traz o inteiro teor de acórdãos públicos do STJ (AREsp 2.432.194/SP e três do corpus em `stj_corpus`, baixados em 17/10/2026), as ementas dos conjuntos de dados abertos do STJ usadas como gabarito, e as versões compiladas do Código Civil e da Lei 13.709/2018 (LGPD) obtidas do Planalto, usados como fixtures. São atos e textos oficiais; a redistribuição não foi objeto de parecer.
+
+O corpus também inclui documentos públicos STF/TJMG e o ofício administrativo de Picos, com proveniência nos manifestos de regressão; R07/TJMG e R10/Picos são distintos dos originais privados ORG ausentes. `tests/casos/org05/proveniencia.json` registra URLs oficiais, coleta e SHA-256 dos novos acórdãos TJMG P01/P02. Sua aprovação estrutural humana não confere assinatura, mérito jurídico ou autorização de redistribuição. Originais privados e derivados identificáveis não integram estes documentos públicos de teste.
+
+Na fase 5, as versões e licenças declaradas das dez dependências diretas de execução e das duas de desenvolvimento foram conferidas nos metadados das distribuições do ambiente local. Isso não é parecer de compatibilidade ou homologação de redistribuição. Nenhuma biblioteca, modelo, serviço pago ou dependência adicional foi adotada nessa etapa; custos e condições do modelo da conversa e de serviços externos permanecem próprios. Configuração e limites: [uso assistido](docs/uso-assistido.md).
 
 ## Piloto opcional de peças (`requirements-piloto-pecas.txt`)
 
