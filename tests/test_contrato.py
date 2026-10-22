@@ -91,6 +91,41 @@ def cods(r):
     return [x["codigo"] for x in r["erros"]]
 
 
+def test_apontamento_comercial_admite_avaliacao_juridica_pendente(ext_e_issue):
+    ext, iss = ext_e_issue
+    iss["issues"][0].update(severidade_juridica="nao_avaliada", motivo_nao_avaliada="Somente parâmetro comercial informado.",
+                            base=[{"tipo": "pratica_do_cliente", "nota": "Cliente quer negociar a duração."}])
+    r = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas")
+    assert r["erros"] == []
+    assert r["avaliacao_juridica_pendente"] == ["i1"]
+    assert r["entregavel"] is False and r["rascunho"] is False
+    assert "avaliacao_juridica_pendente" in {a["codigo"] for a in r["avisos"]}
+
+
+def test_avaliacao_juridica_pendente_exige_motivo(ext_e_issue):
+    ext, iss = ext_e_issue
+    iss["issues"][0].update(severidade_juridica="nao_avaliada", base=[{"tipo": "pratica_do_cliente", "nota": "Política comercial."}])
+    assert "motivo_nao_avaliada_ausente" in cods(contrato.validar_issues(iss, ext))
+
+
+@pytest.mark.parametrize("grau", ["baixa", "media", "alta", "critica"])
+def test_pratica_comercial_nao_sustenta_graduacao_juridica(ext_e_issue, grau):
+    ext, iss = ext_e_issue
+    iss["issues"][0].update(severidade_juridica=grau, base=[{"tipo": "pratica_do_cliente", "nota": "Preferência comercial."}])
+    r = contrato.validar_issues(iss, ext)
+    assert "severidade_sem_base_juridica" in cods(r)
+    assert not r["entregavel"]
+
+
+def test_regra_nao_conferida_nao_libera_graduacao_comercial(ext_e_issue):
+    ext, iss = ext_e_issue
+    iss["issues"][0].update(severidade_juridica="baixa", base=[
+        {"tipo": "pratica_do_cliente", "nota": "Preferência comercial."}, {"tipo": "regra", "rule_id": "inventada"}])
+    r = contrato.validar_issues(iss, ext)
+    assert r["entregavel"] is False
+    assert "regra_nao_conferida" in {a["codigo"] for a in r["avisos"]}
+
+
 def test_issue_com_regra_rascunho_e_barrada_e_com_permissao_vira_aviso(ext_e_issue):
     ext, iss = ext_e_issue
     r = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas")

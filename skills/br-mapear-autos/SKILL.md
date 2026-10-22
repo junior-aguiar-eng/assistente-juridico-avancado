@@ -35,6 +35,14 @@ Para o advogado ou assistente que precisa saber, com fonte, o que os documentos 
 8. **Valide:** `python scripts/validate.py derived/facts.json --extracoes derived/extracao.json`. Corrija os erros; leia os avisos (`documentado_em_citacao`, `fato_informado_sem_documento`, `dado_pessoal_no_trecho`, `relevancia_excessiva`).
 9. **Escreva o `mapa.md`** e liste ao usuário as pendências por prioridade.
 
+## Uso do inventário de peças
+
+Se o documento tem inventário, registre `source.peca` e as referências das fontes adicionais com `inventario_id`, `inventario_sha256`, `piece_id` e `fragmentos`; mantenha documento, bloco e localizador físico. Acrescente `secao_id` apenas ao usar uma seção identificada, sem transformar o `section` do extrator em conferência.
+
+Valide com `--pecas derived/pecas.json input/original.pdf --exigir-pecas` (repetível; revisão posterior exige `--pecas-anterior`). Na análise, mostre os avisos; para usar materialmente o trecho, execute `--modo fundamentada`.
+
+Limites/tipo propostos, leitura insuficiente e atribuição ambígua precisam ser resolvidos, não apagados para passar. Uma referência antiga não é remapeada após revisão. O modelo não registra confirmação humana e o inventário não prova o fato narrado.
+
 ## Como classificar
 
 | O documento... | `kind` |

@@ -29,7 +29,7 @@ _LINHA_ASSINATURA = re.compile(r"_{3,}.*(contratante|contratada|contratado|teste
                                r"|[A-Za-zÀ-ú .]+,\s*_{2,}\s*de\s*_{2,}(\s*de\s*_{2,})?", re.I)
 _ASSINATURA = re.compile(r"assinatura|assinam|assinado|firmam|testemunha|local e data|em \d{1,2} de \w+ de \d{4}", re.I)
 _MINUTA = re.compile(r"\b(minuta|rascunho|draft|vers[ãa]o para discuss[ãa]o|confidencial para negocia[çc][ãa]o)\b", re.I)
-SEV_JUR = ("baixa", "media", "alta", "critica")
+SEV_JUR = ("nao_avaliada", "baixa", "media", "alta", "critica")
 SEV_NEG = ("baixa", "media", "alta")
 TIPOS_BASE = ("regra", "fonte", "pratica_do_cliente")
 
@@ -103,6 +103,8 @@ def validar_issues(obj: dict, extracoes: dict | None = None, regras_dir: Path | 
                    permitir_rascunho: bool = False) -> dict:
     erros, avisos = [], []
     rascunho_usado = False
+    juridica_pendente = []
+    base_nao_conferida = False
 
     def e(cod, onde, msg):
         erros.append({"codigo": cod, "onde": onde, "mensagem": msg})
@@ -138,6 +140,12 @@ def validar_issues(obj: dict, extracoes: dict | None = None, regras_dir: Path | 
         sj, sn = it.get("severidade_juridica"), it.get("severidade_negocial")
         if sj not in SEV_JUR:
             e("severidade_juridica_invalida", w, f"use uma de {SEV_JUR}")
+        elif sj == "nao_avaliada":
+            juridica_pendente.append(it.get("id"))
+            motivo = it.get("motivo_nao_avaliada")
+            if not isinstance(motivo, str) or not motivo.strip():
+                e("motivo_nao_avaliada_ausente", w, "nao_avaliada exige motivo_nao_avaliada; não substitua falta de avaliação por risco baixo")
+            a("avaliacao_juridica_pendente", w, "a avaliação jurídica não foi realizada: severidade negocial não comprova risco jurídico")
         if sn not in SEV_NEG:
             e("severidade_negocial_invalida", w, f"use uma de {SEV_NEG}")
         base = it.get("base")
@@ -157,6 +165,7 @@ def validar_issues(obj: dict, extracoes: dict | None = None, regras_dir: Path | 
                 r = regras.get(b.get("rule_id"))
                 if regras_dir is None:
                     a("regra_nao_conferida", wb, "sem --regras: a regra citada não foi conferida")
+                    base_nao_conferida = True
                 elif r is None:
                     e("regra_inexistente", wb, f"rule_id {b.get('rule_id')} não existe no pacote")
                 elif r.get("uso") != "revisada":
@@ -182,6 +191,8 @@ def validar_issues(obj: dict, extracoes: dict | None = None, regras_dir: Path | 
                 e("pratica_sem_nota", wb, "descreva a prática ou política do cliente em 'nota'")
         if sj == "critica" and juridica == 0:
             e("critica_sem_base_juridica", w, "severidade crítica não pode apoiar-se só em prática do cliente ou em regra não revisada")
+        if sj in SEV_JUR[1:] and juridica == 0 and not any(b.get("tipo") == "regra" for b in base):
+            e("severidade_sem_base_juridica", w, "prática comercial ou ausência de base jurídica não sustenta graduação jurídica: use nao_avaliada com motivo")
         loc = it.get("locators") or ([it["locator"]] if it.get("locator") else [])
         if not loc:
             e("localizador_ausente", w, "informe 'locator' (ou 'locators') da cláusula")
@@ -202,7 +213,9 @@ def validar_issues(obj: dict, extracoes: dict | None = None, regras_dir: Path | 
         if it.get("sugestao") and _ns(it["sugestao"]) == _ns(it.get("clause_text", "")):
             e("sugestao_igual_ao_original", w, "a sugestão repete a cláusula")
     return {"erros": erros, "avisos": avisos, "issues": len(lista), "rascunho": rascunho_usado,
-            "entregavel": not erros and not rascunho_usado}
+            "avaliacao_juridica_pendente": juridica_pendente,
+            "base_juridica_nao_conferida": base_nao_conferida,
+            "entregavel": not erros and not rascunho_usado and not juridica_pendente and not base_nao_conferida}
 
 
 def main(argv=None) -> int:

@@ -1,0 +1,5 @@
+# Experimento opcional e local; não é dependência das oito skills.
+# Não inclui modelos de layout/OCR ou o pipeline completo do Docling.
+-r requirements.txt
+docling-parse==7.23.0
+docling-core==2.104.0

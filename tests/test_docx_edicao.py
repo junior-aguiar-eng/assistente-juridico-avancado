@@ -204,6 +204,100 @@ def test_lint_cruza_com_o_modelo_e_com_a_extracao(modelo):
     assert "trecho_fora_do_bloco" in [e["codigo"] for e in preencher.lint(ok, extracoes=ext)["erros"]]
 
 
+@pytest.mark.parametrize("inverter", [False, True])
+@pytest.mark.parametrize("mesmo_texto", [False, True])
+def test_lint_recusa_localizador_abreviado_ambiguo(inverter, mesmo_texto):
+    c = campos_base()
+    trecho = c["campos"][0]["fonte"]["trecho"]
+    blocos = [
+        {"id": "b1", "locator": "docx.par.2", "text": trecho},
+        {"id": "b2", "locator": "docx.tabela.1.par.2", "text": trecho if mesmo_texto else "Outra contratante."},
+    ]
+    ext = {"documents": [{"document_id": "doc-1", "blocks": blocos[::-1] if inverter else blocos}]}
+    r = preencher.lint(c, extracoes=ext)
+    assert [e["codigo"] for e in r["erros"]] == ["localizador_ambiguo"]
+    assert "localizador completo" in r["erros"][0]["mensagem"]
+
+
+@pytest.mark.parametrize("inverter", [False, True])
+def test_lint_prioriza_localizador_exato_sobre_sufixo(inverter):
+    c = campos_base()
+    blocos = [
+        {"id": "b1", "locator": "anexo.docx.par.2", "text": "Outra contratante."},
+        {"id": "b2", "locator": "docx.par.2", "text": c["campos"][0]["fonte"]["trecho"]},
+    ]
+    c["campos"][0]["fonte"]["locator"] = "docx.par.2"
+    ext = {"documents": [{"document_id": "doc-1", "blocks": blocos[::-1] if inverter else blocos}]}
+    assert preencher.lint(c, extracoes=ext)["erros"] == []
+
+
+def test_lint_recusa_localizador_exato_duplicado():
+    c = campos_base()
+    c["campos"][0]["fonte"]["locator"] = "docx.par.2"
+    ext = {"documents": [{"document_id": "doc-1", "blocks": [
+        {"id": bid, "locator": "docx.par.2", "text": c["campos"][0]["fonte"]["trecho"]}
+        for bid in ("b1", "b2")]}]}
+    assert [e["codigo"] for e in preencher.lint(c, extracoes=ext)["erros"]] == ["localizador_ambiguo"]
+
+
+def test_lint_nao_busca_outro_bloco_quando_trecho_diverge_do_localizador_exato():
+    c = campos_base()
+    c["campos"][0]["fonte"]["locator"] = "docx.par.2"
+    ext = {"documents": [{"document_id": "doc-1", "blocks": [
+        {"id": "b1", "locator": "anexo.docx.par.2", "text": c["campos"][0]["fonte"]["trecho"]},
+        {"id": "b2", "locator": "docx.par.2", "text": "Outra contratante."}]}]}
+    assert [e["codigo"] for e in preencher.lint(c, extracoes=ext)["erros"]] == ["trecho_fora_do_bloco"]
+
+
+@pytest.mark.parametrize("documento_avulso", [False, True])
+def test_lint_aceita_sufixo_unico_no_documento_indicado(documento_avulso):
+    c = campos_base()
+    doc = {"document_id": "doc-1", "blocks": [
+        {"id": "b1", "locator": "docx.par.2", "text": c["campos"][0]["fonte"]["trecho"]}]}
+    outro = {"document_id": "doc-2", "blocks": [
+        {"id": "b1", "locator": "docx.par.2", "text": "Outra contratante."}]}
+    ext = doc if documento_avulso else {"documents": [outro, doc]}
+    assert preencher.lint(c, extracoes=ext)["erros"] == []
+
+
+@pytest.mark.parametrize("cmd", ["lint", "gerar"])
+def test_cli_retornando_erro_json_para_localizador_ambiguo(modelo, tmp_path, capsys, cmd):
+    c = campos_base()
+    ext = {"documents": [{"document_id": "doc-1", "blocks": [
+        {"id": bid, "locator": loc, "text": c["campos"][0]["fonte"]["trecho"]}
+        for bid, loc in (("b1", "docx.par.2"), ("b2", "docx.tabela.1.par.2"))]}]}
+    campos_path, extracoes_path = tmp_path / "campos.json", tmp_path / "extracao.json"
+    campos_path.write_text(json.dumps(c), encoding="utf-8")
+    extracoes_path.write_text(json.dumps(ext), encoding="utf-8")
+    saida = tmp_path / "o.docx"
+    args = [cmd, str(campos_path)]
+    args += ["--modelo", str(modelo)] if cmd == "lint" else [str(modelo), str(saida)]
+    assert preencher.main([*args, "--extracoes", str(extracoes_path)]) == 1
+    r = json.loads(capsys.readouterr().out)
+    assert [e["codigo"] for e in r["erros"]] == ["localizador_ambiguo"]
+    assert not saida.exists()
+
+
+@pytest.mark.parametrize("saida_existente", [False, True])
+def test_gerar_recusa_localizador_ambiguo_sem_alterar_arquivos(modelo, tmp_path, saida_existente):
+    c = campos_base()
+    ext = {"documents": [{"document_id": "doc-1", "blocks": [
+        {"id": bid, "locator": loc, "text": c["campos"][0]["fonte"]["trecho"]}
+        for bid, loc in (("b1", "docx.par.2"), ("b2", "docx.tabela.1.par.2"))]}]}
+    saida = tmp_path / "o.docx"
+    if saida_existente:
+        saida.write_bytes(modelo.read_bytes())
+    antes = sha(modelo)
+    r = preencher.gerar(c, modelo, saida, extracoes=ext)
+    assert r["gerado"] is False
+    assert [e["codigo"] for e in r["erros"]] == ["localizador_ambiguo"]
+    assert sha(modelo) == antes
+    if saida_existente:
+        assert sha(saida) == antes
+    else:
+        assert not saida.exists()
+
+
 def test_gerar_recusa_quando_o_lint_tem_erro(modelo, tmp_path):
     c = campos_base()
     c["campos"][0]["fonte"]["trecho"] = "nada a ver"

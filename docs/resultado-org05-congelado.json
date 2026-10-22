@@ -1,0 +1,470 @@
+{
+  "schema_version": "1",
+  "base_produto": "a3848b1c5443cc72d9a00346c5f661e69a52b558",
+  "manifesto_sha256": "9e5917e837b0ea43104688792ac8b30c23ab320a71aafd115033f0e2bf95a82a",
+  "produto_sha256": {
+    "scripts/extract.py": "b2677ea69ea8dac919f815a4b7bb1d48026d65ca42f9cbf1fbf41b964dcf5d22",
+    "scripts/ocr.py": "5ea81fe208f34c81ff92fd1f915163b85dd14cd4e69252d61abbb39a8a3ecaca",
+    "scripts/pecas.py": "2214bd03991571d00f9bcddab24ce04688e0b961f52e76986cdb6ded4b26f0a0",
+    "scripts/pecas_proposta.py": "aced2a3936fafbbcb3aad1d1f6fa752080522262e527f5270202115a7d4406d3",
+    "scripts/pecas_validacao.py": "4a6112343e0ae9cc925cab7cd442727a29f95fc7818c8471bec6c53d8ffeab21",
+    "scripts/pecas_historico.py": "a46eb7d57b5ffd367d0969ab1bf4c911f8fe70c2b5f0c1d8821607fea5fcf397",
+    "scripts/pecas_uso.py": "157b3d73d0e3f1e4b6f6a400cd18b1c095b199e8f6a852eee5322e87a4c400d0",
+    "scripts/validate.py": "bc88e07417bdea770c803502a6b556bc1c854e29c205026df501f09e8f5b9a4f",
+    "scripts/cronologia.py": "c990f0e901d61f8e2cf21f498ff9acd2dc680b67999a4e3ae95c02445a7788df",
+    "scripts/triagem.py": "680e7d9dac5555fa9a572db299b1dfa9f4b5801d39e0a48d5613b5aa9b352b6d",
+    "scripts/auditar.py": "9e3a7b703b8cc345a7dce9a2639f3fbe9184d0dd0e12bf6932e3549959eeffec"
+  },
+  "liberacao_material": false,
+  "casos": [
+    {
+      "id": "ORG05-P01",
+      "processo_id": "tjmg:1.0000.25.012630-7/001",
+      "natureza": "processo",
+      "grupo": "avaliacao",
+      "modalidade": "nativo",
+      "sha256": "7d0f8bedb58268b89425fffd5ef1c9e3b83355e28c04b6c074bc1721fe5ff19e",
+      "referencia_origem": "modelo_tecnico",
+      "conferencia_humana": false,
+      "execucao": "concluida",
+      "extracao_status": "ok",
+      "paginas": 16,
+      "integridade_inventario": true,
+      "pecas_propostas": [
+        {
+          "inicio": 1,
+          "fim": 16,
+          "tipo": "nao_identificada"
+        }
+      ],
+      "leitura": {
+        "texto_nativo": 16
+      },
+      "avisos_extracao": [
+        "cabecalho_rodape_removido"
+      ],
+      "metricas": {
+        "precisao": "pagina",
+        "pecas_esperadas": 1,
+        "pecas_propostas": 1,
+        "fronteiras_corretas": {
+          "numerador": 0,
+          "denominador": 0
+        },
+        "cortes_propostos": 0,
+        "fragmentacoes": 0,
+        "fusoes": 0,
+        "tipo_correto": {
+          "numerador": 0,
+          "denominador": 1
+        },
+        "abstencoes": {
+          "numerador": 1,
+          "denominador": 1
+        }
+      },
+      "amostras_textuais": {
+        "numerador": 0,
+        "denominador": 0
+      },
+      "integracao": {
+        "execucao": "concluida",
+        "triagem_integra": true,
+        "analise_sem_erros": true,
+        "avisos_pecas": [
+          "pecas_aviso_extracao",
+          "pecas_limite_incerto",
+          "pecas_limites_nao_conferido",
+          "pecas_tipo_nao_conferido",
+          "pecas_tipo_nao_identificado"
+        ],
+        "fundamentada_bloqueada": true,
+        "erros_fundamentada": [
+          "pecas_aviso_extracao",
+          "pecas_limite_incerto",
+          "pecas_limites_nao_conferido",
+          "pecas_tipo_nao_conferido",
+          "pecas_tipo_nao_identificado"
+        ],
+        "cronologia_preserva_vinculos": true,
+        "g16_analise": "alerta",
+        "g16_fundamentada": "reprovado"
+      }
+    },
+    {
+      "id": "ORG05-P02",
+      "processo_id": "tjmg:1.0000.24.455292-3/001",
+      "natureza": "processo",
+      "grupo": "avaliacao",
+      "modalidade": "nativo",
+      "sha256": "a8e3bb498ccf6feae4b0461574bda1351869ee59249ed13c0ba651daadf2edd6",
+      "referencia_origem": "modelo_tecnico",
+      "conferencia_humana": false,
+      "execucao": "concluida",
+      "extracao_status": "partial",
+      "paginas": 14,
+      "integridade_inventario": true,
+      "pecas_propostas": [
+        {
+          "inicio": 1,
+          "fim": 14,
+          "tipo": "nao_identificada"
+        }
+      ],
+      "leitura": {
+        "texto_nativo": 14
+      },
+      "avisos_extracao": [
+        "cabecalho_rodape_removido",
+        "secao_aninhada_ambigua"
+      ],
+      "metricas": {
+        "precisao": "pagina",
+        "pecas_esperadas": 1,
+        "pecas_propostas": 1,
+        "fronteiras_corretas": {
+          "numerador": 0,
+          "denominador": 0
+        },
+        "cortes_propostos": 0,
+        "fragmentacoes": 0,
+        "fusoes": 0,
+        "tipo_correto": {
+          "numerador": 0,
+          "denominador": 1
+        },
+        "abstencoes": {
+          "numerador": 1,
+          "denominador": 1
+        }
+      },
+      "amostras_textuais": {
+        "numerador": 0,
+        "denominador": 0
+      },
+      "integracao": {
+        "execucao": "concluida",
+        "triagem_integra": true,
+        "analise_sem_erros": true,
+        "avisos_pecas": [
+          "pecas_aviso_extracao",
+          "pecas_limite_incerto",
+          "pecas_limites_nao_conferido",
+          "pecas_tipo_nao_conferido",
+          "pecas_tipo_nao_identificado"
+        ],
+        "fundamentada_bloqueada": true,
+        "erros_fundamentada": [
+          "pecas_aviso_extracao",
+          "pecas_limite_incerto",
+          "pecas_limites_nao_conferido",
+          "pecas_tipo_nao_conferido",
+          "pecas_tipo_nao_identificado"
+        ],
+        "cronologia_preserva_vinculos": true,
+        "g16_analise": "alerta",
+        "g16_fundamentada": "reprovado"
+      }
+    },
+    {
+      "id": "ORG05-D07-nativo",
+      "processo_id": "tjmg:1.0000.25.176803-2/002",
+      "natureza": "processo",
+      "grupo": "desenvolvimento",
+      "modalidade": "nativo",
+      "sha256": "e47df36b255c5000c00d58a1f9cedb46c5ed30ddb70b21b44536f08d09aaf27c",
+      "referencia_origem": "modelo_tecnico",
+      "conferencia_humana": false,
+      "execucao": "concluida",
+      "extracao_status": "partial",
+      "paginas": 12,
+      "integridade_inventario": true,
+      "pecas_propostas": [
+        {
+          "inicio": 1,
+          "fim": 12,
+          "tipo": "nao_identificada"
+        }
+      ],
+      "leitura": {
+        "texto_nativo": 12
+      },
+      "avisos_extracao": [
+        "cabecalho_rodape_removido",
+        "secao_aninhada_ambigua"
+      ],
+      "metricas": {
+        "precisao": "pagina",
+        "pecas_esperadas": 1,
+        "pecas_propostas": 1,
+        "fronteiras_corretas": {
+          "numerador": 0,
+          "denominador": 0
+        },
+        "cortes_propostos": 0,
+        "fragmentacoes": 0,
+        "fusoes": 0,
+        "tipo_correto": {
+          "numerador": 0,
+          "denominador": 1
+        },
+        "abstencoes": {
+          "numerador": 1,
+          "denominador": 1
+        }
+      },
+      "amostras_textuais": {
+        "numerador": 0,
+        "denominador": 0
+      },
+      "integracao": {
+        "execucao": "concluida",
+        "triagem_integra": true,
+        "analise_sem_erros": true,
+        "avisos_pecas": [
+          "pecas_aviso_extracao",
+          "pecas_limite_incerto",
+          "pecas_limites_nao_conferido",
+          "pecas_tipo_nao_conferido",
+          "pecas_tipo_nao_identificado"
+        ],
+        "fundamentada_bloqueada": true,
+        "erros_fundamentada": [
+          "pecas_aviso_extracao",
+          "pecas_limite_incerto",
+          "pecas_limites_nao_conferido",
+          "pecas_tipo_nao_conferido",
+          "pecas_tipo_nao_identificado"
+        ],
+        "cronologia_preserva_vinculos": true,
+        "g16_analise": "alerta",
+        "g16_fundamentada": "reprovado"
+      }
+    },
+    {
+      "id": "ORG05-D10-sem_ocr",
+      "processo_id": "picos:oficio106-2022-pgm",
+      "natureza": "documento",
+      "grupo": "desenvolvimento",
+      "modalidade": "sem_ocr",
+      "sha256": "9277cc0309549906f57d2ded428c6ccd358d7c3deee89344fe92cee7ecd7b720",
+      "referencia_origem": "modelo_tecnico",
+      "conferencia_humana": false,
+      "execucao": "concluida",
+      "extracao_status": "no_text",
+      "paginas": 1,
+      "integridade_inventario": true,
+      "pecas_propostas": [],
+      "leitura": {
+        "sem_texto": 1
+      },
+      "avisos_extracao": [
+        "pagina_sem_texto"
+      ],
+      "metricas": {
+        "precisao": "pagina",
+        "pecas_esperadas": 1,
+        "pecas_propostas": 0,
+        "fronteiras_corretas": {
+          "numerador": 0,
+          "denominador": 0
+        },
+        "cortes_propostos": 0,
+        "fragmentacoes": 0,
+        "fusoes": 0,
+        "tipo_correto": {
+          "numerador": 0,
+          "denominador": 0
+        },
+        "abstencoes": {
+          "numerador": 0,
+          "denominador": 0
+        }
+      },
+      "amostras_textuais": {
+        "numerador": 0,
+        "denominador": 3
+      },
+      "integracao": {
+        "execucao": "nao_executada",
+        "motivo": "nenhum_fragmento_atribuido"
+      }
+    },
+    {
+      "id": "ORG05-D10-ocr",
+      "processo_id": "picos:oficio106-2022-pgm",
+      "natureza": "documento",
+      "grupo": "desenvolvimento",
+      "modalidade": "ocr",
+      "sha256": "9277cc0309549906f57d2ded428c6ccd358d7c3deee89344fe92cee7ecd7b720",
+      "referencia_origem": "modelo_tecnico",
+      "conferencia_humana": false,
+      "execucao": "concluida",
+      "extracao_status": "partial",
+      "paginas": 1,
+      "integridade_inventario": true,
+      "pecas_propostas": [],
+      "leitura": {
+        "ocr_parcial": 1
+      },
+      "avisos_extracao": [
+        "ocr_aplicado",
+        "pagina_sem_texto"
+      ],
+      "metricas": {
+        "precisao": "pagina",
+        "pecas_esperadas": 1,
+        "pecas_propostas": 0,
+        "fronteiras_corretas": {
+          "numerador": 0,
+          "denominador": 0
+        },
+        "cortes_propostos": 0,
+        "fragmentacoes": 0,
+        "fusoes": 0,
+        "tipo_correto": {
+          "numerador": 0,
+          "denominador": 0
+        },
+        "abstencoes": {
+          "numerador": 0,
+          "denominador": 0
+        }
+      },
+      "amostras_textuais": {
+        "numerador": 3,
+        "denominador": 3
+      },
+      "integracao": {
+        "execucao": "nao_executada",
+        "motivo": "nenhum_fragmento_atribuido"
+      }
+    }
+  ],
+  "grupos": [
+    {
+      "grupo": "avaliacao",
+      "modalidade": "nativo",
+      "observacoes": 2,
+      "unidades": 2,
+      "processos": 2,
+      "avaliados": 2,
+      "nao_avaliados": 0,
+      "fronteiras_corretas": {
+        "numerador": 0,
+        "denominador": 0
+      },
+      "tipo_correto": {
+        "numerador": 0,
+        "denominador": 2
+      },
+      "abstencoes": {
+        "numerador": 2,
+        "denominador": 2
+      },
+      "fragmentacoes": {
+        "total": 0,
+        "casos_mensuraveis": 2
+      },
+      "fusoes": {
+        "total": 0,
+        "casos_mensuraveis": 2
+      }
+    },
+    {
+      "grupo": "desenvolvimento",
+      "modalidade": "nativo",
+      "observacoes": 1,
+      "unidades": 1,
+      "processos": 1,
+      "avaliados": 1,
+      "nao_avaliados": 0,
+      "fronteiras_corretas": {
+        "numerador": 0,
+        "denominador": 0
+      },
+      "tipo_correto": {
+        "numerador": 0,
+        "denominador": 1
+      },
+      "abstencoes": {
+        "numerador": 1,
+        "denominador": 1
+      },
+      "fragmentacoes": {
+        "total": 0,
+        "casos_mensuraveis": 1
+      },
+      "fusoes": {
+        "total": 0,
+        "casos_mensuraveis": 1
+      }
+    },
+    {
+      "grupo": "desenvolvimento",
+      "modalidade": "ocr",
+      "observacoes": 1,
+      "unidades": 1,
+      "processos": 0,
+      "avaliados": 1,
+      "nao_avaliados": 0,
+      "fronteiras_corretas": {
+        "numerador": 0,
+        "denominador": 0
+      },
+      "tipo_correto": {
+        "numerador": 0,
+        "denominador": 0
+      },
+      "abstencoes": {
+        "numerador": 0,
+        "denominador": 0
+      },
+      "fragmentacoes": {
+        "total": 0,
+        "casos_mensuraveis": 1
+      },
+      "fusoes": {
+        "total": 0,
+        "casos_mensuraveis": 1
+      }
+    },
+    {
+      "grupo": "desenvolvimento",
+      "modalidade": "sem_ocr",
+      "observacoes": 1,
+      "unidades": 1,
+      "processos": 0,
+      "avaliados": 1,
+      "nao_avaliados": 0,
+      "fronteiras_corretas": {
+        "numerador": 0,
+        "denominador": 0
+      },
+      "tipo_correto": {
+        "numerador": 0,
+        "denominador": 0
+      },
+      "abstencoes": {
+        "numerador": 0,
+        "denominador": 0
+      },
+      "fragmentacoes": {
+        "total": 0,
+        "casos_mensuraveis": 1
+      },
+      "fusoes": {
+        "total": 0,
+        "casos_mensuraveis": 1
+      }
+    }
+  ],
+  "limites": [
+    "Referências técnicas não equivalem a conferência humana ou revisão jurídica.",
+    "Denominadores zero indicam ausência de medição; fronteiras medidas por página.",
+    "Tipo só comparado em envelopes exatamente correspondentes; não mede classificação universal.",
+    "Amostras OCR não são transcrição integral nem taxa de erro de caracteres.",
+    "Proposta e consumidores congelados; mudanças posteriores exigem nova coorte de avaliação."
+  ],
+  "fase": "avaliacao_congelada"
+}

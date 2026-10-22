@@ -4,3 +4,10 @@ __pycache__/
 .pytest_cache/
 .pytest_tmp/
 .cache/
+# Corpus privado fornecido pelo titular: manter somente no ambiente local.
+tests/casos/regressao/pendentes/R07_tj_decisao.pdf
+tests/casos/regressao/pendentes/R10_escaneado_real.pdf
+
+# Corpus privado recuperado: IDs distintos dos públicos R07/R10
+tests/casos/regressao/pendentes/ORG-R07-PRIVADO.pdf
+tests/casos/regressao/pendentes/ORG-R10-PRIVADO.pdf

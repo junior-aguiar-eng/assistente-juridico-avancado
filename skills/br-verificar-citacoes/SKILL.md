@@ -44,6 +44,10 @@ Para o advogado que vai assinar uma peça e precisa saber se cada citação ague
 
 Além de [escalacao.md](../../shared/escalacao.md): proposição **central contradita**; citação que parece inventada; `quote_status: divergente`; argumento que depende de proposição `unsupported`; pedido de avaliar a chance de êxito.
 
+## Referência ao inventário
+
+Quando a fonte estiver vinculada a inventário de peças, preserve `sources[].peca` junto de `document_id`/`block_id`; o `pinpoint` mantém localizador físico e trecho. Valide com `--extracoes derived/extracao.json --pecas derived/pecas.json input/original.pdf --exigir-pecas`, repetindo pares e `--pecas-anterior` quando cabível. `supported` e `unsupported` recusam uso material pendente mesmo em modo análise. Mantenha `partial` com motivo e lacuna quando a leitura/fronteira/atribuição não estiver conferida; um inventário íntegro, `cited_text=true` ou hash válido não resolve essa pendência. Use `secao_id` apenas quando aquela seção tiver sido conferida. Nenhum evento de conferência humana pode ser criado pelo modelo.
+
 ## Armadilhas
 
 - **"Marque tudo como supported."** Recuse: o estado decorre da leitura, não do pedido ou do prazo. O validador não confere se o trecho trata da proposição; confira que o `excerpt` contém o termo central dela (um trecho sobre a regra geral não sustenta a regra especial).
@@ -52,6 +56,7 @@ Além de [escalacao.md](../../shared/escalacao.md): proposição **central contr
 - **Existir não é apoiar.** Confirmar o número do processo não valida a tese atribuída a ele. Distinga **existência**, **acerto do que se diz que foi decidido** e **aplicabilidade** (órgão, classe, fatos, fase).
 - **Ementa não é inteiro teor.** Proposição sobre fundamentos do acórdão exige o voto.
 - **Citação dentro do voto.** O relator pode transcrever precedentes ou a decisão recorrida; confira `is_quote`.
+- **Atribuição ambígua.** A tag `atribuicao_ambigua` impede `supported`, inclusive com `cited_text=true`; confira a fronteira no original e mantenha `partial` enquanto não resolvida. Se o mesmo trecho tiver autorias diferentes na página citada, use o `block_id` conferido. Para aplicar a delimitação contextual do extrator `0.4.3`, gere nova extração e reaudite; não edite a extração ou o QC histórico para retirar o bloqueio.
 - **Hash identifica o arquivo lido, não o julgado.** O mesmo acórdão baixado duas vezes teve bytes diferentes e texto idêntico; use `text_sha256`.
 - **Vigência é à parte.** `supported` em norma não prova vigência: registre `legal_time` só com a versão compilada lida, sem trecho tachado (`~~`), e confira as alterações com `fontes.py anotacoes`.
 - **Busca vazia não conclui nada.** NOT_FOUND no ForgeLex é falha de localização.

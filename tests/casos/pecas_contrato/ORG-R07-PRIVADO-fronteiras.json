@@ -1,0 +1,53 @@
+{
+  "schema_gabarito": "1",
+  "caso_id": "ORG-R07-PRIVADO",
+  "natureza": "fronteiras_fisicas_sem_transcricoes",
+  "arquivo_sha256": "d5431d9144779f04f2d5e7d455332a5a640fc1f2bf413d75ea67bfa42597933b",
+  "total_paginas": 38,
+  "pecas": [
+    {
+      "id": "r07-p1",
+      "tipo": "sentenca",
+      "pagina_inicio": 1,
+      "pagina_fim": 24
+    },
+    {
+      "id": "r07-p2",
+      "tipo": "acordao",
+      "pagina_inicio": 25,
+      "pagina_fim": 38
+    }
+  ],
+  "conferencia_paginas": {
+    "estado": "conferido",
+    "ator_tipo": "humano",
+    "ator": "titular do projeto",
+    "data": "2026-10-22",
+    "origem": "confirmação expressa nesta conversa",
+    "escopo": "intervalos físicos e natureza sentença/acórdão; não confirma texto OCR, seções ou mérito jurídico"
+  },
+  "ancora_tecnica": {
+    "estado": "proposto",
+    "ator_tipo": "modelo",
+    "origem": "inspeção visual e conferência técnica dos blocos",
+    "extracao_sha256": "f2aeac95e8099c1c2a8b8fbada3e5b0441d012ab56a0cbbe8dd210295f51da53",
+    "extrator_versao": "0.4.0",
+    "block_id": "b0998",
+    "fragmento_sentenca": {
+      "inicio": 0,
+      "fim": 9,
+      "pagina": 24
+    },
+    "fragmento_acordao": {
+      "inicio": 9,
+      "fim": 28,
+      "pagina": 25
+    },
+    "escopo": "Offsets de code points deste snapshot de extração; não são confirmação humana nem se aplicam automaticamente a outra extração."
+  },
+  "observacoes": [
+    "Numeração física e numeração impressa não são equivalentes.",
+    "Os PDFs, imagens e o snapshot de extração permanecem privados, fora do Git.",
+    "Este gabarito de páginas não é inventário completo pecas.json nem mede acerto de um classificador."
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "documentos": [
+    {
+      "id": "ORG05-P01",
+      "url": "https://www5.tjmg.jus.br/jurisprudencia/relatorioEspelhoAcordao.do?ano=25&codigoOrigem=0000&inteiroTeor=true&numero=012630&sequencial=001&sequencialAcordao=0&ttriCodigo=1",
+      "url_final": "https://www5.tjmg.jus.br/jurisprudencia/relatorioEspelhoAcordao.do?ano=25&codigoOrigem=0000&inteiroTeor=true&numero=012630&sequencial=001&sequencialAcordao=0&ttriCodigo=1",
+      "http": 200,
+      "content_type": "application/pdf",
+      "bytes": 34698,
+      "sha256": "7d0f8bedb58268b89425fffd5ef1c9e3b83355e28c04b6c074bc1721fe5ff19e",
+      "retrieved_at": "2026-10-22T21:13:16.821020+00:00",
+      "arquivo": "tests/casos/org05/ORG05-P01.pdf"
+    },
+    {
+      "id": "ORG05-P02",
+      "url": "https://www5.tjmg.jus.br/jurisprudencia/relatorioEspelhoAcordao.do?ano=24&codigoOrigem=0000&inteiroTeor=true&numero=455292&sequencial=001&sequencialAcordao=0&ttriCodigo=1",
+      "url_final": "https://www5.tjmg.jus.br/jurisprudencia/relatorioEspelhoAcordao.do?ano=24&codigoOrigem=0000&inteiroTeor=true&numero=455292&sequencial=001&sequencialAcordao=0&ttriCodigo=1",
+      "http": 200,
+      "content_type": "application/pdf",
+      "bytes": 29370,
+      "sha256": "a8e3bb498ccf6feae4b0461574bda1351869ee59249ed13c0ba651daadf2edd6",
+      "retrieved_at": "2026-10-22T21:13:17.459714+00:00",
+      "arquivo": "tests/casos/org05/ORG05-P02.pdf"
+    }
+  ],
+  "limite": "Fonte publica oficial, consistencia dos bytes; nao autentica assinatura nem revisao humana."
+}

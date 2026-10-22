@@ -31,6 +31,10 @@ Para quem monta a narrativa do caso (petição, parecer, preparação de audiên
 4. **Exposição de fatos** (`--formato fatos`, exige `--matter`): prosa em ordem, só fatos de relevância alta ou média, com o tipo e a fonte de cada um. Em triagem `misto` de sigilo, **só entra o que está `priv: ok`**; o restante fica de fora e o relatório diz quantos. `--incluir-sinalizados` só com a confirmação do advogado, e o cabeçalho registra isso. Com fontes `nao_triado`, a skill se recusa.
 5. **Mantenha atualizada:** `python scripts/cronologia.py conferir --facts derived/facts.json --timeline outputs/timeline.json`. A auditoria (`br-auditar-entrega --timeline`) bloqueia a entrega com cronologia velha.
 
+## Fatos vinculados a peças
+
+Quando facts usa `peca`, forneça `--extracoes derived/extracao.json --pecas derived/pecas.json input/original.pdf --exigir-pecas` tanto ao gerar quanto ao conferir, repetindo pares e `--pecas-anterior` quando necessário. O JSON preserva peça/bloco e hashes dos inventários; o Markdown mostra referências e pendências. Cronologia de trabalho pode conservar ressalvas, sem aprovar o uso. `--modo fundamentada` e a exposição `--formato fatos` recusam pendência material antes de gravar saídas. Não remova a extensão para contornar esse bloqueio; revisão de inventário exige reconciliar as fontes e gerar nova versão, preservando as antigas.
+
 ## O que não fazer
 
 - **Pedido para calcular prazo ou completar data.** Recuse: explique que mês é mês, peça o documento que traz a data e encaminhe o cálculo ao advogado.

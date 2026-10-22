@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:juris-skills-br:pecas:1",
+  "title": "Inventário de peças — contrato ORG-01 v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "inventario_id", "revisao", "anterior_sha256", "origem", "metodo", "paginas", "fragmentos", "pecas", "secoes", "eventos", "pendencias"],
+  "properties": {
+    "schema_version": {"const": "1"},
+    "inventario_id": {"$ref": "#/$defs/id"},
+    "revisao": {"type": "integer", "minimum": 1},
+    "anterior_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+    "origem": {"$ref": "#/$defs/origem"},
+    "metodo": {"$ref": "#/$defs/metodo"},
+    "paginas": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/pagina"}},
+    "fragmentos": {"type": "array", "items": {"$ref": "#/$defs/fragmento"}},
+    "pecas": {"type": "array", "items": {"$ref": "#/$defs/peca"}},
+    "secoes": {"type": "array", "items": {"$ref": "#/$defs/secao"}},
+    "eventos": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evento"}},
+    "pendencias": {"type": "array", "items": {"$ref": "#/$defs/pendencia"}}
+  },
+  "allOf": [{"if": {"properties": {"revisao": {"const": 1}}}, "then": {"properties": {"anterior_sha256": {"type": "null"}}}, "else": {"properties": {"anterior_sha256": {"$ref": "#/$defs/sha256"}}}}],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9_-]+$"},
+    "texto": {"type": "string", "minLength": 1, "pattern": "\\S"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "metodo": {
+      "type": "object", "additionalProperties": false, "required": ["nome", "versao"],
+      "properties": {"nome": {"$ref": "#/$defs/texto"}, "versao": {"$ref": "#/$defs/texto"}}
+    },
+    "origem": {
+      "type": "object", "additionalProperties": false,
+      "required": ["document_id", "arquivo_sha256", "extracao_sha256", "total_paginas", "extrator", "configuracao_sha256"],
+      "properties": {
+        "document_id": {"$ref": "#/$defs/id"}, "arquivo_sha256": {"$ref": "#/$defs/sha256"},
+        "extracao_sha256": {"$ref": "#/$defs/sha256"}, "total_paginas": {"type": "integer", "minimum": 1},
+        "extrator": {"$ref": "#/$defs/metodo"},
+        "configuracao_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]}
+      }
+    },
+    "pagina": {
+      "type": "object", "additionalProperties": false, "required": ["numero", "leitura", "origem"],
+      "properties": {
+        "numero": {"type": "integer", "minimum": 1},
+        "leitura": {"enum": ["texto_nativo", "ocr_parcial", "sem_texto", "nao_processada"]},
+        "origem": {"enum": ["extracao", "conferencia_visual"]}
+      }
+    },
+    "localizacao": {
+      "type": "object", "additionalProperties": false, "required": ["inicio", "fim", "precisao", "origem"],
+      "properties": {
+        "inicio": {"type": "integer", "minimum": 1}, "fim": {"type": "integer", "minimum": 1},
+        "precisao": {"enum": ["pagina", "intervalo", "indeterminada"]},
+        "origem": {"enum": ["extracao", "conferencia_visual", "indeterminada"]}
+      }
+    },
+    "destino": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["classe", "piece_id"], "properties": {"classe": {"const": "peca"}, "piece_id": {"$ref": "#/$defs/id"}}},
+        {"type": "object", "additionalProperties": false, "required": ["classe", "motivo"], "properties": {"classe": {"enum": ["auxiliar", "nao_atribuido"]}, "motivo": {"$ref": "#/$defs/texto"}}}
+      ]
+    },
+    "fragmento": {
+      "type": "object", "additionalProperties": false, "required": ["id", "block_id", "inicio", "fim", "paginas", "destino"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "block_id": {"$ref": "#/$defs/id"},
+        "inicio": {"type": "integer", "minimum": 0}, "fim": {"type": "integer", "minimum": 1},
+        "paginas": {"$ref": "#/$defs/localizacao"}, "destino": {"$ref": "#/$defs/destino"}
+      }
+    },
+    "conferencia": {
+      "type": "object", "additionalProperties": false, "required": ["estado", "evento_id"],
+      "properties": {"estado": {"enum": ["proposto", "conferido", "rejeitado"]}, "evento_id": {"anyOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]}},
+      "allOf": [{"if": {"properties": {"estado": {"const": "proposto"}}}, "then": {"properties": {"evento_id": {"type": "null"}}}, "else": {"properties": {"evento_id": {"$ref": "#/$defs/id"}}}}]
+    },
+    "evidencia": {
+      "type": "object", "additionalProperties": false, "required": ["sinal", "fragmentos", "observacao"],
+      "properties": {"sinal": {"enum": ["titulo", "autoria", "numeracao", "continuidade", "indice", "conferencia_visual", "outro"]}, "fragmentos": {"$ref": "#/$defs/ids"}, "observacao": {"$ref": "#/$defs/texto"}}
+    },
+    "peca": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "ordem", "tipo_proposto", "inicio", "fim", "proposta_evento_id", "limites", "tipo", "evidencias"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "ordem": {"type": "integer", "minimum": 1},
+        "tipo_proposto": {"enum": ["peticao_inicial", "contestacao", "peticao", "recurso", "manifestacao_mp", "decisao_interlocutoria", "despacho", "sentenca", "acordao", "certidao", "anexo", "nao_identificada"]},
+        "inicio": {"$ref": "#/$defs/id"}, "fim": {"$ref": "#/$defs/id"}, "proposta_evento_id": {"$ref": "#/$defs/id"},
+        "limites": {"$ref": "#/$defs/conferencia"}, "tipo": {"$ref": "#/$defs/conferencia"},
+        "evidencias": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidencia"}}
+      }
+    },
+    "secao": {
+      "type": "object", "additionalProperties": false, "required": ["id", "piece_id", "tipo_proposto", "fragmentos", "conferencia"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "piece_id": {"$ref": "#/$defs/id"},
+        "tipo_proposto": {"enum": ["relatorio", "fundamentacao", "voto", "dispositivo", "ementa", "outro", "nao_identificada"]},
+        "fragmentos": {"$ref": "#/$defs/ids"}, "conferencia": {"$ref": "#/$defs/conferencia"}
+      }
+    },
+    "evento": {
+      "type": "object", "additionalProperties": false, "required": ["id", "instante", "ator", "acao", "alvos", "motivo"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "instante": {"type": "string", "format": "date-time"},
+        "ator": {"type": "object", "additionalProperties": false, "required": ["tipo", "identificador"], "properties": {"tipo": {"enum": ["humano", "modelo", "sistema"]}, "identificador": {"$ref": "#/$defs/texto"}}},
+        "acao": {"enum": ["propor", "corrigir", "conferir_limites", "rejeitar_limites", "conferir_tipo", "rejeitar_tipo", "conferir_secao", "rejeitar_secao"]},
+        "alvos": {"$ref": "#/$defs/ids"}, "motivo": {"$ref": "#/$defs/texto"}
+      },
+      "allOf": [{"if": {"properties": {"ator": {"properties": {"tipo": {"enum": ["modelo", "sistema"]}}}}}, "then": {"properties": {"acao": {"enum": ["propor", "corrigir"]}}}}]
+    },
+    "pendencia": {
+      "type": "object", "additionalProperties": false, "required": ["id", "codigo", "referencias", "mensagem", "material"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "codigo": {"enum": ["tipo_nao_identificado", "limite_incerto", "leitura_insuficiente", "localizacao_indeterminada", "pagina_sem_texto", "pagina_nao_processada", "configuracao_nao_registrada", "fragmento_nao_atribuido", "outro"]},
+        "referencias": {"$ref": "#/$defs/ids"}, "mensagem": {"$ref": "#/$defs/texto"}, "material": {"type": "boolean"}
+      }
+    }
+  }
+}

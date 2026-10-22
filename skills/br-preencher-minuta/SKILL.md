@@ -34,7 +34,7 @@ Para quem monta minutas a partir de modelos do escritório. A skill **transporta
 
 1. **Extraia** o modelo e as fontes. Confirme com o usuário **qual documento é a fonte de cada dado** quando houver mais de um candidato.
 2. **Monte o `campos.json`** campo a campo. Para cada dado tirado de documento, copie do bloco extraído o trecho (a frase ou linha inteira) e o `locator`; o valor é um pedaço desse trecho, sem reescrever (CNPJ, nome e valores saem como estão). Dois documentos divergentes: `conflito`, não escolha. Dado ausente: `pendente`, não complete.
-3. **Confira:** `python scripts/preencher.py lint campos.json --modelo modelo.docx --extracoes derived/extracao.json`. Os erros típicos: valor fora do trecho, marcador do modelo sem campo, campo `pendente` com valor, `informado` sem data.
+3. **Confira:** `python scripts/preencher.py lint campos.json --modelo modelo.docx --extracoes derived/extracao.json`. O localizador completo tem prioridade; abreviação só é aceita se identificar um único bloco no documento. `localizador_ambiguo` impede a geração: copie o localizador completo; se ele estiver duplicado, corrija a extração. Outros erros típicos: valor fora do trecho, marcador do modelo sem campo, campo `pendente` com valor, `informado` sem data.
 4. **Gere:** `python scripts/preencher.py gerar campos.json modelo.docx outputs/minuta.docx --extracoes derived/extracao.json`. Sem `--aceitar-inferidos`, o inferido fica pendente.
 5. **Entregue o relatório junto**: `completo: true` só quando nada ficou em amarelo. Liste ao advogado cada campo marcado e o motivo.
 

@@ -1,5 +1,7 @@
 # Planejamento v2: juris-skills-br (8 skills, infraestrutura enxuta)
 
+> **Histórico — substituído em 2026-10-22 pelo [plano principal vigente](plano-principal.md).** As prioridades, os estados e os critérios abaixo registram decisões de 16/10/2026 e não são o andamento atual.
+
 Data-base: 16/10/2026. Substitui as fases 0 a 5 do blueprint original.
 
 ## 1. Decisões

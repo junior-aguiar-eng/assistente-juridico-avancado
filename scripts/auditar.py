@@ -2,6 +2,8 @@
 
   auditar  --facts F.json --claims C.json --extracoes E.json [--modo analise|fundamentada]
            [--timeline T.json] [--matter M.json] [--tipo-entrega interna|cliente|peticao|contrato]
+           [--issues I.json] [--campos C.json --modelo M.docx --minuta D.docx]
+           [--regras DIR --pacote servicos_saas,lgpd]
            [--reverificar N] [--relatorio R.md ...] [--artefato ARQ ...] --saida qc.json
   aprovar  qc.json --revisor NOME [--registro OAB/UF] --declaracao TEXTO [--decisao aprovada|reprovada]
            [--nota TEXTO] --saida aprovacao.json
@@ -82,7 +84,9 @@ def _baixar(url, destino):
 
 
 def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."), timeline=None,
-            matter=None, tipo_entrega="interna", reverificar=0, relatorios=(), sem_teses_centrais=False) -> dict:
+            matter=None, tipo_entrega="interna", reverificar=0, relatorios=(), sem_teses_centrais=False,
+            issues=None, campos=None, modelo=None, minuta=None, regras_dir=None, pacote="servicos_saas,lgpd", *,
+            pecas=(), pecas_anteriores=(), exigir_pecas=False) -> dict:
     g = Gates()
     externa = tipo_entrega != "interna"
     rigor = "reprovado" if (modo == "fundamentada" or externa) else "alerta"
@@ -96,10 +100,16 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         obj = json.loads(ep.read_text(encoding="utf-8"))
         docs += obj.get("documents", [obj] if "blocks" in obj else [])
     artefatos = {}
+    import pecas_uso
+    contexto = pecas_uso.carregar_contexto(extracoes, pecas, anteriores=pecas_anteriores, exigir=exigir_pecas)
+    erros_pecas, avisos_pecas = list(contexto.erros), []
 
     def reg(caminho, tipo):
         p = Path(caminho).resolve()
         artefatos[p] = tipo
+
+    for caminho, tipo in contexto.artefatos:
+        reg(caminho, tipo)
 
     # G00: sem extração nada é conferido contra o texto lido (trechos, localizadores, hashes)
     if extracoes:
@@ -121,7 +131,10 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         except (OSError, ValueError) as e:
             g.add(gid, f"{rot}.json válido", "reprovado", f"ilegível: {e}")
             continue
-        r = fn(objs[rot], idx if extracoes else None)
+        r = fn(objs[rot], idx if extracoes else None, pecas=contexto if contexto.ativo else None,
+               modo="fundamentada" if rigor == "reprovado" else "analise")
+        erros_pecas += [e for e in r.erros if e['codigo'].startswith('pecas_')]
+        avisos_pecas += [a for a in r.avisos if a['codigo'].startswith('pecas_')]
         avisos_val += [(rot, a) for a in r.avisos]
         g.add(gid, f"{rot}.json válido contra as regras e as fontes extraídas",
               "reprovado" if r.erros else "aprovado", _resumo_erros(r) if r.erros else f"{len(r.avisos)} aviso(s)")
@@ -168,6 +181,8 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         if not d.get("sha256"):
             continue
         p = _resolver(d["path"], *dirs_ext)
+        if p is None and d.get("document_id") in contexto.documentos:
+            p = contexto.documentos[d["document_id"]]["original"]
         if p is None:
             ausente.append(d["path"])
         else:
@@ -175,7 +190,7 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
             if _sha(p) != d["sha256"]:
                 mudou.append(d["path"])
     g.add("G04_originais_intactos", "arquivos de origem iguais aos extraídos",
-          "reprovado" if mudou else ("alerta" if ausente else "aprovado"),
+          "reprovado" if mudou else (rigor if ausente else "aprovado"),
           ("alterados após a extração: " + ", ".join(mudou)) if mudou else
           (("não localizados para conferir: " + ", ".join(ausente)) if ausente else f"{len(docs)} arquivo(s) conferido(s)"))
 
@@ -198,12 +213,15 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
                     continue
                 reg(p, "fonte")
                 did = s.get("document_id")
-                texto_ok = idx.get(did, {}).get("text_sha256") if isinstance(did, str) else None
-                if _sha(p) == s.get("content_hash") or (texto_ok and s.get("content_hash") == texto_ok):
+                extraido = idx.get(did, {}) if isinstance(did, str) else {}
+                # Hash textual identifica o texto registrado; a integridade do arquivo
+                # local exige os bytes do documento do qual esse texto foi extraído.
+                bruto = extraido.get("sha256") if extraido else s.get("content_hash")
+                aceitos = {h for h in (bruto, extraido.get("text_sha256")) if h}
+                if _sha(p) == bruto and s.get("content_hash") in aceitos:
                     conf += 1
                 else:
                     div.append(f"{c.get('id')}:{s['local_file']}")
-        bloqueia_sem_local = bool(sem_local) and rigor == "reprovado"
         detalhes = []
         if div:
             detalhes.append("hash diverge em " + ", ".join(div))
@@ -212,7 +230,7 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         if sem_local:
             detalhes.append("sem local_file (não reconferível): " + ", ".join(sem_local))
         g.add("G05_fontes_lidas_conferem", "arquivo de cada fonte lida confere com o hash registrado",
-              "reprovado" if (div or bloqueia_sem_local) else ("alerta" if (falt or sem_local) else "aprovado"),
+              "reprovado" if div else (rigor if (falt or sem_local) else "aprovado"),
               "; ".join(detalhes) or f"{conf} fonte(s) conferida(s)")
     else:
         g.add("G05_fontes_lidas_conferem", "arquivo de cada fonte lida confere com o hash registrado", "nao_aplicavel", "sem claims.json")
@@ -285,7 +303,7 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
             import cronologia
 
             try:
-                c = cronologia.conferir(facts, timeline)
+                c = cronologia.conferir(facts, timeline, pecas_contexto=contexto if contexto.ativo else None)
                 g.add("G09_cronologia_atualizada", "cronologia corresponde ao facts.json",
                       "aprovado" if c["atualizada"] else "reprovado",
                       "atualizada" if c["atualizada"] else "desatualizada: gere a cronologia de novo a partir do facts.json atual")
@@ -305,8 +323,9 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         g.add("G10_aviso_no_relatorio", "relatórios de entrega trazem o aviso padrão (shared/aviso-padrao.md)",
               rigor if sem_aviso else "aprovado", ("sem o aviso: " + ", ".join(sem_aviso)) if sem_aviso else f"{len(relatorios)} relatório(s) com aviso")
     else:
-        g.add("G10_aviso_no_relatorio", "relatórios de entrega trazem o aviso padrão (shared/aviso-padrao.md)", "nao_aplicavel",
-              "nenhum relatório informado (--relatorio)")
+        g.add("G10_aviso_no_relatorio", "relatórios de entrega trazem o aviso padrão (shared/aviso-padrao.md)",
+              "reprovado" if externa else "nao_aplicavel",
+              "entrega externa exige relatório (--relatorio)" if externa else "nenhum relatório informado (--relatorio)")
 
     # G11 conflito de interesses e G12 sigilo, a partir do matter.json
     mj = None
@@ -397,13 +416,24 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
             g.add("G13_reverificacao", "fontes oficiais relidas e iguais às registradas",
                   rigor if mudou else ("alerta" if falhou else "aprovado"), "; ".join(partes))
 
+    import auditoria_documental
+
+    issues, campos = auditoria_documental.identificar(issues, campos, extras)
+    documentos = auditoria_documental.conferir(g, reg, idx, bool(extracoes), issues, campos, modelo, minuta, regras_dir, pacote)
+    if contexto.ativo or erros_pecas or avisos_pecas:
+        for item in erros_pecas + avisos_pecas:
+            g.pend("pecas", item['caminho'], item['codigo'])
+        g.add("G16_inventario_pecas", "inventários íntegros e referências aptas para o uso declarado",
+              "reprovado" if erros_pecas else ("alerta" if avisos_pecas else "aprovado"),
+              "; ".join(sorted({i['codigo'] for i in erros_pecas + avisos_pecas})) or "referências conferidas; não é aprovação jurídica")
     reprovados = [i for i in g.itens if i["resultado"] == "reprovado"]
     sem_ressalva = not any(i["resultado"] == "alerta" for i in g.itens) and not g.pendencias
     faixa = "nao_entregar" if reprovados else ("alta" if (not externa and sem_ressalva) else "mista")
     return {
         "schema_version": SCHEMA_VERSION, "gerado_em": _agora(), "modo": modo,
         "estado_tecnico": "bloqueado" if reprovados else "revisao_pronta",
-        "gates": g.itens, "pendencias": g.pendencias,
+        "gates": g.itens, "pendencias": g.pendencias, "documentos": documentos,
+        **({"inventarios_pecas": contexto.vinculos(), "exigir_pecas": exigir_pecas} if contexto.ativo else {}),
         "artefatos": sorted(({"caminho": _rel(p, base), "tipo": t, "sha256": _sha(p)} for p, t in artefatos.items()),
                             key=lambda a: a["caminho"]),
         "tipo_entrega": tipo_entrega, "faixa": faixa,
@@ -492,7 +522,8 @@ def status(qc_path, aprovacao_path=None) -> dict:
     qc = json.loads(qcp.read_text(encoding="utf-8"))
     obrig = qc.get("aprovacao_humana_obrigatoria", True)
     out = {"estado_tecnico": qc["estado_tecnico"], "faixa": qc.get("faixa"), "tipo_entrega": qc.get("tipo_entrega"),
-           "aprovacao_humana_obrigatoria": obrig, "revisao_humana": "pendente", "alterados": [], "ausentes": []}
+           "aprovacao_humana_obrigatoria": obrig, "revisao_humana": "pendente", "alterados": [], "ausentes": [],
+           "documentos": qc.get("documentos", {}), "pendencias": qc.get("pendencias", [])}
     # a integridade dos artefatos é conferida sempre, com ou sem aprovação: pacote mexido depois da auditoria não está liberado
     alt0, aus0 = _recalcular({"artefatos": qc.get("artefatos", [])}, qcp.parent)
     out.update(alterados=alt0, ausentes=aus0)
@@ -520,6 +551,12 @@ def main(argv=None) -> int:
     a = sub.add_parser("auditar")
     a.add_argument("--facts")
     a.add_argument("--claims")
+    a.add_argument("--issues", help="apontamentos contratuais a validar, não apenas registrar por hash")
+    a.add_argument("--campos", help="dados de preenchimento da minuta")
+    a.add_argument("--modelo", help="modelo DOCX original; exige --campos e --minuta")
+    a.add_argument("--minuta", help="minuta DOCX gerada; exige --campos e --modelo")
+    a.add_argument("--regras", help="diretório dos pacotes de regras; padrão rules/br do projeto")
+    a.add_argument("--pacote", default="servicos_saas,lgpd", help="pacotes usados na validação contratual")
     a.add_argument("--extracoes", action="append", default=[])
     a.add_argument("--modo", choices=("analise", "fundamentada"), default="analise")
     a.add_argument("--artefato", action="append", default=[])
@@ -531,6 +568,8 @@ def main(argv=None) -> int:
     a.add_argument("--relatorio", action="append", default=[], help="relatório .md de entrega (precisa do aviso padrão)")
     a.add_argument("--sem-teses-centrais", action="store_true", help="declara que nenhuma proposição é tese central")
     a.add_argument("--saida", required=True)
+    import pecas_uso
+    pecas_uso.adicionar_argumentos(a)
     p = sub.add_parser("aprovar")
     p.add_argument("qc")
     p.add_argument("--revisor", required=True)
@@ -548,7 +587,9 @@ def main(argv=None) -> int:
             if not (n.facts or n.claims):
                 raise ValueError("informe --facts e/ou --claims")
             qc = auditar(n.facts, n.claims, n.extracoes, n.modo, n.artefato, Path(n.saida).resolve().parent, n.timeline,
-                         n.matter, n.tipo_entrega, n.reverificar, n.relatorio, n.sem_teses_centrais)
+                         n.matter, n.tipo_entrega, n.reverificar, n.relatorio, n.sem_teses_centrais,
+                         n.issues, n.campos, n.modelo, n.minuta, n.regras, n.pacote,
+                         pecas=n.pecas, pecas_anteriores=n.pecas_anterior, exigir_pecas=n.exigir_pecas)
             Path(n.saida).write_text(json.dumps(qc, ensure_ascii=False, indent=2), encoding="utf-8")
             res, cod = qc, 0 if qc["estado_tecnico"] == "revisao_pronta" else 1
         elif n.cmd == "aprovar":
