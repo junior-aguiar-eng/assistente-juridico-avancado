@@ -176,6 +176,12 @@ def capacidades() -> dict:
                           "existem nesta sessão."}
 
 
+def resumir_pecas(extracoes, pecas=(), *, anteriores=(), exigir=False):
+    """Organização declarada e suas restrições; não propõe nem confere fronteiras."""
+    import pecas_uso
+    return pecas_uso.carregar_contexto(extracoes, pecas, anteriores=anteriores, exigir=exigir).resumo()
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -190,6 +196,10 @@ def main(argv=None) -> int:
     v.add_argument("--travar", action="store_true")
     p = sub.add_parser("processos")
     p.add_argument("extracoes", nargs="+")
+    pp = sub.add_parser("pecas", help="resumo dos inventários vinculados, sem transcrever documentos")
+    pp.add_argument("--extracoes", action="append", default=[])
+    import pecas_uso
+    pecas_uso.adicionar_argumentos(pp)
     n = ap.parse_args(argv)
     try:
         if n.cmd == "init":
@@ -200,9 +210,11 @@ def main(argv=None) -> int:
             res = privacidade(n.extracoes)
         elif n.cmd == "capacidades":
             res = capacidades()
+        elif n.cmd == "pecas":
+            res = resumir_pecas(n.extracoes, n.pecas, anteriores=n.pecas_anterior, exigir=n.exigir_pecas)
         else:
             res = processos(n.extracoes)
-        cod = 0
+        cod = 0 if res.get("valido", True) else 1
     except (ValueError, OSError) as e:
         res, cod = {"erro": f"{type(e).__name__}: {e}"}, 1
     sys.stdout.buffer.write((json.dumps(res, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))

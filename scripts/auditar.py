@@ -85,7 +85,8 @@ def _baixar(url, destino):
 
 def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."), timeline=None,
             matter=None, tipo_entrega="interna", reverificar=0, relatorios=(), sem_teses_centrais=False,
-            issues=None, campos=None, modelo=None, minuta=None, regras_dir=None, pacote="servicos_saas,lgpd") -> dict:
+            issues=None, campos=None, modelo=None, minuta=None, regras_dir=None, pacote="servicos_saas,lgpd", *,
+            pecas=(), pecas_anteriores=(), exigir_pecas=False) -> dict:
     g = Gates()
     externa = tipo_entrega != "interna"
     rigor = "reprovado" if (modo == "fundamentada" or externa) else "alerta"
@@ -99,10 +100,16 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         obj = json.loads(ep.read_text(encoding="utf-8"))
         docs += obj.get("documents", [obj] if "blocks" in obj else [])
     artefatos = {}
+    import pecas_uso
+    contexto = pecas_uso.carregar_contexto(extracoes, pecas, anteriores=pecas_anteriores, exigir=exigir_pecas)
+    erros_pecas, avisos_pecas = list(contexto.erros), []
 
     def reg(caminho, tipo):
         p = Path(caminho).resolve()
         artefatos[p] = tipo
+
+    for caminho, tipo in contexto.artefatos:
+        reg(caminho, tipo)
 
     # G00: sem extração nada é conferido contra o texto lido (trechos, localizadores, hashes)
     if extracoes:
@@ -124,7 +131,10 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         except (OSError, ValueError) as e:
             g.add(gid, f"{rot}.json válido", "reprovado", f"ilegível: {e}")
             continue
-        r = fn(objs[rot], idx if extracoes else None)
+        r = fn(objs[rot], idx if extracoes else None, pecas=contexto if contexto.ativo else None,
+               modo="fundamentada" if rigor == "reprovado" else "analise")
+        erros_pecas += [e for e in r.erros if e['codigo'].startswith('pecas_')]
+        avisos_pecas += [a for a in r.avisos if a['codigo'].startswith('pecas_')]
         avisos_val += [(rot, a) for a in r.avisos]
         g.add(gid, f"{rot}.json válido contra as regras e as fontes extraídas",
               "reprovado" if r.erros else "aprovado", _resumo_erros(r) if r.erros else f"{len(r.avisos)} aviso(s)")
@@ -171,6 +181,8 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         if not d.get("sha256"):
             continue
         p = _resolver(d["path"], *dirs_ext)
+        if p is None and d.get("document_id") in contexto.documentos:
+            p = contexto.documentos[d["document_id"]]["original"]
         if p is None:
             ausente.append(d["path"])
         else:
@@ -291,7 +303,7 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
             import cronologia
 
             try:
-                c = cronologia.conferir(facts, timeline)
+                c = cronologia.conferir(facts, timeline, pecas_contexto=contexto if contexto.ativo else None)
                 g.add("G09_cronologia_atualizada", "cronologia corresponde ao facts.json",
                       "aprovado" if c["atualizada"] else "reprovado",
                       "atualizada" if c["atualizada"] else "desatualizada: gere a cronologia de novo a partir do facts.json atual")
@@ -408,6 +420,12 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
 
     issues, campos = auditoria_documental.identificar(issues, campos, extras)
     documentos = auditoria_documental.conferir(g, reg, idx, bool(extracoes), issues, campos, modelo, minuta, regras_dir, pacote)
+    if contexto.ativo or erros_pecas or avisos_pecas:
+        for item in erros_pecas + avisos_pecas:
+            g.pend("pecas", item['caminho'], item['codigo'])
+        g.add("G16_inventario_pecas", "inventários íntegros e referências aptas para o uso declarado",
+              "reprovado" if erros_pecas else ("alerta" if avisos_pecas else "aprovado"),
+              "; ".join(sorted({i['codigo'] for i in erros_pecas + avisos_pecas})) or "referências conferidas; não é aprovação jurídica")
     reprovados = [i for i in g.itens if i["resultado"] == "reprovado"]
     sem_ressalva = not any(i["resultado"] == "alerta" for i in g.itens) and not g.pendencias
     faixa = "nao_entregar" if reprovados else ("alta" if (not externa and sem_ressalva) else "mista")
@@ -415,6 +433,7 @@ def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."),
         "schema_version": SCHEMA_VERSION, "gerado_em": _agora(), "modo": modo,
         "estado_tecnico": "bloqueado" if reprovados else "revisao_pronta",
         "gates": g.itens, "pendencias": g.pendencias, "documentos": documentos,
+        **({"inventarios_pecas": contexto.vinculos(), "exigir_pecas": exigir_pecas} if contexto.ativo else {}),
         "artefatos": sorted(({"caminho": _rel(p, base), "tipo": t, "sha256": _sha(p)} for p, t in artefatos.items()),
                             key=lambda a: a["caminho"]),
         "tipo_entrega": tipo_entrega, "faixa": faixa,
@@ -549,6 +568,8 @@ def main(argv=None) -> int:
     a.add_argument("--relatorio", action="append", default=[], help="relatório .md de entrega (precisa do aviso padrão)")
     a.add_argument("--sem-teses-centrais", action="store_true", help="declara que nenhuma proposição é tese central")
     a.add_argument("--saida", required=True)
+    import pecas_uso
+    pecas_uso.adicionar_argumentos(a)
     p = sub.add_parser("aprovar")
     p.add_argument("qc")
     p.add_argument("--revisor", required=True)
@@ -567,7 +588,8 @@ def main(argv=None) -> int:
                 raise ValueError("informe --facts e/ou --claims")
             qc = auditar(n.facts, n.claims, n.extracoes, n.modo, n.artefato, Path(n.saida).resolve().parent, n.timeline,
                          n.matter, n.tipo_entrega, n.reverificar, n.relatorio, n.sem_teses_centrais,
-                         n.issues, n.campos, n.modelo, n.minuta, n.regras, n.pacote)
+                         n.issues, n.campos, n.modelo, n.minuta, n.regras, n.pacote,
+                         pecas=n.pecas, pecas_anteriores=n.pecas_anterior, exigir_pecas=n.exigir_pecas)
             Path(n.saida).write_text(json.dumps(qc, ensure_ascii=False, indent=2), encoding="utf-8")
             res, cod = qc, 0 if qc["estado_tecnico"] == "revisao_pronta" else 1
         elif n.cmd == "aprovar":

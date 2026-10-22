@@ -44,6 +44,10 @@ Para o advogado que vai assinar uma peça e precisa saber se cada citação ague
 
 Além de [escalacao.md](../../shared/escalacao.md): proposição **central contradita**; citação que parece inventada; `quote_status: divergente`; argumento que depende de proposição `unsupported`; pedido de avaliar a chance de êxito.
 
+## Referência ao inventário
+
+Quando a fonte estiver vinculada a inventário de peças, preserve `sources[].peca` junto de `document_id`/`block_id`; o `pinpoint` mantém localizador físico e trecho. Valide com `--extracoes derived/extracao.json --pecas derived/pecas.json input/original.pdf --exigir-pecas`, repetindo pares e `--pecas-anterior` quando cabível. `supported` e `unsupported` recusam uso material pendente mesmo em modo análise. Mantenha `partial` com motivo e lacuna quando a leitura/fronteira/atribuição não estiver conferida; um inventário íntegro, `cited_text=true` ou hash válido não resolve essa pendência. Use `secao_id` apenas quando aquela seção tiver sido conferida. Nenhum evento de conferência humana pode ser criado pelo modelo.
+
 ## Armadilhas
 
 - **"Marque tudo como supported."** Recuse: o estado decorre da leitura, não do pedido ou do prazo. O validador não confere se o trecho trata da proposição; confira que o `excerpt` contém o termo central dela (um trecho sobre a regra geral não sustenta a regra especial).

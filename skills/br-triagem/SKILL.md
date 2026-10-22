@@ -36,6 +36,10 @@ Para o advogado ou assistente jurídico que abre o caso e responde pelo sigilo. 
 6. **Valide:** `python scripts/validate.py CASO/matter.json --extracoes CASO/derived/extracao.json` (as partes são conferidas contra o texto). Aviso `conflitos_*`, `papel_nao_informado`, `jurisdicao_nao_informada`, `sigilo_com_consultas_externas`, `segredo_com_consultas_externas` ou `fontes_sem_triagem_de_sigilo` vai ao usuário.
 7. **Escreva o `intake.md`:** objetivo, papel, partes, jurisdição e datas; conflito de interesses; sigilo; documentos recebidos com cobertura; processos; achados de privacidade; lacunas iniciais; fluxo sugerido (mapear o caso; pesquisar e verificar; revisar contrato). Termine com o [aviso padrão](../../shared/aviso-padrao.md).
 
+## Inventário de peças após a extração
+
+Para autos com inventários fornecidos, rode `python scripts/triagem.py pecas --extracoes CASO/derived/extracao.json --pecas CASO/derived/pecas.json CASO/input/original.pdf` (repita o par para outros arquivos; revisão posterior exige `--pecas-anterior`). Registre no `intake.md` identidades, estados e pendências; `valido` só confirma integridade. Não registre proposta de modelo como conferência humana. No fluxo integrado, fontes de documentos paginados levam `peca` conforme [formatos](../../shared/dados.md); consumidores usam `--exigir-pecas`. Documento sem páginas continua no fluxo anterior, com seu limite explícito. Leitura OCR/parcial ou limite/tipo pendente não vira uso material aprovado.
+
 ## Quando escalar
 
 Além dos gatilhos de [escalacao.md](../../shared/escalacao.md): conflito de interesses `not-run` ou `pending` (o responsável decide se segue); processo em segredo de justiça com consulta externa permitida; fontes `nao_triado` quanto a sigilo; papel do cliente que muda no meio do caso.

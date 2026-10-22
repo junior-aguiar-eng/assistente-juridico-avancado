@@ -59,8 +59,13 @@ Para o advogado responsável e para quem prepara o pacote para ele. Trabalho de 
 | G13 | texto de fonte oficial relida diferente do lido (em `fundamentada` ou entrega externa); falha de acesso é alerta |
 | G14 | apontamento contratual inválido ou apoiado em regra inativa; `nao_avaliada` com motivo é pendência/alerta, nunca risco baixo |
 | G15 | erro de campos, falta de modelo/minuta ou partes do DOCX diferentes da geração; campos marcados ficam pendentes e `completo: false` |
+| G16 | referência/inventário incompatível; pendência material de peça no uso fundamentado ou entrega externa (análise interna conserva ressalvas) |
 
 Alerta não bloqueia, mas vira pendência para o revisor.
+
+## Gate de peças — G16
+
+No fluxo com inventário, acrescente `--pecas derived/pecas.json input/original.pdf --exigir-pecas` e revisões anteriores com `--pecas-anterior` quando houver. G16 confere identidade, fragmentos e restrições por uso; o QC liga esses insumos por hash e `status` detecta alterações posteriores. Referência nova sem contexto é erro; cronologia com peças exige o mesmo contexto. Análise interna pode registrar ressalvas, mas modo fundamentado e entrega externa recusam pendência material de limites/tipo, leitura, seção utilizada ou atribuição. Não suprima inventários, flags ou referências para liberar o pacote pelo fluxo legado. G16 não autentica o revisor nem substitui os outros gates, revisão jurídica ou aprovação humana; as 19 regras continuam inativas.
 
 ## Revisão crítica
 

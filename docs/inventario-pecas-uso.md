@@ -2,7 +2,22 @@
 
 [Plano principal](plano-principal.md) · [Contrato v1](contratos/pecas-v1.md) · [Resultados do piloto](piloto-org02-2026-10-22.md).
 
-Instalar `requirements.txt` em Python >=3.12. O inventário é opcional nesta etapa; os consumidores atuais ainda não o usam como gate.
+Instalar `requirements.txt` em Python >=3.12. ORG-04 acrescenta consumo opcional por triagem, validador, cronologia e auditor; o fluxo legado continua disponível. Para organização assistida de autos, usar o modo explícito e registrar as referências de peça conforme [shared/dados.md](../shared/dados.md).
+
+## Consumir inventários nas entregas
+
+```sh
+python scripts/triagem.py pecas --extracoes caso/derived/extracao.json \
+  --pecas caso/derived/pecas.json caso/input/original.pdf
+python scripts/validate.py caso/derived/facts.json --extracoes caso/derived/extracao.json \
+  --pecas caso/derived/pecas.json caso/input/original.pdf --exigir-pecas --modo fundamentada
+```
+
+O resumo de triagem distingue integridade, propostas, leitura e pendências, sem transcrever o documento. `valido` indica integridade dos inventários fornecidos; não é conferência humana ou autorização de uso. Referências `source.peca`/`sources[].peca` fixam o hash da revisão corrente, a peça e os fragmentos usados. `--pecas` é repetível; revisão posterior exige `--pecas-anterior ARQUIVO` com os bytes exatos da revisão imediatamente anterior. Originais e extrações são entradas explícitas, somente leitura.
+
+Os mesmos parâmetros são aceitos por `cronologia.py gerar`, `cronologia.py conferir` e `auditar.py auditar`. A cronologia de trabalho preserva as referências e mostra pendências; `--modo fundamentada` e `--formato fatos` recusam o uso material pendente antes de gravar saídas. Para conferir uma cronologia com peças, fornecer novamente extração, inventário, original e revisão anterior quando houver; não basta o hash de facts. No auditor, `G16_inventario_pecas` aplica as restrições do uso e os insumos ficam ligados ao QC por hash.
+
+`--exigir-pecas` exige referência nas fontes de documentos paginados; não inventa páginas para DOCX/TXT. Sem essa flag, uma referência explícita ou um uso de documento com inventário fornecido também precisa conferir. Limites/tipo propostos, OCR e atribuição incerta continuam pendentes na análise e bloqueiam o uso fundamentado; `supported`/`unsupported` não podem usar fonte pendente nem em análise. Pendência localizada em outra peça não bloqueia automaticamente um trecho nativo conferido. Não remover flags/referências para apresentar o fluxo legado como análise integrada de autos.
 
 ## Validar um inventário
 

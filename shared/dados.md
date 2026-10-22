@@ -63,6 +63,8 @@ Alegação não vira fato: o documento que mostra a alegação a sustenta como a
 
 ## claims.json
 
+As fontes de facts/claims podem usar a extensão opcional de peça descrita abaixo; não acrescente referências fictícias a registros antigos apenas para satisfazer um gate.
+
 ```json
 {
   "schema_version": "1",
@@ -113,6 +115,30 @@ Alegação não vira fato: o documento que mostra a alegação a sustenta como a
 `document_id` é obrigatório em **toda** fonte `lida`, inclusive secundária e em estado `partial`. Registros anteriores sem esse campo são inválidos até recuperar o documento real, gerar sua extração e registrar o vínculo correto; não invente um identificador para liberar o pacote. Sem `--extracoes`, a validação é estrutural: informar um ID não comprova que o trecho foi conferido.
 
 `existence` diferente de `confirmada` só combina com `unverified`: busca vazia ou fonte inacessível nunca prova que a autoridade não existe. Em `supported` de `tipo=norma` sem `legal_time`, o aviso lembra que apoio ao texto não prova vigência.
+
+## Referência de peça por uso — ORG-04
+
+Em `facts[].source`, `facts[].other_sources[]` e `claims[].sources[]`, `peca` é opcional no fluxo legado. Quando declarado, contém exatamente:
+
+| Campo | Regra |
+|---|---|
+| `inventario_id` | Identidade do inventário v1 fornecido ao consumidor. |
+| `inventario_sha256` | SHA-256 dos bytes exatos da revisão corrente do JSON do inventário; muda até com reformatação. Não é hash do original ou da extração. |
+| `piece_id` | Peça existente desse documento/inventário. |
+| `fragmentos` | Lista não vazia e sem duplicatas de IDs de fragmentos dessa peça, em ordem original e contíguos. O trecho deve estar dentro desses recortes Unicode, não apenas em algum lugar do bloco/documento. Trechos descontínuos exigem fontes separadas. |
+| `secao_id` | Opcional; seção da mesma peça que abrange os fragmentos. Ao usar a classificação da seção, sua conferência também precisa estar concluída para o uso fundamentado. |
+
+O `document_id`, `block_id` quando informado e `locator` da fonte continuam obrigados a coincidir com o texto e a localização física selecionados. Uma referência de peça usa `p.N` ou intervalo físico contido nos fragmentos; numeração interna dos autos não substitui essa página. Em claims, `peca` fica na fonte, ao lado de `document_id`; localizador/trecho continuam no `pinpoint`.
+
+Forneça `--extracoes E.json --pecas PECAS.json ORIGINAL.pdf` aos consumidores; repita o par para outros inventários. `--pecas-anterior REVISAO.json` fornece os bytes da revisão imediatamente anterior quando exigidos pelo contrato. Não se abre um caminho interno ao inventário para encontrar fontes. A validação calcula o hash real do original e seleciona a extração pelos bytes exatos fornecidos. Inventários/extrações ambíguos ou divergentes são recusados.
+
+`--exigir-pecas` exige referência nas fontes materiais de documentos paginados; fontes sem paginação física permanecem no contrato anterior. Sem esse modo, declarar um inventário já exige a referência nos usos daquele documento. Uma referência explícita sem inventário é erro. Omissão de todos esses parâmetros e da extensão mantém o fluxo legado; não demonstra integração com peças nem análise de autos completos.
+
+`validate.py --modo analise` pode manter proposta/OCR como aviso explícito. `--modo fundamentada`, a exposição de fatos e entregas externas no auditor recusam pendências materiais do uso: limites/tipo não conferidos, leitura não nativa, atribuição ambígua, seção utilizada sem conferência e pendências pertinentes. Claims `supported`/`unsupported` não podem usar trecho pendente mesmo em modo análise. Pendência de outra peça/página não é transferida automaticamente; aviso da extração sem localização permanece global. Marcar uma pendência OCR como não material não torna sua leitura suficiente.
+
+O QC acrescenta `G16_inventario_pecas` quando aplicável e vincula inventário, revisão anterior, extração e original em `artefatos`; alterações posteriores invalidam o pacote em `status`. A cronologia preserva `peca`/`block_id` nas fontes e registra `inventarios_pecas`, `pendencias_pecas`, `modo_pecas` e `exigir_pecas`. Conferir essa cronologia exige os mesmos insumos; trocar revisão sem atualizar as referências não remapeia fatos antigos.
+
+O formato do inventário e seus eventos humanos permanecem no [contrato v1](../docs/contratos/pecas-v1.md). Conferência registrada em arquivo editável não autentica a pessoa, e nenhum desses estados certifica mérito ou prova jurídica. As 19 regras contratuais continuam inativas.
 
 ## Apontamentos contratuais e auditoria documental
 

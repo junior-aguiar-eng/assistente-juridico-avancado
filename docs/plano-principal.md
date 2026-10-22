@@ -1,6 +1,6 @@
 # Plano principal: juris-skills-br
 
-Revisão 8 — 2026-10-22. **Este é o plano vigente e a fonte única de prioridades e andamento.** Substitui o [planejamento v2](planejamento-juris-skills-br-v2.md), preservado como histórico. Pesquisa, especificações e relatórios detalham decisões; não mantêm cronogramas ou listas de execução concorrentes.
+Revisão 9 — 2026-10-22. **Este é o plano vigente e a fonte única de prioridades e andamento.** Substitui o [planejamento v2](planejamento-juris-skills-br-v2.md), preservado como histórico. Pesquisa, especificações e relatórios detalham decisões; não mantêm cronogramas ou listas de execução concorrentes.
 
 **Objetivo:** manter as oito skills e o fluxo atual de evidências, acrescentando organização verificável de peças antes de liberar análise assistida de autos completos.
 
@@ -15,6 +15,7 @@ Revisão 8 — 2026-10-22. **Este é o plano vigente e a fonte única de priorid
 - Esta cópia concilia o snapshot Codex `abbf85a` com AF-01/CP-01/AC-01/GT-01 sem commit e os incrementos recuperados até `ff225a7`. Registro: [reconciliação RC-01](reconciliacao-org-2026-10-22.md).
 - Oito skills existentes; as **19 regras de Código Civil/LGPD permanecem inativas**, conforme determinação do usuário nesta reconciliação. A ativação registrada na outra branch não foi aplicada. NDA permanece sem regras. Revisão jurídica, aprovação de entregas e validação técnica são etapas distintas.
 - A base Codex registra 732 testes aprovados/3 ignorados na GT-01; as entregas ORG registram seus resultados históricos em Linux. RC-01 registra 943 aprovados/5 ignorados e 304 focados em ambiente limpo. **VT-01 repete a suíte completa no worktree Codex e no ambiente limpo: 943 aprovados/5 ignorados, sem falhas, em 859,31 s**; dois testes de rede, piloto opcional Docling e dois originais privados ausentes foram ignorados. Os 160 testes do snapshot intermediário também passaram; isso não constitui avaliação jurídica ou CI remoto.
+- **ORG-04 implementada e validada localmente:** 41 testes novos, 283 aprovações focadas e **984 aprovados/5 ignorados na suíte integral offline**, sem falhas, em 815,17 s. A primeira execução teve uma falha de decodificação no ambiente; a repetição com UTF-8 consistente passou sem alterar produto/teste para essa falha. Oito skills PRONTA; referências opcionais e restrições por uso integradas. Ver [relatório](integracao-org04.md). Sem commit/push; ORG-05 não iniciada.
 - Corpus combinado: os 12 casos locais permanecem, incluindo R07/TJMG público e R10/ofício de Picos público. Os dois casos privados recuperados usam IDs próprios **ORG-R07-PRIVADO** e **ORG-R10-PRIVADO**, com hashes distintos e originais ausentes. Ver [mapa do corpus](corpus-reconciliado.md).
 - As correções de localizadores, proteção de entradas, vínculo redline/issues e recursos ORG foram conciliadas preservando os gates locais. CI remoto, instalação, ativação e integração com peças em ORG-04 não foram executados nesta recuperação.
 - A preparação RC-01 e a [integração IG-01](integracao-org-codex-2026-10-22.md) ocorreram sem commit ou push. O pedido posterior permite o versionamento local: VT-01 registra duas unidades no worktree `codex/organizacao-colaboracao`, correções AF-01/CP-01/AC-01/GT-01 e reconciliação ORG-01/02/03 com os controles DOCX recuperados. Referências e validação em [coordenação](COORDENACAO.md); push continua não autorizado.
@@ -36,24 +37,24 @@ Revisão 8 — 2026-10-22. **Este é o plano vigente e a fonte única de priorid
 |---|---|---|
 | 0. Base | Repositório, garantias, governança, licenças e dependências | Entregue; manutenção contínua. |
 | 1. Infraestrutura de leitura | Extração multiformato, OCR opcional, CNJ e validação | Entregue com limites de OCR e layout; melhorias entram na 4A. |
-| 2. Núcleo jurídico | Mapear, verificar citações e auditar | Entregue no escopo existente; integração com peças será incremental. |
+| 2. Núcleo jurídico | Mapear, verificar citações e auditar | Entregue no escopo existente; ORG-04 acrescenta referências opcionais de peças e restrições por uso, sem aprovação jurídica automática. |
 | 3. Entorno | Triagem, cronologia e pesquisa | Entregue no escopo existente; não confundir inventário por arquivo com inventário de peças. |
 | 4. Contratos e minuta | Pré-checagem, issues, redline e preenchimento | Parte mecânica entregue, com auditoria documental e avaliação jurídica pendente explícita; 19 regras inativas e NDA sem regras. |
-| **4A. Organização dos autos** | Inventário de peças, fronteiras, seções internas, qualidade de leitura e integração | **ORG-01/02/03 recuperadas e conciliadas (contrato, validador, proposta assistida e diagnóstico OCR); integração e validação ampliada ainda pendentes. Obrigatória antes de encerrar a fase 5 no escopo de autos completos.** |
+| **4A. Organização dos autos** | Inventário de peças, fronteiras, seções internas, qualidade de leitura e integração | **ORG-01/02/03 recuperadas e conciliadas; ORG-04 integrada e validada localmente, sem commit/push. Validação ampliada ORG-05 pendente. Obrigatória antes de encerrar a fase 5 no escopo de autos completos.** |
 | 5. Liberação | Regressões, avaliação das skills, compatibilidade e limites publicados | Aberta; 12 casos executáveis não bastam como critério isolado de conclusão. |
 
 OCR e DOCX/redline deixaram de ser itens futuros: já existem. A nova etapa aperfeiçoa e integra o que falta, sem apagar esse histórico.
 
 ## 4. Execução da fase 4A
 
-IDs abaixo são estáveis. Dependências determinam a ordem; os detalhes de implementação de cada pacote serão escritos antes de executá-lo. Esta revisão não cria novos comandos nem altera o comportamento das skills.
+IDs abaixo são estáveis. Dependências determinam a ordem; os detalhes de implementação de cada pacote são registrados antes de executá-lo. A ORG-04 acrescenta parâmetros opcionais e orientações às skills consumidoras; as interfaces legadas são preservadas.
 
 | ID | Pacote e resultado verificável | Depende de | Critério de conclusão | Estado |
 |---|---|---|---|---|
 | ORG-01 | Contrato do inventário e gabarito inicial: arquivo, peça, seção, bloco; fronteiras; estados de conferência; exemplos anônimos | Marco preservado | [Contrato v1](contratos/pecas-v1.md), esquema estrutural e exemplos verificáveis; fronteira física do ORG-R07-PRIVADO conferida visualmente e confirmada pelo titular (1–24/25–38), sem promover âncora técnica a confirmação humana | Entregue; verificação final no [relatório ORG-01](entrega-org01-2026-10-22.md) |
 | ORG-02 | Validador semântico do contrato, segmentação de referência e piloto comparativo: títulos espaçados, início/continuação, evidências de fronteira, revisão manual; comparar extração atual e candidato Docling | ORG-01 | Códigos de erro do contrato exercitados; casos adversariais, fusão/fragmentação, custo e licenças verificados; decisão de adotar ou rejeitar adaptador registrada com evidências | Entregue: [validação e piloto](piloto-org02-2026-10-22.md); 635 testes aprovados/3 ignorados na origem, resultado histórico; Docling Parse experimental, sem adoção no fluxo padrão |
 | ORG-03 | Qualidade de OCR: diagnóstico do ORG-R10-PRIVADO, experimento local, comparação com transcrição conferida, preservação de originais e avisos | ORG-01 | Resultado e limitações reproduzíveis; expectativas textuais conferidas. Se continuar insuficiente, declarar trecho ilegível e manter bloqueio de uso material, sem forçar leitura | Entregue: [experimento OCR](experimento-org03-2026-10-22.md), seis amostras humanas; mediana/72 opcional, texto integral não conferido; 676 testes aprovados/3 ignorados na origem, resultado histórico |
-| ORG-04 | Integração do inventário nas skills e nos gates, preservando fluxos anteriores | ORG-02; diagnóstico e decisão de uso do ORG-03 | Referências peça/bloco verificáveis; pendência material de fronteira, atribuição ou leitura aparece na entrega e impede aprovação técnica fundamentada daquele uso; testes legados preservados | Não iniciado |
+| ORG-04 | Integração do inventário nas skills e nos gates, preservando fluxos anteriores | ORG-02; diagnóstico e decisão de uso do ORG-03 | Referências peça/bloco verificáveis; pendência material de fronteira, atribuição ou leitura aparece na entrega e impede aprovação técnica fundamentada daquele uso; testes legados preservados | Entregue localmente: [implementação e evidências](integracao-org04.md), 984 aprovados/5 ignorados; sem commit/push |
 | ORG-05 | Validação integrada e ampliação do corpus, separando resultados por processo e modalidade de leitura | ORG-04 | Gabaritos conferidos, avaliação com casos não usados no ajuste, métricas e falhas publicadas; segunda avaliação das skills realizada no escopo efetivamente disponível | Não iniciado |
 
 ORG-02 e ORG-03 podem avançar independentemente depois do contrato comum. Compartilham o mesmo plano, formatos e registro de decisão; não são projetos paralelos. ORG-04 pode integrar leitura parcial explicitamente recusada: não exige prometer OCR perfeito, mas exige impedir que sua falha seja tratada como evidência legível.
@@ -114,12 +115,11 @@ Testes podem passar verificando que uma falha é avisada; isso não converte a c
 
 ## 8. Pendências consolidadas após a reconciliação
 
-O próximo incremento de implementação é **ORG-04**, seguido de **ORG-05**. O inventário possui contrato, validação e CLI próprios; ainda não é consumido pelos gates de `validate.py`/`auditar.py`, triagem e cronologia. Passar os testes desses módulos não demonstra a integração que falta. Nenhuma dessas duas tarefas é iniciada pelo versionamento local.
+A **ORG-04 foi entregue e validada localmente**, por autorização posterior ao versionamento, sem commit/push. Integra referências opcionais e restrições por uso em `validate.py`/`auditar.py`, triagem e cronologia, com as instruções das skills consumidoras. **ORG-05 continua não iniciada**: a integração e seus testes sintéticos não substituem ampliação do corpus ou avaliação independente.
 
 | Prioridade ou gate | Pendência confirmada | Evidência necessária para encerrar |
 |---|---|---|
-| Próxima implementação — ORG-04 | Integrar referências peça/bloco e restrições de leitura, fronteira e atribuição nos consumidores e nas skills | Fluxo integrado com testes positivos e negativos; pendência material impede aprovação técnica fundamentada daquele uso; interfaces legadas preservadas. |
-| Depois de ORG-04 — ORG-05 | Validação integrada e ampliação do corpus; avaliação independente das skills | Casos não usados no ajuste, separação por processo/modalidade, gabaritos conferidos e métricas com denominadores. Rodada exploratória e testes sintéticos não encerram esse gate. |
+| Próxima implementação — ORG-05 | Validação integrada e ampliação do corpus; avaliação independente das skills | Casos não usados no ajuste, separação por processo/modalidade, gabaritos conferidos e métricas com denominadores. Rodada exploratória e testes sintéticos não encerram esse gate. |
 | Insumos privados | Originais ORG-R07-PRIVADO e ORG-R10-PRIVADO ausentes nesta máquina | Recuperar arquivos autorizados fora do Git e conferir os hashes esperados antes de repetir o experimento. As fronteiras e seis amostras históricas não comprovam fidelidade integral. R07/TJMG e R10/Picos públicos continuam disponíveis e separados. |
 | Revisão jurídica humana | Conferência das regras, gabaritos e entregas; 19 regras inativas e NDA vazio | Revisão identificada e decisão expressa para qualquer ativação futura. Testes, recuperação de aprovação de outra branch ou commit não autorizam ativação. |
 | Validação contratual e encerramento pelo responsável | Contratos/NDA/modelos reais autorizados e fechamento formal de CL-01/CL-02 ainda não demonstrados | Avaliação documentada além dos controles sintéticos, revisão jurídica quando cabível e encerramento registrado pelo responsável. |
@@ -147,4 +147,4 @@ As correções AF-01/AC-01/GT-01 e a recuperação/integração RC-01/IG-01 são
 - Registrar adoção/rejeição de tecnologia com evidências no relatório do piloto e resumir a decisão aqui. Sem licença clara, não copiar código/dados/pesos de terceiros.
 - Alterações de regras, escopo jurídico e entregas continuam sujeitas às decisões humanas registradas; uma revisão do plano não aprova automaticamente essas alterações.
 
-**Próxima entrega:** ORG-04, integrar referências ao inventário e restrições por uso nos consumidores/skills, preservando compatibilidade. OCR parcial ou pendência material deve permanecer visível e impedir a aprovação técnica fundamentada daquele uso. O diagnóstico ORG-03 permite avançar com leitura parcial explicitamente recusada; não declara o ORG-R10-PRIVADO integralmente legível.
+**Próxima entrega:** ORG-05, avaliar o fluxo integrado e ampliar o corpus no escopo autorizado, separando processos e modalidades de leitura, com casos não usados no ajuste e limites publicados. ORG-04 preserva bloqueios por uso e não encerra essa avaliação. O diagnóstico ORG-03 não declara o ORG-R10-PRIVADO integralmente legível; recuperar seu original e executar testes não substitui a conferência humana pertinente.

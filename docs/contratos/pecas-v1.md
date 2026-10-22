@@ -2,7 +2,7 @@
 
 Entrega ORG-01, 2026-10-22. [Especificação](../especificacao-inventario-pecas.md) · [Plano principal](../plano-principal.md) · [JSON Schema](pecas-v1.schema.json) · [Exemplos e gabaritos](../../tests/casos/pecas_contrato/README.md).
 
-**Estado:** contrato definido e exemplos verificáveis. ORG-02 acrescenta [validador semântico e proposta conservadora opcionais](../inventario-pecas-uso.md). Não existe ainda gate consumidor desse formato. A validação estrutural por JSON Schema não certifica as referências ou a classificação. A validação semântica é implementada/testada em ORG-02; a integração nos consumidores pertence a ORG-04.
+**Estado:** contrato definido e exemplos verificáveis. ORG-02 acrescenta [validador semântico e proposta conservadora opcionais](../inventario-pecas-uso.md). ORG-04 integra os consumidores por referências opcionais em facts/claims, sem mudar este esquema v1; ver [contrato de uso](../../shared/dados.md#referência-de-peça-por-uso--org-04). A validação estrutural por JSON Schema não certifica as referências ou a classificação. Integridade, conferência humana e aptidão para uso material são verificações distintas.
 
 ## 1. Artefato e identidade
 

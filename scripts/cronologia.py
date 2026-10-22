@@ -52,11 +52,14 @@ def _intervalo(d):
 
 def _fonte(f):
     s = f.get("source")
-    return {"document_id": s.get("document_id"), "locator": s.get("locator")} if isinstance(s, dict) else None
+    if not isinstance(s, dict):
+        return None
+    return {"document_id": s.get("document_id"), "locator": s.get("locator"),
+            **({k:s[k] for k in ("peca", "block_id") if k in s} if "peca" in s else {})}
 
 
 def _outras(f):
-    return [{"document_id": o.get("document_id"), "locator": o.get("locator")}
+    return [_fonte({"source":o})
             for o in (f.get("other_sources") or []) if isinstance(o, dict)]
 
 
@@ -124,7 +127,7 @@ def construir(facts_obj: dict, facts_sha: str, matter: dict | None = None, janel
 def diferencas(atual: dict, anterior: dict) -> dict:
     a = {e["fact_id"]: e for e in atual["entradas"]} | {s["fact_id"]: s for s in atual["sem_data"]}
     b = {e["fact_id"]: e for e in anterior["entradas"]} | {s["fact_id"]: s for s in anterior["sem_data"]}
-    chaves = ("text", "kind", "data", "fonte", "relevancia", "priv")
+    chaves = ("text", "kind", "data", "fonte", "outras_fontes", "relevancia", "priv")
     return {"novos": sorted(set(a) - set(b)), "removidos": sorted(set(b) - set(a)),
             "alterados": sorted(k for k in set(a) & set(b) if any(a[k].get(c) != b[k].get(c) for c in chaves)),
             "reordenados": sorted(e["fact_id"] for e in atual["entradas"]
@@ -137,7 +140,9 @@ def _cel(s) -> str:
 
 def _fonte_txt(f, outras=()) -> str:
     base = f"{f['document_id']}, {f['locator']}" if f else "sem fonte (inferência, informado ou lacuna)"
-    extra = "; ".join(f"{o['document_id']}, {o['locator']}" for o in outras)
+    if f and "peca" in f:
+        base += f"; peça {f['peca']['piece_id']}, fragmentos {', '.join(f['peca']['fragmentos'])}"
+    extra = "; ".join(_fonte_txt(o) for o in outras)
     return base + (f"; também em {extra}" if extra else "")
 
 
@@ -175,6 +180,8 @@ def _cabecalho(t, formato, n_avisos, incluir_sinalizados):
         L.append("⚠ Incluídas, por reconhecimento expresso do usuário, as entradas sinalizadas quanto a sigilo (`--incluir-sinalizados`).")
     if n_avisos:
         L.append(f"O validador emitiu {n_avisos} aviso(s) sobre os fatos: veja a saída de `validate.py`.")
+    if t.get("pendencias_pecas"):
+        L.append("⚠ Há pendências no uso das peças abaixo; esta cronologia de trabalho não aprova seu uso material.")
     return L
 
 
@@ -243,11 +250,17 @@ def markdown(t: dict, mudancas=None, n_avisos=0, formato="trabalho", incluir_sin
                   "Pode ser lacuna de documentos: confira antes de concluir qualquer coisa."
                   for j in t["janelas_sem_eventos"] for a, b in [j["entre"]]]
         L += ["", "## Sem data", ""]
-        L += [f"- **{s['fact_id']}** ({ROTULO[s['kind']]}): {_cel(s['text'])} — {s['motivo']}" for s in t["sem_data"]] or ["- nenhum"]
+        L += [f"- **{s['fact_id']}** ({ROTULO[s['kind']]}): {_cel(s['text'])} — {s['motivo']}"
+              + (f"; fonte: {_cel(_fonte_txt(s['fonte'],s['outras_fontes']))}" if (s.get('fonte') and 'peca' in s['fonte'])
+                 or any('peca' in o for o in s['outras_fontes']) else "")
+              for s in t["sem_data"]] or ["- nenhum"]
         L += ["", "## Conflitos entre fatos", ""]
         L += [f"- {a} x {b}: o pacote não decide qual vale." for a, b in t["conflitos"]] or ["- nenhum registrado"]
         L += ["", "## Lacunas", ""]
         L += [f"- {x['fact_id']}: {_cel(x['text'])}" for x in t["lacunas"]] or ["- nenhuma registrada"]
+    if t.get("pendencias_pecas"):
+        L += ["", "## Pendências das peças utilizadas", ""]
+        L += [f"- {_cel(p['caminho'])}: {_cel(p['codigo'])}." for p in t['pendencias_pecas']]
     if mudancas is not None:
         L += ["", "## Alterações desde a versão anterior", ""]
         L += [f"- {nome}: {', '.join(ids) if ids else 'nenhum'}" for nome, ids in mudancas.items()]
@@ -256,11 +269,14 @@ def markdown(t: dict, mudancas=None, n_avisos=0, formato="trabalho", incluir_sin
 
 
 def gerar(facts_path, saida_json, saida_md, anterior=None, extracoes=(), matter=None, formato="trabalho",
-          incluir_sinalizados=False, janela_meses=0):
+          incluir_sinalizados=False, janela_meses=0, *, pecas=(), pecas_anteriores=(), exigir_pecas=False, modo="analise"):
     fp = Path(facts_path)
     obj = json.loads(fp.read_text(encoding="utf-8"))
     idx = validate.carregar_extracoes(extracoes) if extracoes else None
-    r = validate.validar_facts(obj, idx)
+    import pecas_uso
+    contexto = pecas_uso.carregar_contexto(extracoes,pecas,anteriores=pecas_anteriores,exigir=exigir_pecas)
+    modo_pecas = "fundamentada" if formato == "fatos" else modo
+    r = validate.validar_facts(obj, idx, pecas=contexto if contexto.ativo else None, modo=modo_pecas)
     if r.erros:
         raise ValueError("facts.json inválido: " + "; ".join(f"{e['codigo']} em {e['caminho']}" for e in r.erros[:6]))
     m = json.loads(Path(matter).read_text(encoding="utf-8")) if matter else None
@@ -274,6 +290,9 @@ def gerar(facts_path, saida_json, saida_md, anterior=None, extracoes=(), matter=
     if formato == "fatos" and m is None:
         raise ValueError("a exposição de fatos exige --matter (papel, sigilo e privilégio entram no cabeçalho e no filtro)")
     t = construir(obj, _sha(fp), m, janela_meses)
+    if contexto.ativo:
+        t.update(inventarios_pecas=contexto.vinculos(),exigir_pecas=exigir_pecas,modo_pecas=modo_pecas,
+                 pendencias_pecas=[a for a in r.avisos if a['codigo'].startswith('pecas_')])
     ant = json.loads(Path(anterior).read_text(encoding="utf-8")) if anterior else None
     t["versao"] = (ant.get("versao", 1) + 1) if ant else 1
     mud = diferencas(t, ant) if ant else None
@@ -287,12 +306,24 @@ def gerar(facts_path, saida_json, saida_md, anterior=None, extracoes=(), matter=
             "versao": t["versao"], "resumo": t["resumo"], "mudancas": mud}
 
 
-def conferir(facts_path, timeline_path) -> dict:
+def conferir(facts_path, timeline_path, *, pecas_contexto=None) -> dict:
     fp = Path(facts_path)
     t = json.loads(Path(timeline_path).read_text(encoding="utf-8"))
-    novo = construir(json.loads(fp.read_text(encoding="utf-8")), _sha(fp))
+    obj = json.loads(fp.read_text(encoding="utf-8"))
+    novo = construir(obj, _sha(fp))
     igual_arquivo = t.get("facts_sha256") == novo["facts_sha256"]
     igual_conteudo = all(t.get(k) == novo[k] for k in ("entradas", "sem_data", "lacunas", "conflitos"))
+    usa_pecas = bool(t.get('inventarios_pecas') or t.get('exigir_pecas') or pecas_contexto is not None
+                     or any('peca' in (f.get('source') or {}) or any('peca' in s for s in (f.get('other_sources') or []))
+                            for f in obj.get('facts',[]) if isinstance(f,dict)))
+    if usa_pecas:
+        igual_conteudo = igual_conteudo and pecas_contexto is not None
+        if pecas_contexto is not None:
+            r = validate.validar_facts(obj,pecas_contexto.indice,pecas=pecas_contexto,modo=t.get('modo_pecas','analise'))
+            igual_conteudo = (igual_conteudo and not r.erros
+                and t.get('inventarios_pecas') == pecas_contexto.vinculos()
+                and t.get('exigir_pecas') == pecas_contexto.exigir
+                and t.get('pendencias_pecas') == [a for a in r.avisos if a['codigo'].startswith('pecas_')])
     # vale o conteúdo, não os bytes: reformatar o JSON sem mudar nenhum fato não invalida a cronologia
     return {"atualizada": igual_conteudo, "facts_json_mudou": not igual_arquivo, "conteudo_diverge": not igual_conteudo}
 
@@ -310,16 +341,23 @@ def main(argv=None) -> int:
     g.add_argument("--formato", choices=("trabalho", "fatos"), default="trabalho")
     g.add_argument("--incluir-sinalizados", action="store_true")
     g.add_argument("--janela-meses", type=int, default=0)
+    g.add_argument("--modo", choices=("analise","fundamentada"), default="analise")
     c = sub.add_parser("conferir")
     c.add_argument("--facts", required=True)
     c.add_argument("--timeline", required=True)
+    c.add_argument("--extracoes", action="append", default=[])
+    import pecas_uso
+    for parser in (g,c):
+        pecas_uso.adicionar_argumentos(parser)
     n = ap.parse_args(argv)
     try:
         if n.cmd == "gerar":
             res, cod = gerar(n.facts, n.saida_json, n.saida_md, n.anterior, n.extracoes, n.matter, n.formato,
-                             n.incluir_sinalizados, n.janela_meses), 0
+                             n.incluir_sinalizados, n.janela_meses, pecas=n.pecas,pecas_anteriores=n.pecas_anterior,
+                             exigir_pecas=n.exigir_pecas,modo=n.modo), 0
         else:
-            res = conferir(n.facts, n.timeline)
+            contexto = pecas_uso.carregar_contexto(n.extracoes,n.pecas,anteriores=n.pecas_anterior,exigir=n.exigir_pecas)
+            res = conferir(n.facts, n.timeline,pecas_contexto=contexto if contexto.ativo else None)
             cod = 0 if res["atualizada"] else 1
     except (ValueError, OSError, KeyError) as e:
         res, cod = {"erro": f"{type(e).__name__}: {e}"}, 1

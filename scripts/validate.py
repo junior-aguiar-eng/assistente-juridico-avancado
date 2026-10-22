@@ -248,8 +248,45 @@ def _so_em_citacao(idx, s):
     return bool(ach) and all(b.get("is_quote") for b in ach) if ach else None
 
 
+def _conferir_pecas(r, obj, idx, contexto, modo):
+    if modo not in ("analise", "fundamentada"):
+        raise ValueError("modo inválido")
+    if contexto is not None:
+        r.erros.extend(contexto.erros)
+    fontes = []
+    for i, f in enumerate(obj.get("facts", [])):
+        if not isinstance(f, dict):
+            continue
+        fontes.append((f.get("source"), f"$.facts[{i}].source", False, False))
+        if isinstance(f.get("other_sources"), list):
+            fontes += [(s, f"$.facts[{i}].other_sources[{j}]", False, False) for j, s in enumerate(f["other_sources"])]
+    for i, c in enumerate(obj.get("claims", [])):
+        if isinstance(c, dict) and isinstance(c.get("sources"), list):
+            for j, s in enumerate(c['sources']):
+                if isinstance(s,dict) and s.get('access') != 'lida' and 'peca' in s:
+                    r.erro('pecas_sem_leitura',f'$.claims[{i}].sources[{j}].peca',
+                           'Fonte não lida não pode declarar vínculo de trecho com uma peça.')
+            fontes += [(s, f"$.claims[{i}].sources[{j}]", c.get("status") in ("supported", "unsupported"), True)
+                       for j, s in enumerate(c["sources"]) if isinstance(s, dict) and s.get("access") == "lida"]
+    for s, caminho, conclusao, claim in fontes:
+        if not isinstance(s, dict):
+            continue
+        if contexto is None:
+            if "peca" in s:
+                r.erro("pecas_inventario_ausente", caminho + ".peca", "Referência exige inventário e original conferidos.")
+            continue
+        pinpoint = s.get("pinpoint") if claim else s
+        pinpoint = pinpoint if isinstance(pinpoint, dict) else {}
+        erros, pendencias = contexto.conferir_fonte(s, pinpoint.get("locator"), pinpoint.get("excerpt"), idx)
+        for e in erros:
+            r.erro(e["codigo"], caminho + ".peca", e["mensagem"])
+        for p in pendencias:
+            registrar = r.erro if p["material"] and (modo == "fundamentada" or conclusao) else r.aviso
+            registrar(p["codigo"], caminho + ".peca", p["mensagem"])
+
+
 # --------------------------------------------------------------------------- facts.json
-def validar_facts(obj, idx=None) -> Resultado:
+def validar_facts(obj, idx=None, *, pecas=None, modo="analise") -> Resultado:
     r = Resultado()
     if not isinstance(obj, dict) or not isinstance(obj.get("facts"), list):
         r.erro("estrutura", "$", "esperado objeto com a lista 'facts'")
@@ -339,6 +376,7 @@ def validar_facts(obj, idx=None) -> Resultado:
     avaliados = [f for f in obj["facts"] if isinstance(f, dict) and f.get("relevancia") in RELEVANCIA]
     if len(avaliados) >= 6 and sum(1 for f in avaliados if f["relevancia"] == "alta") / len(avaliados) > 0.5:
         r.aviso("relevancia_excessiva", "$.facts", "mais da metade dos fatos avaliados é 'alta': se tudo é central, a marca perde o sentido")
+    _conferir_pecas(r, obj, idx, pecas, modo)
     return r
 
 
@@ -409,7 +447,7 @@ def _validar_data(r, d, c):
 
 
 # --------------------------------------------------------------------------- claims.json
-def validar_claims(obj, idx=None) -> Resultado:
+def validar_claims(obj, idx=None, *, pecas=None, modo="analise") -> Resultado:
     r = Resultado()
     if not isinstance(obj, dict) or not isinstance(obj.get("claims"), list):
         r.erro("estrutura", "$", "esperado objeto com a lista 'claims'")
@@ -516,6 +554,7 @@ def validar_claims(obj, idx=None) -> Resultado:
                 r.erro("referencia_inexistente", f"{c}.depends_on", f"proposição '{x}' não existe")
             elif x == cid:
                 r.erro("referencia_circular", f"{c}.depends_on", "a proposição não pode depender de si mesma")
+    _conferir_pecas(r, obj, idx, pecas, modo)
     return r
 
 
@@ -748,16 +787,16 @@ def validar_matter(obj, idx=None) -> Resultado:
 
 
 # --------------------------------------------------------------------------- orquestração
-def validar(obj, idx=None) -> tuple[str, Resultado]:
+def validar(obj, idx=None, *, pecas=None, modo="analise") -> tuple[str, Resultado]:
     chaves = [k for k in ("facts", "claims", "matter") if isinstance(obj, dict) and k in obj]
     if len(chaves) > 1:
         r = Resultado()
         r.erro("estrutura", "$", f"o arquivo traz {' e '.join(repr(k) for k in chaves)}; use um arquivo para cada formato")
         return "indefinido", r
     if chaves == ["facts"]:
-        return "facts", validar_facts(obj, idx)
+        return "facts", validar_facts(obj, idx, pecas=pecas, modo=modo)
     if chaves == ["claims"]:
-        return "claims", validar_claims(obj, idx)
+        return "claims", validar_claims(obj, idx, pecas=pecas, modo=modo)
     if chaves == ["matter"]:
         return "matter", validar_matter(obj, idx)
     r = Resultado()
@@ -788,6 +827,9 @@ def main(argv=None) -> int:
     ap.add_argument("arquivo")
     ap.add_argument("--extracoes", action="append", default=[], help="saída do extract.py (repetível)")
     ap.add_argument("--estrito", action="store_true", help="avisos também reprovam")
+    ap.add_argument("--modo", choices=("analise", "fundamentada"), default="analise")
+    import pecas_uso
+    pecas_uso.adicionar_argumentos(ap)
     a = ap.parse_args(argv)
     try:
         obj = json.loads(Path(a.arquivo).read_text(encoding="utf-8"))
@@ -803,7 +845,8 @@ def main(argv=None) -> int:
             r.erro("extracoes_ilegiveis", "--extracoes", f"{type(e).__name__}: {e}")
             obj = {}
         else:
-            tipo, r = validar(obj, idx)
+            contexto = pecas_uso.carregar_contexto(a.extracoes, a.pecas, anteriores=a.pecas_anterior, exigir=a.exigir_pecas)
+            tipo, r = validar(obj, idx, pecas=contexto if contexto.ativo else None, modo=a.modo)
     valido = not r.erros and not (a.estrito and r.avisos)
     saida = {"arquivo": a.arquivo, "tipo": tipo, "valido": valido, "erros": r.erros, "avisos": r.avisos,
              "resumo": resumo(tipo, obj, r)}
