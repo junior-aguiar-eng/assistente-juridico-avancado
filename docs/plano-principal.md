@@ -1,6 +1,6 @@
 # Plano principal: juris-skills-br
 
-Revisão 14 — 2026-10-22. **Este é o plano vigente e a fonte única de prioridades e andamento.** Substitui o [planejamento v2](planejamento-juris-skills-br-v2.md), preservado como histórico. Pesquisa, especificações e relatórios detalham decisões; não mantêm cronogramas ou listas de execução concorrentes.
+Revisão 16 — 2026-10-22. **Este é o plano vigente e a fonte única de prioridades e andamento.** Substitui o [planejamento v2](planejamento-juris-skills-br-v2.md), preservado como histórico. Pesquisa, especificações e relatórios detalham decisões; não mantêm cronogramas ou listas de execução concorrentes.
 
 **Objetivo:** manter as oito skills e o fluxo atual de evidências, acrescentando organização verificável de peças antes de liberar análise assistida de autos completos.
 
@@ -149,3 +149,14 @@ As correções AF-01/AC-01/GT-01 e a recuperação/integração RC-01/IG-01 são
 - Alterações de regras, escopo jurídico e entregas continuam sujeitas às decisões humanas registradas; uma revisão do plano não aprova automaticamente essas alterações.
 
 **Próximo gate de liberação material:** conferência humana dos inventários/trechos efetivamente usados e aprovação da entrega correspondente. A integração técnica autorizada é acompanhada na PR #5, com merge condicionado à CI do HEAD final. A validação local e a CI identificada estão concluídas e não devem ser refeitas sem mudança ou falha nova. P01/P02 já foram conferidos estruturalmente pelo titular; não reabrir essa pendência. A integração não ativa regras. Classificação automática se absteve nos dois processos novos; o uso continua assistido. O diagnóstico ORG-03 não declara o ORG-R10-PRIVADO integralmente legível.
+
+## 10. Evolução analítica aprovada — execução por etapa
+
+**Contrato e plano aprovados pelo titular em 22/10/2026; somente EV-01 autorizada.** O pedido inicial foi documental; a instrução posterior “Aprovo o contrato e o plano. Prossiga com a EV-01” autoriza o contrato executável, validador/renderização, exemplos e testes dessa etapa. Objetivo preservado: análise por questão com posições, provas, fundamentos, conclusões preliminares e limites, automatizando verificações técnicas e destacando decisões jurídicas importantes. A EV-01, isoladamente, não gera essa análise nem demonstra profundidade jurídica.
+
+- [Desenho analise-1 aprovado](superpowers/specs/2026-10-22-analise-estruturada-design.md) e [contrato executável EV-01](contratos/analise-v1.md): schema aditivo, snapshots, cobertura, atribuição, pesquisa, resultados técnicos e decisões profissionais; não modifica peças v1 ou estados legados.
+- [Decomposição técnica e piloto](superpowers/plans/2026-10-22-evolucao-analise-estruturada.md): **EV-01 concluída e validada localmente**, sem commit/push. Contrato/schema aditivos, APIs puras de validação/renderização, dois exemplos sintéticos positivos/cinco contraexemplos; 117 aprovações focadas (76 EV-01/41 ORG-04) e **1095 aprovados/5 ignorados na integral offline**, zero falhas/erros em 632,45 s. Código/testes/schema congelados por hash; oito skills PRONTA, ambiente sem conflitos, revisão independente reconferida após correções. EV-02 corpus/protocolo; EV-03 automação técnica; EV-04 fluxo agêntico; EV-05 comparação; EV-06 integração permanecem **não iniciadas, sem autorização de execução**. Este é o registro canônico de andamento.
+- Próxima etapa prevista, ainda não iniciada: EV-02, corpus/protocolo. A/B/C mantêm o mesmo modelo na comparação principal; P01/P02 são desenvolvimento/regressão, com processos novos reservados à avaliação. Metas são critérios de projeto aprovados para o desenho, a congelar com o protocolo antes do holdout, não resultados ou garantias. Modelo, revisor do benchmark, insumos e tetos ainda precisam ser definidos.
+- Novas dependências, modelos/APIs, persistência, dados transmitidos, orçamento e execução das demais etapas precisam de decisões próprias. Sem adoção de LangGraph/SDK/Docling, mudança dos gates da fase 5, aprovação material, ativação de regras, commit ou push.
+
+A evolução não substitui os gates anteriores nem altera suas evidências. Aprovar o contrato não aprova os casos concretos ou as 19 regras, que continuam inativas. Registro, resultados e preservação: EV-P01/EV-01 em [coordenação](COORDENACAO.md).
