@@ -229,3 +229,24 @@ def test_cpf_diferente_nos_documentos_gera_possivel_conflito():
                      "fonte": {"document_id": "doc-1", "locator": "par.1", "trecho": "Outorgante: Maria, CPF 111.444.777-35, residente em Maceió."}}]}
     r = preencher.lint(c, extracoes=ext)
     assert r["erros"] == [] and "possivel_conflito" in [a["codigo"] for a in r["avisos"]]
+
+
+def test_localizador_por_sufixo_escolhe_o_bloco_que_contem_o_trecho():
+    """Dois blocos terminam em 'par.2': o primeiro não pode ser tomado só por vir antes."""
+    trecho = "A contratante é Alfa Serviços Ltda., com sede em Maceió."
+    ext = {"documents": [{"document_id": "doc-1", "blocks": [
+        {"id": "b0", "locator": "tabela.par.2", "text": "Outro texto, sem relação com a contratante."},
+        {"id": "b1", "locator": "docx.par.2", "text": trecho}]}]}
+    c = campos_base()
+    assert preencher.lint(c, extracoes=ext)["erros"] == []
+    # sem nenhum candidato que contenha o trecho, o erro continua sendo apontado
+    ext["documents"][0]["blocks"][1]["text"] = "Texto diferente."
+    assert "trecho_fora_do_bloco" in [e["codigo"] for e in preencher.lint(c, extracoes=ext)["erros"]]
+
+
+def test_localizador_exato_tem_prioridade_sobre_o_sufixo():
+    trecho = "A contratante é Alfa Serviços Ltda., com sede em Maceió."
+    ext = {"documents": [{"document_id": "doc-1", "blocks": [
+        {"id": "b0", "locator": "docx.par.2", "text": "Texto de outro bloco."},
+        {"id": "b1", "locator": "par.2", "text": trecho}]}]}
+    assert preencher.lint(campos_base(), extracoes=ext)["erros"] == []
