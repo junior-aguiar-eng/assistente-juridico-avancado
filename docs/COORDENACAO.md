@@ -2,6 +2,26 @@
 
 Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia as correções ou expansões listadas abaixo.
 
+## CL-PARECER — decisões propostas para as 21 regras, 30/10/2026
+
+- Entrada: o titular anexou um "parecer jurídico objetivo" sobre as 21 regras. O arquivo **não identifica o autor** e traz resíduos de rascunho; é registrado como **insumo externo**, não como revisão: nenhuma regra recebeu `revisor`, `data` ou `observacao`, e **nenhuma foi ativada ou alterada**. A ativação continua exigindo o revisor identificado pelo titular (nome completo, data, observação), por PR. Responsável por este registro: Claude, só documentação.
+- Contagem corrigida: o parecer traz três totais incompatíveis ("15/4/2" no início, "15/2/1" na seção 4 e uma tabela final). Somando as decisões regra a regra: **1** ativar como está, **17** ajustar e ativar, **2** manter inativas, **1** descartar (total 21). Valem estes números.
+- Decisões propostas pelo parecer, por regra (proposta; não é ativação):
+
+| Decisão proposta | Regras |
+|---|---|
+| Ativar como está | `civ-473` |
+| Ajustar a pergunta e ativar | `civ-412`, `civ-413`, `civ-421a`, `civ-422`, `civ-423`, `civ-424`, `civ-478`, `lgpd-7`, `lgpd-11`, `lgpd-18`, `lgpd-33`, `lgpd-37`, `lgpd-39`, `lgpd-41`, `lgpd-42`, `lgpd-46`, `lgpd-48` |
+| Manter inativa | `civ-598` (enquadramento de SaaS no regime típico de serviços), `pi-195-xi` |
+| Descartar | `pi-195-xii` (a tipificação legal subsiste sem previsão contratual) |
+
+- Escopo proposto: pacote `servicos_saas` prioritariamente B2B, com alerta de incidência do CDC em B2C; LGPD em B2B e B2C quando houver tratamento de dados pessoais; arts. 207 e 209 da Lei 9.279/1996 como fundamento civil complementar, sem exigência automática de cláusula; sem prazo universal de sigilo; foro fora do pacote de NDA.
+- Conferido pelo Claude nesta data: o art. 19 da LGPD (resposta simplificada imediata ou declaração completa em até 15 dias) consta do texto compilado já guardado em `tests/casos/regras_fontes/lgpd_compilado.md`. A Resolução CD/ANPD nº 15/2024 (24/04/2024) fixa 3 dias úteis para comunicar incidente, segundo fonte secundária (escritório de advocacia), não o texto oficial. Existência das Resoluções CD/ANPD nº 18/2024 (encarregado) e nº 19/2024 (transferência internacional) apareceu em resultados de busca; o texto oficial não foi aberto. A Resolução CD/ANPD nº 2/2022 não foi verificada.
+- O que bloqueia a ativação das 17 "ajustar e ativar": reescrever cada pergunta de revisão; decidir se o art. 19 e as resoluções da ANPD entram como fonte do pacote (ampliação de escopo que exige leitura da fonte oficial, data e hash); validar o texto literal do Código Civil, cujo compilado **não está** no repositório (sem `--fonte-cc`, `regras.py validar` não confere as 9 regras do CC); limpar artefatos de conversão no texto literal de `lgpd-7` e `lgpd-11` (marcação de link e quebras de linha). Só `civ-473` está pronta para ativar sem alteração de pergunta.
+- Orientação do parecer preservada como diretriz, sem implementação: as regras devem sinalizar pontos de revisão, sem declarar nulidade ou ilegalidade pela mera ausência de cláusula.
+- Correções de documentação desta entrada: `docs/plano-principal.md` (revisão 15), `docs/uso-assistido.md`, `shared/dados.md` e `skills/br-revisar-contrato/SKILL.md` passam a dizer 21 regras inativas (19 de Código Civil/LGPD e 2 de NDA) e que o pacote NDA tem 2 regras-rascunho, em vez de "NDA vazio". Registros datados anteriores (por exemplo, `docs/validacao-fase5.md`) preservam a contagem da época e não foram alterados.
+- Verificação: ver o PR; a suíte integral não foi executada localmente.
+
 ## CL-FECH — fechamento da reconciliação do repositório, 30/10/2026
 
 - Pedido autorizado pelo titular, passo a passo. Responsável: Claude; apenas Git/GitHub e este registro, sem alteração de código, de regras ou de skills. O worktree do Codex não foi tocado.
