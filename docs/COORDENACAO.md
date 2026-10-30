@@ -2,6 +2,14 @@
 
 Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia as correções ou expansões listadas abaixo.
 
+## CL-QUEBRAS — quebras de linha no texto literal da LGPD, 30/10/2026
+
+- Decisão do titular, após ler o arquivo de revisão dos 21 trechos marcados: "obviamente precisamos unir os trechos". Responsável: Claude; só `scripts/regras.py`, `rules/br/lgpd.json`, `tests/test_contrato.py` e este registro. Todas as 21 regras continuam **inativas** e sem revisor.
+- Causa: a fonte compilada grafa "caput" (itálico) sozinho num parágrafo, o que partia a frase em três linhas. `extrair_artigo` passa a colar esse parágrafo ao anterior e ao seguinte. Nenhuma outra quebra foi alterada: a alínea "g" do art. 11, que a heurística de revisão marcou por engano, continua em linha própria.
+- Efeito: 20 quebras removidas em `lgpd-7` (4), `lgpd-11` (4), `lgpd-18` (2), `lgpd-33` (2), `lgpd-42` (2) e `lgpd-46` (6). Conferido: com espaços normalizados, o texto de cada regra é idêntico ao anterior; só mudou a forma. Hash da fonte, data de leitura e demais campos inalterados; os pacotes do Código Civil e de NDA saem idênticos na regeração.
+- A pendência de `pendencias_de_fonte` sobre quebras de linha foi retirada; restam duas no pacote `lgpd` (resoluções da ANPD como fontes complementares; art. 19 como fonte de `lgpd-18`).
+- Verificação: `validar` com as três fontes, zero erros, 21 regras; `gerar` reproduz byte a byte `lgpd.json`, `servicos_saas.json` e `nda.json`; testes dos módulos que tocam regras aprovados (ver o PR). Suíte integral não executada localmente.
+
 ## CL-TEXTO — texto literal sem marcação de link e correção de erro sobre o compilado do Código Civil, 30/10/2026
 
 - Pedido: "continue o projeto". Responsável: Claude; só `scripts/regras.py`, `rules/br/lgpd.json`, `rules/br/servicos_saas.json`, `tests/test_contrato.py` e este registro. Todas as 21 regras continuam **inativas** e sem revisor.

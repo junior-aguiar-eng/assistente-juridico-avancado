@@ -264,6 +264,18 @@ def test_texto_literal_nao_guarda_marcacao_de_link_da_conversao_da_pagina(tmp_pa
         assert "](" not in r["fonte"]["texto_literal"], r["id"]
 
 
+def test_texto_literal_cola_o_caput_isolado_sem_perder_a_alinea_separada(tmp_path):
+    fonte = tmp_path / "lei.md"
+    fonte.write_text(
+        "Art. 1º Texto.\n\n§ 1º A exceção do inciso I do\n\ncaput\n\ndeste artigo vale.\n\n"
+        "II - garantia, ou\n\ng) item separado.\n\nArt. 2º Outro.\n", encoding="utf-8")
+    texto = regras.extrair_artigo(fonte.read_text(encoding="utf-8"), "1")["texto_literal"]
+    assert "§ 1º A exceção do inciso I do caput deste artigo vale." in texto.split("\n")
+    assert "g) item separado." in texto.split("\n")
+    for r in regras.carregar(REGRAS, "lgpd", incluir_inativas=True)["regras"]:
+        assert "\ncaput\n" not in "\n" + r["fonte"]["texto_literal"] + "\n", r["id"]
+
+
 def test_pacote_lgpd_tem_texto_literal_sem_dispositivo_revogado_ou_vetado():
     pacote = {r["id"]: r for r in regras.carregar(REGRAS, "lgpd", incluir_inativas=True)["regras"]}
     assert set(pacote) == {f"lgpd-{n}" for n in (7, 11, 18, 33, 37, 39, 41, 42, 46, 48)}
