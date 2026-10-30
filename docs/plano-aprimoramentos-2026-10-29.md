@@ -70,7 +70,7 @@ Itens do levantamento original **já resolvidos** e retirados desta lista: A3, A
 |---|---|---|
 | CL-01 | Consolidar o incremento de revisão contratual e preenchimento | Scripts, skills e documentação coerentes; regras não revisadas inativas; limitações explícitas |
 | CL-02 | Organizar fixtures e documentação dos casos contratuais e do corpus STJ | Origem e gabarito de cada fixture identificados; separação entre testes de extração, mecânicos e de avaliação jurídica |
-| C-01 | Ler a Lei 9.279/1996, art. 195, XI e XII, na versão compilada oficial (via `fontes.py`, com data e hash) e preparar o texto literal da regra de NDA **como rascunho inativo** | `nda.json` com texto literal e fonte; `pendencias_de_fonte` reduzida; permanece `inativa` até o revisor |
+| C-01 | **Executado em 2026-10-29 (sem commit).** Ler a Lei 9.279/1996, art. 195, XI e XII, na versão compilada oficial (via `fontes.py`, com data e hash) e preparar o texto literal da regra de NDA **como rascunho inativo** | `nda.json` com texto literal e fonte; `pendencias_de_fonte` reduzida; permanece `inativa` até o revisor |
 | C-02 | Ligar o redline ao `issues.json` (melhoria já listada como futura) | Cada alteração rastreada referencia o `issue_id` |
 | C-03 | Corrigir o casamento do localizador por sufixo em `preencher.py` | **Executado em 2026-10-29**: dois testes novos; falhavam antes e passam depois; sem commit |
 | C-04 | Revisar mensagens de erro e o relatório de `escalar` na minuta | Relatório legível pelo advogado, sem jargão de schema |

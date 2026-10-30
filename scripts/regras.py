@@ -1,7 +1,7 @@
 """Pacotes de regras de revisão contratual: rascunhos com o texto literal da lei, sempre INATIVOS até revisão jurídica.
 
-  gerar  --fonte-cc CC.md --fonte-lgpd LGPD.md --saida-dir rules/br [--lido-em AAAA-MM-DD]   escreve os pacotes-rascunho
-  validar [--dir rules/br] [--fonte-cc CC.md] [--fonte-lgpd LGPD.md]            confere estrutura, ativação e texto literal
+  gerar  --fonte-cc CC.md --fonte-lgpd LGPD.md --fonte-lpi LPI.md --saida-dir rules/br [--lido-em AAAA-MM-DD]   escreve os pacotes-rascunho
+  validar [--dir rules/br] [--fonte-cc CC.md] [--fonte-lgpd LGPD.md] [--fonte-lpi LPI.md]   confere estrutura, ativação e texto literal
   listar [--dir rules/br] [--incluir-inativas]                                  regras que podem ser usadas
 
 Uma regra só é usada se `status` for "ativa" **e** houver `revisao.revisor` e `revisao.data`. Este script nunca ativa
@@ -22,6 +22,8 @@ NORMAS = {
     "cc": {"nome": "Lei nº 10.406/2002 (Código Civil)", "url": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm"},
     "lgpd": {"nome": "Lei nº 13.709/2018 (LGPD)",
              "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709compilado.htm"},
+    "lpi": {"nome": "Lei nº 9.279/1996 (Lei da Propriedade Industrial)",
+            "url": "https://www.planalto.gov.br/ccivil_03/leis/l9279.htm"},
 }
 RASCUNHO = "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito."
 
@@ -49,8 +51,18 @@ LGPD = [
     ("lgpd-46", "lgpd", "46", "segurança", "O contrato fixa medidas de segurança técnicas e administrativas compatíveis com o risco dos dados tratados?", "lgpd"),
     ("lgpd-48", "lgpd", "48", "incidente de segurança", "O contrato fixa prazo e forma para comunicar incidente de segurança à outra parte, de modo a permitir a comunicação à ANPD e ao titular?", "lgpd"),
 ]
+# O art. 195 da Lei 9.279/1996 é o texto literal inteiro; as duas regras separam as perguntas de revisão (incisos XI e XII).
+NDA = [
+    ("pi-195-xi", "nda", "195", "sigilo: informação confidencial obtida por relação contratual (art. 195, XI)",
+     "A definição de informação confidencial exclui o que é de conhecimento público ou evidente para um técnico no assunto, "
+     "e o fim do contrato é tratado de modo compatível com a ressalva 'mesmo após o término do contrato'?", "lpi"),
+    ("pi-195-xii", "nda", "195", "sigilo: informação obtida por meio ilícito ou fraude (art. 195, XII)",
+     "O contrato trata expressamente do uso de informação confidencial obtida por meio ilícito ou mediante fraude, "
+     "ou deixa essa hipótese apenas à lei?", "lpi"),
+]
 PENDENCIAS_NDA = [
-    "Lei nº 9.279/1996, art. 195, XI e XII (concorrência desleal e segredo de empresa): texto compilado ainda não lido",
+    "Lei nº 9.279/1996, art. 195 tipifica crime de concorrência desleal; a via civil está nos arts. 207 e 209 da mesma lei "
+    "(lidos na versão compilada, sem virar regra): decisão do revisor jurídico se entram no pacote",
     "Prazo de vigência do dever de sigilo e foro: sem regra legal específica; decisão do revisor jurídico",
 ]
 _CABECALHO = re.compile(r"^(Art\.\s*\d|LIVRO|T[ÍI]TULO|CAP[ÍI]TULO|Se[cç][aã]o|Subse[cç][aã]o|\*\*)")
@@ -105,12 +117,12 @@ def extrair_artigo(texto: str, numero: str) -> dict:
 
 
 def gerar(fontes: dict[str, Path], saida_dir: Path, lido_em: str | None = None) -> dict:
-    """fontes: {'cc': caminho do Markdown compilado, 'lgpd': ...}. Cada regra guarda o hash do arquivo de onde foi lida."""
+    """fontes: {'cc': caminho do Markdown compilado, 'lgpd': ..., 'lpi': ...}. Cada regra guarda o hash do arquivo de onde foi lida."""
     lido_em = lido_em or date.today().isoformat()
     date.fromisoformat(lido_em)
     brutos = {k: Path(v).read_bytes() for k, v in fontes.items()}
     pacotes: dict[str, list] = {}
-    for rid, pacote, art, topico, pergunta, norma in CODIGO_CIVIL + LGPD:
+    for rid, pacote, art, topico, pergunta, norma in CODIGO_CIVIL + LGPD + NDA:
         if norma not in brutos:
             continue
         art_ = extrair_artigo(brutos[norma].decode("utf-8"), art)
@@ -192,12 +204,14 @@ def main(argv=None) -> int:
     g = sub.add_parser("gerar")
     g.add_argument("--fonte-cc")
     g.add_argument("--fonte-lgpd")
+    g.add_argument("--fonte-lpi")
     g.add_argument("--saida-dir", required=True)
     g.add_argument("--lido-em")
     v = sub.add_parser("validar")
     v.add_argument("--dir", default="rules/br")
     v.add_argument("--fonte-cc")
     v.add_argument("--fonte-lgpd")
+    v.add_argument("--fonte-lpi")
     l = sub.add_parser("listar")
     l.add_argument("--dir", default="rules/br")
     l.add_argument("--pacote", default="servicos_saas")
@@ -205,12 +219,12 @@ def main(argv=None) -> int:
     n = ap.parse_args(argv)
     try:
         if n.cmd == "gerar":
-            fs = {k: Path(v) for k, v in (("cc", n.fonte_cc), ("lgpd", n.fonte_lgpd)) if v}
+            fs = {k: Path(v) for k, v in (("cc", n.fonte_cc), ("lgpd", n.fonte_lgpd), ("lpi", n.fonte_lpi)) if v}
             if not fs:
-                raise ValueError("informe --fonte-cc e/ou --fonte-lgpd")
+                raise ValueError("informe --fonte-cc, --fonte-lgpd e/ou --fonte-lpi")
             res, cod = gerar(fs, Path(n.saida_dir), n.lido_em), 0
         elif n.cmd == "validar":
-            res = validar(Path(n.dir), fontes={k: Path(v) for k, v in (("cc", n.fonte_cc), ("lgpd", n.fonte_lgpd)) if v})
+            res = validar(Path(n.dir), fontes={k: Path(v) for k, v in (("cc", n.fonte_cc), ("lgpd", n.fonte_lgpd), ("lpi", n.fonte_lpi)) if v})
             cod = 1 if res["erros"] else 0
         else:
             res, cod = carregar(Path(n.dir), n.pacote, n.incluir_inativas), 0

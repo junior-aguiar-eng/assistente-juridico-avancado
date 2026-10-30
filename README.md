@@ -99,7 +99,7 @@ python scripts/auditar.py auditar --help
 | `contrato.py precheck\|validar-issues` | campo em branco, anexo ausente, remissão quebrada, assinatura; valida `issues.json` |
 | `redline_docx.py ORIG.docx EDICOES.json SAIDA.docx` | alterações rastreadas; o original não muda |
 | `preencher.py lint\|gerar` | preenche `{{campo}}` com seis estados de procedência |
-| `regras.py gerar\|validar\|listar` | pacotes `rules/br` (serviços/SaaS e LGPD, com texto literal do Planalto), todos inativos |
+| `regras.py gerar\|validar\|listar` | pacotes `rules/br` (serviços/SaaS, LGPD e NDA, com texto literal do Planalto), todos inativos |
 | `revisar_skill.py skills/*/SKILL.md` | estrutura, atualidade e superfície de confiança das skills |
 
 </details>
