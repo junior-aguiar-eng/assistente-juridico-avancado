@@ -10,6 +10,13 @@ Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia
 - Pendência que permanece: quebras de linha no meio de frases no texto literal de `lgpd-7`, `-11`, `-18`, `-33`, `-42` e `-46` (herdadas da fonte); registrada em `pendencias_de_fonte` do pacote `lgpd`.
 - Verificação: `validar` com as três fontes (CC, LGPD e art. 195): zero erros, 21 regras; `gerar` reproduz `lgpd.json`, `nda.json` e `servicos_saas.json`; 83 testes aprovados nos módulos que tocam regras. Suíte integral não executada localmente.
 
+## CL-CODEX — push do `785d4ce` pelo Codex e conflito pendente, 30/10/2026
+
+- O titular informou que o Codex enviou o commit `785d4ce` ("feat: validar e renderizar análise estruturada"). Conferido pelo Claude no GitHub: `origin/codex/organizacao-colaboracao` está em `785d4ce`, sobre a base `3ab28e2` (PR #5); é o único commit da branch que o `main` não tem. Isso substitui a pendência de CL-FECH ("só no worktree do Codex"). Não há PR aberto para ele.
+- Conteúdo, por `git show --stat`: 9 arquivos, 3.882 linhas: `scripts/analise_estruturada.py`, `docs/contratos/analise-v1.md` e `.schema.json`, `tests/casos/analise_contrato/exemplos.json`, `tests/test_analise_estruturada.py`, documentos de especificação e alterações em `docs/COORDENACAO.md` e `docs/plano-principal.md`. O Claude não revisou nem executou esse código.
+- Merge simulado contra o `main` (`d81f8b4`, `git merge-tree`, sem alterar nada): **um conflito**, em `docs/plano-principal.md` (o `main` passou para a revisão 15 em 30/10/2026: 21 regras inativas e NDA com 2 regras). `docs/COORDENACAO.md` mescla sem conflito; não há conflito em código.
+- Responsável pela resolução e pelo PR: Codex, no worktree dele; o Claude não tocou na branch. A resolução deve preservar o texto do `main` sobre as 21 regras (19 de Código Civil/LGPD e 2 de NDA, todas inativas) e acrescentar o que o commit do Codex introduz. Merge só com CI verde e revisão, por decisão do titular.
+
 ## CL-PERGUNTAS — perguntas de revisão reescritas como rascunho, 30/10/2026
 
 - Pedido autorizado pelo titular, opção "reescrever perguntas, inativas", sobre o parecer registrado em CL-PARECER. Responsável: Claude; branch `claude/perguntas-regras-rascunho`.
