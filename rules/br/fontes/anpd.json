@@ -175,6 +175,45 @@
           "texto_literal": "Art. 11. Os agentes de tratamento de pequeno porte não são obrigados a indicar o encarregado pelo tratamento de dados pessoais exigido no art. 41 da LGPD.\n§ 1º O agente de tratamento de pequeno porte que não indicar um encarregado deve disponibilizar um canal de comunicação com o titular de dados para atender o disposto no art. 41, § 2º, I da LGPD.\n§ 2º A indicação de encarregado por parte dos agentes de tratamento de pequeno porte será considerada política de boas práticas e governança para fins do disposto no art. 52, §1º, IX da LGPD."
         }
       ]
+    },
+    {
+      "id": "anpd-32-2026",
+      "norma": "Resolução CD/ANPD nº 32, de 26 de janeiro de 2026 (reconhecimento da União Europeia como organismo internacional com grau de proteção de dados pessoais adequado)",
+      "orgao": "Agência Nacional de Proteção de Dados (ANPD), Conselho Diretor",
+      "publicacao": "Diário Oficial da União, Seção 1, nº 18, p. 49, 27/01/2026",
+      "url": "https://www.in.gov.br/web/dou/-/resolucao-n-32-de-26-de-janeiro-de-2026-683334547",
+      "origem": "PDF da página 49 do DOU (assinada digitalmente, ICP-Brasil), fornecido pelo titular em 30/10/2026 (SHA-256 do original: 836c3284ba5179ac671aeacd73c169cdacb3acc77143b6c8e98ffc07b3a49203). A página traz atos de terceiros sem relação com o projeto; por isso o repositório guarda apenas um recorte da área da resolução, sem a assinatura digital da página. O texto extraído do recorte confere palavra por palavra com o da resolução na página original.",
+      "lido_em": "2026-10-30",
+      "cobertura": "Resolução completa (arts. 1º a 6º). Registrados com texto literal os arts. 1º (com o parágrafo único), 2º, 4º e 5º. Cobre só a decisão de adequação da União Europeia; não altera a Res. CD/ANPD 19/2024.",
+      "aplica_a": [
+        "lgpd-33"
+      ],
+      "arquivos": [
+        {
+          "descricao": "DOU nº 18, 27/01/2026, p. 49: recorte da resolução",
+          "arquivo": "tests/casos/regras_fontes/anpd/res_anpd_32_2026_dou_2026-01-27_recorte.pdf",
+          "arquivo_sha256": "ea31b80d2edf9a8e694efa4e06d7bb94c3f1157c263e28acf50d5b6c67c41750",
+          "texto_extraido": "tests/casos/regras_fontes/anpd/res_anpd_32_2026_dou_2026-01-27_recorte.txt"
+        }
+      ],
+      "artigos": [
+        {
+          "artigo": "1",
+          "texto_literal": "Art. 1º Fica reconhecida a União Europeia como organismo internacional que proporciona grau de proteção de dados pessoais adequado ao previsto na Lei nº 13.709, de 14 de agosto de 2018, para fins de transferência internacional de dados.\nParágrafo único. O reconhecimento previsto no caput autoriza a realização de transferências internacionais de dados com base no mecanismo previsto no art. 33, I, da Lei nº 13.709, de 14 de agosto de 2018, para todos os Estados membros da União Europeia, os três países da Associação Europeia de Livre Comércio - AELC que integram o Espaço Econômico Europeu - EEE (Islândia, Liechtenstein e Noruega), bem como as instituições, órgãos e agências da União Europeia, nos termos do Regulamento (UE) 2016/679, da Decisão nº 154/2018, de 6 de julho, do Comitê Misto do EEE, e do Regulamento (UE) 2018/1725."
+        },
+        {
+          "artigo": "2",
+          "texto_literal": "Art. 2º Esta decisão de adequação não se aplica às transferências internacionais de dados realizadas para fins exclusivos de segurança pública, defesa nacional, segurança do Estado ou atividades de investigação e repressão de infrações penais."
+        },
+        {
+          "artigo": "4",
+          "texto_literal": "Art. 4º A ANPD realizará monitoramento contínuo do nível de proteção de dados pessoais mantido pela União Europeia, podendo solicitar informações adicionais e realizar avaliações periódicas.\n§1º A decisão de adequação será objeto de reavaliação no prazo de quatro anos, a contar da entrada em vigor desta Resolução.\n§2º Para fins da reavaliação referida no §1º, serão consideradas, dentre outros aspectos, alterações na legislação de proteção de dados pessoais posteriores à emissão da presente decisão de adequação."
+        },
+        {
+          "artigo": "5",
+          "texto_literal": "Art. 5º O disposto nesta decisão de adequação não impede a realização de transferências internacionais de dados para os países referidos no parágrafo único do art. 1º desta Resolução com base nos demais mecanismos de transferência previstos no art. 33 da Lei nº 13.709, de 14 de agosto de 2018."
+        }
+      ]
     }
   ]
 }
