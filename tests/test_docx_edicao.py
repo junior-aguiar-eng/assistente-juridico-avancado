@@ -65,6 +65,37 @@ def test_excluir_e_inserir_apos(contrato, tmp_path):
     assert reaberto.paragraphs[0].runs  # continua abrindo no python-docx
 
 
+def test_edicao_ligada_ao_issue_e_conferida_contra_o_issues_json(contrato, tmp_path):
+    issues = {"issues": [{"id": "I1"}, {"id": "I2"}]}
+    edicoes = [{"acao": "substituir", "de": "10% (dez por cento)", "para": "2% (dois por cento)", "issue_id": "I1"},
+               {"acao": "excluir", "de": ", sem prejuízo de perdas e danos"},  # sem vínculo
+               {"acao": "inserir_apos", "ancora": "O foro será o de Maceió", "texto": ", capital", "issue_id": "I9"}]  # desconhecido
+    r = redline_docx.aplicar(contrato, edicoes, tmp_path / "r.docx", issues=issues)
+    assert r["aplicadas"] == 2 and r["recusadas"] == 1
+    assert r["issues_com_edicao"] == ["I1"] and r["edicoes_sem_issue"] == 1
+    assert r["edicoes"][0]["issue_id"] == "I1" and "aviso" not in r["edicoes"][0]
+    assert r["edicoes"][1]["aviso"] == "edicao_sem_issue"
+    assert r["edicoes"][2]["resultado"] == "recusada" and r["edicoes"][2]["codigo"] == "issue_desconhecido"
+    assert "capital" not in xml_do_corpo(tmp_path / "r.docx")  # a edição sem issue válido não entrou
+
+
+def test_issue_id_sem_issues_json_nao_e_conferido_e_id_invalido_e_recusado(contrato, tmp_path):
+    r = redline_docx.aplicar(contrato, [{"acao": "excluir", "de": ", sem prejuízo de perdas e danos", "issue_id": "I1"},
+                                        {"acao": "excluir", "de": "O prazo é de 60 meses.", "issue_id": 7}], tmp_path / "r.docx")
+    assert r["edicoes"][0]["aviso"] == "issue_nao_conferido" and r["edicoes"][0]["resultado"] == "aplicada"
+    assert r["edicoes"][1]["codigo"] == "issue_id_invalido" and r["issues_com_edicao"] == ["I1"]
+
+
+def test_cli_com_issues_json(contrato, tmp_path):
+    import subprocess
+    (tmp_path / "e.json").write_text(json.dumps({"edicoes": [{"acao": "excluir", "de": "O foro será o de Maceió.", "issue_id": "X"}]}),
+                                     encoding="utf-8")
+    (tmp_path / "i.json").write_text(json.dumps({"issues": [{"id": "I1"}]}), encoding="utf-8")
+    p = subprocess.run([sys.executable, "-P", str(RAIZ / "scripts" / "redline_docx.py"), str(contrato), str(tmp_path / "e.json"),
+                        str(tmp_path / "o.docx"), "--issues", str(tmp_path / "i.json")], capture_output=True, stdin=subprocess.DEVNULL)
+    assert p.returncode == 2 and json.loads(p.stdout.decode("utf-8"))["edicoes"][0]["codigo"] == "issue_desconhecido"
+
+
 def test_edicao_ambigua_ou_inexistente_e_recusada_sem_chute(contrato, tmp_path):
     r = redline_docx.aplicar(contrato, [
         {"acao": "substituir", "de": "30 dias", "para": "15 dias"},          # aparece duas vezes no documento

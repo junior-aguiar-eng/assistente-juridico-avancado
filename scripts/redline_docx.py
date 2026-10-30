@@ -1,11 +1,15 @@
 """Gera uma cópia do DOCX com as alterações propostas como controle de alterações (w:ins / w:del).
 
-  python scripts/redline_docx.py ORIGINAL.docx EDICOES.json SAIDA.docx [--autor NOME]
+  python scripts/redline_docx.py ORIGINAL.docx EDICOES.json SAIDA.docx [--autor NOME] [--issues issues.json]
 
 EDICOES.json: {"edicoes": [
-  {"acao": "substituir", "de": "trecho atual", "para": "trecho novo"},
-  {"acao": "excluir", "de": "trecho atual"},
+  {"acao": "substituir", "de": "trecho atual", "para": "trecho novo", "issue_id": "I1"},
+  {"acao": "excluir", "de": "trecho atual", "issue_id": "I2"},
   {"acao": "inserir_apos", "ancora": "trecho existente", "texto": "texto novo"}]}
+
+`issue_id` (opcional) liga a edição ao apontamento do issues.json que a motivou. Com --issues, o id é conferido: edição com id
+desconhecido é recusada, e edição sem id é aplicada com o aviso `edicao_sem_issue`. Sem --issues, o id só é repetido no
+relatório (aviso `issue_nao_conferido`).
 
 O original nunca é alterado (a saída tem de ser outro caminho; o hash do original é conferido ao final).
 Edição que não se localiza, que é ambígua ou que atravessa estrutura não suportada é recusada e relatada;
@@ -49,7 +53,8 @@ def _excluir_runs(runs, autor, data, n):
     return d
 
 
-def aplicar(original: Path, edicoes: list[dict], saida: Path, autor: str = "Revisão (a confirmar)") -> dict:
+def aplicar(original: Path, edicoes: list[dict], saida: Path, autor: str = "Revisão (a confirmar)",
+            issues: dict | None = None) -> dict:
     import docx
 
     original, saida = Path(original), Path(saida)
@@ -59,9 +64,21 @@ def aplicar(original: Path, edicoes: list[dict], saida: Path, autor: str = "Revi
     doc = docx.Document(str(original))
     data = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     n_id, resultados = 9000, []
+    ids_issues = None if issues is None else {i.get("id") for i in issues.get("issues", []) if isinstance(i, dict)}
     for i, ed in enumerate(edicoes, 1):
         res = {"n": i, "acao": ed.get("acao")}
         try:
+            iid = ed.get("issue_id")
+            if iid is not None:
+                res["issue_id"] = iid
+                if not isinstance(iid, str) or not iid.strip():
+                    raise du.EdicaoRecusada("issue_id_invalido", "issue_id deve ser um texto não vazio")
+                if ids_issues is None:
+                    res["aviso"] = "issue_nao_conferido"
+                elif iid not in ids_issues:
+                    raise du.EdicaoRecusada("issue_desconhecido", f"{iid!r} não está no issues.json")
+            elif ids_issues is not None:
+                res["aviso"] = "edicao_sem_issue"
             acao = ed.get("acao")
             if acao in ("substituir", "excluir"):
                 p = du.achar_unico(doc, ed.get("de", ""))
@@ -93,7 +110,11 @@ def aplicar(original: Path, edicoes: list[dict], saida: Path, autor: str = "Revi
         raise RuntimeError("o original foi alterado: abortado")
     return {"original": str(original), "original_sha256": antes, "saida": str(saida), "saida_sha256": _sha(saida),
             "autor_das_alteracoes": autor, "aplicadas": sum(r["resultado"] == "aplicada" for r in resultados),
-            "recusadas": sum(r["resultado"] == "recusada" for r in resultados), "edicoes": resultados,
+            "recusadas": sum(r["resultado"] == "recusada" for r in resultados),
+            "issues_com_edicao": sorted({r["issue_id"] for r in resultados
+                                         if r["resultado"] == "aplicada" and isinstance(r.get("issue_id"), str)}),
+            "edicoes_sem_issue": sum(r["resultado"] == "aplicada" and r.get("issue_id") is None for r in resultados),
+            "edicoes": resultados,
             "aviso": "Alterações propostas e rastreadas: nada vale até o advogado aceitar ou rejeitar cada uma no Word."}
 
 
@@ -103,10 +124,14 @@ def main(argv=None) -> int:
     ap.add_argument("edicoes")
     ap.add_argument("saida")
     ap.add_argument("--autor", default="Revisão (a confirmar)")
+    ap.add_argument("--issues", help="issues.json do contrato: confere o issue_id de cada edição")
     n = ap.parse_args(argv)
     try:
         ed = json.loads(Path(n.edicoes).read_text(encoding="utf-8"))["edicoes"]
-        res = aplicar(Path(n.original), ed, Path(n.saida), n.autor)
+        iss = json.loads(Path(n.issues).read_text(encoding="utf-8")) if n.issues else None
+        if iss is not None and not isinstance(iss.get("issues"), list):
+            raise ValueError("o arquivo de --issues não tem a lista 'issues'")
+        res = aplicar(Path(n.original), ed, Path(n.saida), n.autor, iss)
         cod = 0 if not res["recusadas"] else 2
     except (ValueError, OSError, KeyError, RuntimeError) as e:
         res, cod = {"erro": f"{type(e).__name__}: {e}"}, 1
