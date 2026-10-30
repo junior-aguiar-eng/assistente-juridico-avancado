@@ -24,7 +24,7 @@ Para quem monta minutas a partir de modelos do escritório. A skill **transporta
 | Estado | Exige | No documento |
 |---|---|---|
 | `extraido` | `valor` e `fonte` (`document_id`, `locator`, `trecho`); o valor aparece **literalmente** no trecho e o trecho no bloco extraído | valor |
-| `informado` | `valor` e `informado_em` (data) | valor |
+| `informado` | `valor`, `informado_em` (data) e `fala` (a mensagem do usuário, literal, que traz o valor) | valor |
 | `inferido` | `valor` e `razao` | só com `--aceitar-inferidos`, em amarelo, com `[INFERIDO: confirmar]` |
 | `pendente` | `motivo`; sem `valor` | `[PENDENTE: campo]` em amarelo |
 | `conflito` | 2+ `candidatos` de valores diferentes; sem `valor` | `[CONFLITO: campo]` em amarelo |
