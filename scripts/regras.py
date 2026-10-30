@@ -43,38 +43,36 @@ CODIGO_CIVIL = [
     ("civ-598", "servicos_saas", "598", "prestação de serviço: prazo máximo", "O contrato pode ser enquadrado no regime típico de prestação de serviços do Código Civil e, em caso afirmativo, prevê prazo superior a quatro anos? Não presumir esse enquadramento para contratos SaaS, de licenciamento ou mistos.", "cc"),
 ]
 LGPD = [
-    ("lgpd-7", "lgpd", "7", "base legal do tratamento", "Cada operação de tratamento identificada no contrato tem uma hipótese legal do art. 7 que a sustente?", "lgpd"),
-    ("lgpd-11", "lgpd", "11", "dado sensível", "O contrato prevê tratamento de dado pessoal sensível? Em caso positivo, a hipótese específica do art. 11 está identificada?", "lgpd"),
-    ("lgpd-18", "lgpd", "18", "direitos do titular", "O contrato prevê mecanismos para o controlador atender os pedidos do titular (acesso, correção, eliminação, portabilidade) e, quanto à confirmação de existência e ao acesso, os prazos do art. 19 (resposta simplificada imediata ou declaração completa em até 15 dias)?", "lgpd"),
-    ("lgpd-33", "lgpd", "33", "transferência internacional", "Há armazenamento, suporte ou subprocessador fora do Brasil? Em caso positivo, a hipótese do art. 33 está identificada?", "lgpd"),
-    ("lgpd-37", "lgpd", "37", "registro das operações", "O contrato prevê a manutenção do registro das operações de tratamento por controlador e operador? A ausência de cláusula específica não configura, por si só, infração ao art. 37.", "lgpd"),
-    ("lgpd-39", "lgpd", "39", "operador e instruções", "O contrato define os papéis de controlador e operador e as instruções ao operador, ressalvado que a qualificação jurídica depende das atividades efetivamente desempenhadas?", "lgpd"),
-    ("lgpd-41", "lgpd", "41", "encarregado", "O contrato indica o encarregado (ou o canal) de cada parte, observadas as dispensas regulamentares e a distinção entre controlador e operador?", "lgpd"),
-    ("lgpd-42", "lgpd", "42", "responsabilidade e ressarcimento", "A cláusula de limitação de responsabilidade distingue a responsabilidade entre as partes da responsabilidade legal perante o titular, ou aparenta restringir a reparação devida a este por dano de tratamento irregular?", "lgpd"),
-    ("lgpd-46", "lgpd", "46", "segurança", "O contrato prevê medidas de segurança técnicas e administrativas? A adequação efetiva ao risco dos dados exige análise material, não apenas textual.", "lgpd"),
-    ("lgpd-48", "lgpd", "48", "incidente de segurança", "O contrato fixa prazo e procedimento para comunicar incidente de segurança à outra parte, de modo compatível com a obrigação do controlador de comunicar a ANPD e o titular?", "lgpd"),
+    ("lgpd-7", "lgpd", "7", "base legal do tratamento", "As operações de tratamento de dados pessoais identificáveis no contrato têm finalidade definida e hipótese legal pertinente do art. 7º, sem pressupor que todo tratamento dependa de consentimento?", "lgpd"),
+    ("lgpd-11", "lgpd", "11", "dado sensível", "O tratamento identificado envolve dados pessoais sensíveis, inclusive dados que possam revelá-los? Em caso positivo, há hipótese específica do art. 11 e finalidade compatível?", "lgpd"),
+    ("lgpd-18", "lgpd", "18", "direitos do titular", "O instrumento prevê cooperação suficiente para o controlador atender os direitos do titular previstos no art. 18? Quanto à confirmação e ao acesso, considera as formas de resposta do art. 19 (simplificada imediata ou declaração completa em até 15 dias, observadas normas aplicáveis)?", "lgpd"),
+    ("lgpd-33", "lgpd", "33", "transferência internacional", "Há efetiva transferência internacional de dados pessoais, inclusive mediante acesso remoto do exterior, suporte ou subprocessamento? Qual hipótese do art. 33 e, quando aplicável, qual mecanismo do Regulamento aprovado pela Resolução CD/ANPD nº 19/2024 a ampara?", "lgpd"),
+    ("lgpd-37", "lgpd", "37", "registro das operações", "Há disposições de cooperação, rastreabilidade ou manutenção de registros de operações de tratamento por controlador e operador, especialmente quando baseadas no legítimo interesse?", "lgpd"),
+    ("lgpd-39", "lgpd", "39", "operador e instruções", "As instruções lícitas do controlador ao operador e a possibilidade de verificar seu cumprimento estão disciplinadas, considerando as funções efetivamente exercidas por cada agente?", "lgpd"),
+    ("lgpd-41", "lgpd", "41", "encarregado", "Quando exigível, há indicação e canal de contato acessível do encarregado do controlador, observadas as dispensas regulamentares e a possibilidade de atendimento por canal alternativo?", "lgpd"),
+    ("lgpd-42", "lgpd", "42", "responsabilidade e ressarcimento", "Há cláusula que pretenda opor a titulares limitações de responsabilidade por tratamento irregular, em vez de disciplinar apenas a repartição interna de riscos e eventual regresso entre contratantes?", "lgpd"),
+    ("lgpd-46", "lgpd", "46", "segurança", "O contrato trata de medidas técnicas e administrativas de segurança, responsabilidades e cooperação? Há elementos concretos que permitam avaliar sua adequação ao tratamento, sem confundir ausência de cláusula com ausência de medidas efetivas?", "lgpd"),
+    ("lgpd-48", "lgpd", "48", "incidente de segurança", "Há procedimento de detecção, escalonamento e comunicação de incidente entre as partes em prazo que permita ao controlador cumprir, quando incidente possa acarretar risco ou dano relevante, as comunicações à ANPD e aos titulares, conforme Resolução CD/ANPD nº 15/2024?", "lgpd"),
 ]
 # O art. 195 da Lei 9.279/1996 é o texto literal inteiro; as duas regras separam as perguntas de revisão (incisos XI e XII).
 NDA = [
     ("pi-195-xi", "nda", "195", "sigilo: informação confidencial obtida por relação contratual (art. 195, XI)",
-     "A definição de informação confidencial exclui o que é de conhecimento público ou evidente para um técnico no assunto, "
-     "e o fim do contrato é tratado de modo compatível com a ressalva 'mesmo após o término do contrato'?", "lpi"),
+     "O contrato identifica as informações protegidas e disciplina sua utilização ou divulgação não autorizada, inclusive após o término da relação? As exceções para informações públicas ou evidentes a técnico no assunto são consideradas sem presumir obrigatória sua reprodução literal no NDA.", "lpi"),
     ("pi-195-xii", "nda", "195", "sigilo: informação obtida por meio ilícito ou fraude (art. 195, XII)",
-     "O contrato trata expressamente do uso de informação confidencial obtida por meio ilícito ou mediante fraude, "
-     "ou deixa essa hipótese apenas à lei?", "lpi"),
+     "Há cláusula que aparente autorizar divulgação, exploração ou uso não autorizado de informações confidenciais obtidas por meios ilícitos ou mediante fraude? Se a hipótese não estiver expressamente prevista, registrar que a proibição legal independe de cláusula contratual.", "lpi"),
 ]
 PENDENCIAS_LGPD = [
-    "Regulamentos da ANPD: as Resoluções CD/ANPD nº 15/2024 (comunicação de incidente; lgpd-48) e nº 18/2024 (encarregado; lgpd-41) constam de rules/br/fontes/anpd.json como fonte complementar, lidas em páginas do DOU (Res. 15 completa, com os arts. 4º, 5º, 6º, 9º e 10 registrados; da Res. 18, os arts. 1º a 21, com os arts. 3º, 8º e 9º registrados; a página seguinte do DOU da Res. 18, se houver, não foi lida). A Resolução nº 19/2024 (transferência internacional e cláusulas-padrão; lgpd-33) consta completa em PDF do DOU, com os arts. 2º da resolução e 4º, 5º, 9º, 15, 16 e 17 do Regulamento registrados; o texto das cláusulas-padrão (Anexo II) não foi transcrito. A nº 2/2022 (agentes de pequeno porte) e a Res. CD/ANPD 32/2026 (decisão de adequação da União Europeia, mencionada em fonte secundária) ainda não foram incorporadas: decisão do revisor jurídico sobre quais artigos entram",
-    "lgpd-18: a pergunta remete ao art. 19 da Lei 13.709/2018, que consta do compilado guardado no repositório, mas ainda não é fonte própria da regra: decisão do revisor jurídico",
+    "Referências regulamentares complementares: as Resoluções CD/ANPD nº 15/2024 (lgpd-48), nº 18/2024 (lgpd-41) e nº 19/2024 (lgpd-33) constam de rules/br/fontes/anpd.json, com PDF do DOU, hash e texto literal de artigos selecionados; a nº 2/2022 (agentes de pequeno porte) e a nº 32/2026 (decisão de adequação da União Europeia) não foram incorporadas. Os hashes da LGPD não foram alterados.",
+    "lgpd-18 remete complementarmente ao art. 19 da LGPD: o prazo de 15 dias refere-se à declaração clara e completa sobre confirmação/acesso, sem generalização para todos os direitos.",
 ]
 PENDENCIAS_SERVICOS_SAAS = [
     "Escopo proposto em parecer anexado pelo titular: aplicação prioritária a contratos civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo; decisão do revisor jurídico",
 ]
 PENDENCIAS = {"lgpd": PENDENCIAS_LGPD, "servicos_saas": PENDENCIAS_SERVICOS_SAAS}
 PENDENCIAS_NDA = [
-    "Lei nº 9.279/1996, art. 195 tipifica crime de concorrência desleal; a via civil está nos arts. 207 e 209 da mesma lei "
-    "(lidos na versão compilada, sem virar regra): decisão do revisor jurídico se entram no pacote",
-    "Prazo de vigência do dever de sigilo e foro: sem regra legal específica; decisão do revisor jurídico",
+    "Arts. 207 e 209 da LPI oferecem vias de tutela civil, sem criar cláusulas obrigatórias de NDA; eventual inclusão de novas regras exige fonte própria e revisão.",
+    "Não há prazo universal de confidencialidade nem foro obrigatório fundados no art. 195, XI e XII; avaliar a estipulação conforme conteúdo contratual e regime aplicável.",
+    "As duas regras estão ativas por ordem do titular, mas seu uso é limitado a alertas jurídicos, sem concluir crime, invalidade ou omissão contratual ilícita automaticamente.",
 ]
 _CABECALHO = re.compile(r"^(Art\.\s*\d|LIVRO|T[ÍI]TULO|CAP[ÍI]TULO|Se[cç][aã]o|Subse[cç][aã]o|\*\*)")
 _DISP_REVOGADO = re.compile(r"^((?:§\s*\d+[º°o]?|[IVXLC]+|[a-z]\)|Parágrafo único)[^()]{0,12})\((?:Revogad[oa]|VETAD[OA])[^)]*\)\.?$", re.I)

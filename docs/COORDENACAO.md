@@ -53,6 +53,15 @@ Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia
 - Correções de documentação desta entrada: `docs/plano-principal.md` (revisão 15), `docs/uso-assistido.md`, `shared/dados.md` e `skills/br-revisar-contrato/SKILL.md` passam a dizer 21 regras inativas (19 de Código Civil/LGPD e 2 de NDA) e que o pacote NDA tem 2 regras-rascunho, em vez de "NDA vazio". Registros datados anteriores (por exemplo, `docs/validacao-fase5.md`) preservam a contagem da época e não foram alterados.
 - Verificação: ver o PR; a suíte integral não foi executada localmente.
 
+## CL-ATIVA-TODAS — ativação das regras de LGPD e NDA pelo revisor, 30/10/2026
+
+- Decisão do titular, em chat: "todas as regras estão ativas"; editou no JSON local as 12 regras restantes (10 da LGPD e 2 de NDA), reescrevendo as perguntas, as pendências de fonte e o registro de revisão. Revisor gravado em cada uma: José Bonifácio de Aguiar Santos Júnior, 2026-10-30, com observação própria de uso (cada uma delimita o que a regra não deve presumir). Uma primeira versão do registro trazia "Revisão assistida por IA" como revisor; o Claude recusou abrir PR assim, porque o `AGENTS.md` não admite modelo como revisor, e o titular corrigiu.
+- Claude: sincronizou as perguntas e as pendências em `scripts/regras.py` (fonte), incorporou os arquivos do titular em `rules/br/lgpd.json` e `rules/br/nda.json` e ajustou testes e documentos de estado. Única alteração de conteúdo do Claude: na pendência de fonte da LGPD, a frase de que as resoluções da ANPD não estavam incorporadas foi atualizada, porque as Res. 15, 18 e 19/2024 já constam de `rules/br/fontes/anpd.json`; a nota de que o JSON devia ser sincronizado com o gerador foi retirada, pois a sincronização foi feita aqui.
+- **`civ-598` continua inativa.** No arquivo do titular ela estava `ativa` sem revisor nem data (erro `ativa_sem_revisor`), e a nota anterior do titular era "manter inativa" até definir o enquadramento de SaaS. Ativá-la depende de nome, data e observação do revisor.
+- Estado: 20 ativas (8 CC, 10 LGPD, 2 NDA), 1 inativa. As observações de LGPD e NDA mantêm a ressalva de que a ativação não certifica revisão por profissional do Direito; o uso das regras é limitado a alertas, sem concluir infração ou crime.
+- Pendência de escopo mantida: aplicação do pacote a relações civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo. Pendentes de fonte: Res. CD/ANPD 2/2022 e 32/2026; arts. 207 e 209 da Lei 9.279/1996 (via civil).
+- Testes: `test_contrato` e `test_reconciliacao_org` passam a esperar 20 ativas e `civ-598` inativa; os cenários de rascunho usam `civ-598`.
+
 ## CL-ANPD-19 — Res. CD/ANPD 19/2024 como fonte complementar de `lgpd-33`, 30/10/2026
 
 - Decisão do titular, em chat: enviou o PDF da Res. CD/ANPD 19/2024 (DOU, edição 163, seção 1, página 123, 23/08/2024), na sequência de CL-ANPD. Responsável: Claude; só `rules/br/fontes/anpd.json`, o PDF e a extração em `tests/casos/regras_fontes/anpd/`, `scripts/regras.py` (texto da pendência), `tests/test_contrato.py` e este registro.

@@ -10,7 +10,7 @@ owner: "José Bonifácio de Aguiar Santos Júnior (revisor jurídico designado e
 
 Regras comuns: [garantias](../../shared/garantias.md), [estados](../../shared/estados.md), [formatos](../../shared/dados.md), [falhas jurídicas](../../shared/falhas-juridicas.md), [escalação](../../shared/escalacao.md).
 
-**Estado desta skill: rascunho.** Das regras de revisão (`rules/br`), só as **8 do Código Civil ativadas pelo revisor jurídico em 30/10/2026** (`civ-412`, `413`, `421a`, `422`, `423`, `424`, `473` e `478`) sustentam apontamento; `civ-598`, as da LGPD e as de NDA seguem **inativas e sem revisor**. Enquanto o profissional do Direito não ativar as demais, a skill faz a pré-checagem e o redline mecânico, e qualquer apontamento sustentado só por regra de rascunho sai marcado `RASCUNHO_NAO_REVISADO` e **não pode ser entregue como conclusão**.
+**Estado desta skill: rascunho.** Das regras de revisão (`rules/br`), **20 foram ativadas pelo revisor jurídico em 30/10/2026** (8 do Código Civil, as 10 da LGPD e as 2 de NDA) e sustentam apontamento, como alerta a verificar, nunca como conclusão automática de infração ou crime; só a `civ-598` segue **inativa e sem revisor**. Enquanto o revisor não ativar a `civ-598`, a skill faz a pré-checagem e o redline mecânico, e qualquer apontamento sustentado só por regra de rascunho sai marcado `RASCUNHO_NAO_REVISADO` e **não pode ser entregue como conclusão**.
 
 ## Público e natureza do trabalho
 
