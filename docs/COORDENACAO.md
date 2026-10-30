@@ -83,3 +83,16 @@ Correções funcionais do backlog, avaliação com modelo, novos serviços ou de
 - AGENTS.md, CLAUDE.md e este documento iguais nas duas cópias; remissões locais conferidas.
 - Nenhum arquivo previamente versionado foi modificado por esta preparação. HEAD de ambos permanece na base acima; apenas a branch do novo worktree foi criada.
 - Essas verificações registram a base inicial. Não comprovam correção jurídica, avaliação com modelo, CI remoto nem resolução das tarefas reservadas.
+
+## Registro de tarefas em execução
+
+```text
+ID: H-07 (plano de aprimoramentos de 2026-10-29)
+Responsável / branch / commit-base: Claude / fix/fase2-correcoes / bab498d
+Estado: concluída (primeiro passo); demais passos adiados
+Escopo e arquivos previstos: tempo da suíte. Primeiro passo: tests/test_auditar.py (fixture `caso` extraía o PDF a cada teste). Possíveis passos seguintes, só após medir de novo: memoização entre módulos em tests/conftest.py e marcador de testes lentos.
+Critério de aceitação: mesma cobertura e mesmos resultados; tempo da suíte completa menor, medido com `python -m pytest -q --durations=40`.
+Verificações executadas e resultados: medição de base no Windows do titular: 465 passed, 4 skipped em 483,6 s (a fixture `caso` respondia por cerca de 226 s em `setup`). Após a alteração, no mesmo Windows: 465 passed, 4 skipped em 353,3 s (o maior `setup` de test_auditar.py caiu de 21 s para 8 s). A segunda rodada teve mais carga na máquina (testes não alterados ficaram mais lentos, ex.: R03 de 17 s para 42 s), então o ganho real é maior que os 130 s observados. O restante é custo intrínseco de extração (regressão R01 a R03, corpus STJ, OCR, test_extract); memoização entre módulos e marcador de lentos ficam adiados.
+Limitações / dependências: área de teste compartilhada com CX-01 e CX-02; o Codex deve partir desta base se editar test_auditar.py.
+Referência da entrega, se houver: commit desta alteração na branch fix/fase2-correcoes (ver git log).
+```
