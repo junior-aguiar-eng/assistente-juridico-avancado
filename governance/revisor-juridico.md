@@ -2,7 +2,7 @@
 
 **Designado:** José Bonifácio de Aguiar Santos Júnior, em 2026-10-18 (indicação feita pelo titular do projeto, em conversa).
 
-**Situação da revisão:** em 30/10/2026 o revisor designado ativou 20 das 21 regras (8 do Código Civil, 10 da LGPD e 2 de NDA), com nome, data e observação em `revisao`; as observações registram as ressalvas de uso. Só a `civ-598` continua `inativa`. A designação em si não ativa nada: skills continuam "escritas e testadas mecanicamente".
+**Situação da revisão:** em 30/10/2026 o revisor designado ativou as 21 regras (9 do Código Civil, 10 da LGPD e 2 de NDA), com nome, data e observação em `revisao`; as observações registram as ressalvas de uso, como a da `civ-598` sobre o enquadramento de SaaS. A designação em si não ativa nada: skills continuam "escritas e testadas mecanicamente".
 
 ## O que cabe ao revisor
 

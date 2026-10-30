@@ -62,6 +62,14 @@ Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia
 - Pendência de escopo mantida: aplicação do pacote a relações civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo. Pendentes de fonte: Res. CD/ANPD 2/2022 e 32/2026; arts. 207 e 209 da Lei 9.279/1996 (via civil).
 - Testes: `test_contrato` e `test_reconciliacao_org` passam a esperar 20 ativas e `civ-598` inativa; os cenários de rascunho usam `civ-598`.
 
+## CL-CIV-598 — ativação da `civ-598` e orientações gerais de `servicos_saas`, 30/10/2026
+
+- Decisão do titular, em chat: atualizou `servicos_saas.json` no checkout local (as 8 regras ativas ganharam "Orientação geral" em `revisao.observacao`; a `civ-598` foi marcada `ativa` com ressalva de enquadramento) e pediu "corrija" quando o Claude apontou os problemas da `civ-598`. Responsável: Claude; só `rules/br/servicos_saas.json`, testes e documentos de estado, e este registro.
+- Correções do Claude na `civ-598`: `revisao.data` estava `null` (erro `ativa_sem_revisor`) e passou a 2026-10-30, a data da edição do titular; o nome do revisor perdeu um ponto final; a `nota` ("rascunho... não revisada") foi trocada pela mesma das demais ativas. A observação da ressalva de SaaS é do titular e não foi alterada.
+- As orientações gerais das 9 regras do pacote dizem que foram elaboradas com assistência de IA, sem análise de contrato específico; foram mantidas como o titular as gravou.
+- Estado: 21 ativas (9 CC, 10 LGPD, 2 NDA), nenhuma inativa. Pendência de escopo mantida: aplicação do pacote a relações civis e empresariais, com alerta de possível incidência do CDC em consumo.
+- Testes: não há mais regra inativa no repositório; os cenários de rascunho usam uma cópia de `rules/br` com a `civ-598` inativa; `test_reconciliacao_org` espera 21 ativas.
+
 ## CL-ANPD-32 — Res. CD/ANPD 32/2026 como fonte complementar de `lgpd-33`, 30/10/2026
 
 - Decisão do titular, em chat: enviou o PDF da página 49 do DOU nº 18 (27/01/2026), que traz a Res. CD/ANPD 32/2026. Responsável: Claude; só `rules/br/fontes/anpd.json`, o recorte e a extração em `tests/casos/regras_fontes/anpd/`, `scripts/regras.py` e `rules/br/lgpd.json` (só o texto da pendência), `tests/test_contrato.py` e este registro.
