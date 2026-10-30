@@ -66,7 +66,7 @@ PENDENCIAS_LGPD = [
     "lgpd-18 remete complementarmente ao art. 19 da LGPD: o prazo de 15 dias refere-se à declaração clara e completa sobre confirmação/acesso, sem generalização para todos os direitos.",
 ]
 PENDENCIAS_SERVICOS_SAAS = [
-    "Escopo proposto em parecer anexado pelo titular: aplicação prioritária a contratos civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo; decisão do revisor jurídico",
+    "Escopo decidido pelo revisor em 30/10/2026, conforme parecer anexado: aplicação prioritária a contratos civis e empresariais, com aviso de que o CDC pode incidir em contrato de consumo (aviso `cdc_pode_incidir`, emitido quando um apontamento cita regra deste pacote). O pacote não tem regras do CDC; a análise de consumo pelo CDC não é coberta por ele",
 ]
 PENDENCIAS = {"lgpd": PENDENCIAS_LGPD, "servicos_saas": PENDENCIAS_SERVICOS_SAAS}
 PENDENCIAS_NDA = [
