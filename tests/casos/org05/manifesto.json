@@ -12,7 +12,7 @@
     "scripts/validate.py": "ab7bee107aaaf81c6aedc78af3c4544ec5729fb176541782e80a7d4c94581d3e",
     "scripts/cronologia.py": "01ee8a934882a8f7906804d7fd067b3f05512d5931089c5012b5450ab3ce66a0",
     "scripts/triagem.py": "44925dbc58ebfbdfa5f39f1177b094cb3f23b8fc999f93a7d1ba68c68cdded78",
-    "scripts/auditar.py": "cfbe5150e3be1fb9e5dc686693b0af038b1629fb37059429b241d302f4de2407",
+    "scripts/auditar.py": "380db6ed7c792788246ab856ebecf1b6f19fb17309bd6a5ff10d9c6cfae59870",
     "scripts/auditoria_documental.py": "bb732111a06703133d7795207e6842d87972d73f84914d521ef637bd10ce862c"
   },
   "limite": "Regressão posterior à avaliação congelada de a3848b1; mesmos processos, não nova coorte independente. Gabaritos P01/P02 conferidos pelo titular em 22/10/2026, conforme registro vinculado; desenvolvimento permanece técnico. Heurística de classificação não ajustada. Aprovação dos gabaritos não confere inventários propostos ou uso material.",
