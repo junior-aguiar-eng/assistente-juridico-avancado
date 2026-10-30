@@ -6,14 +6,14 @@
     {
       "id": "lgpd-7",
       "topico": "base legal do tratamento",
-      "pergunta_de_revisao": "Cada operação de tratamento identificada no contrato tem uma hipótese legal do art. 7 que a sustente?",
-      "status": "inativa",
+      "pergunta_de_revisao": "As operações de tratamento de dados pessoais identificáveis no contrato têm finalidade definida e hipótese legal pertinente do art. 7º, sem pressupor que todo tratamento dependa de consentimento?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Identificação documental de hipóteses legais; não presumir irregularidade pela ausência de enumeração contratual. Dados sensíveis exigem exame específico pelo art. 11. Texto legal e metadados originais preservados. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lgpd",
         "norma": "Lei nº 13.709/2018 (LGPD)",
@@ -36,14 +36,14 @@
     {
       "id": "lgpd-11",
       "topico": "dado sensível",
-      "pergunta_de_revisao": "O contrato prevê tratamento de dado pessoal sensível? Em caso positivo, a hipótese específica do art. 11 está identificada?",
-      "status": "inativa",
+      "pergunta_de_revisao": "O tratamento identificado envolve dados pessoais sensíveis, inclusive dados que possam revelá-los? Em caso positivo, há hipótese específica do art. 11 e finalidade compatível?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Aplicar as bases próprias do art. 11; não equiparar automaticamente bases do art. 7º a dados sensíveis. Ausência de detalhamento contratual demanda verificação, não conclusão automática de infração. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lgpd",
         "norma": "Lei nº 13.709/2018 (LGPD)",
@@ -63,14 +63,14 @@
     {
       "id": "lgpd-18",
       "topico": "direitos do titular",
-      "pergunta_de_revisao": "O contrato prevê mecanismos para o controlador atender os pedidos do titular (acesso, correção, eliminação, portabilidade) e, quanto à confirmação de existência e ao acesso, os prazos do art. 19 (resposta simplificada imediata ou declaração completa em até 15 dias)?",
-      "status": "inativa",
+      "pergunta_de_revisao": "O instrumento prevê cooperação suficiente para o controlador atender os direitos do titular previstos no art. 18? Quanto à confirmação e ao acesso, considera as formas de resposta do art. 19 (simplificada imediata ou declaração completa em até 15 dias, observadas normas aplicáveis)?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "O art. 19 dispõe especificamente sobre confirmação de existência e acesso; o prazo de 15 dias não deve ser estendido indistintamente a todos os direitos do art. 18. Como o art. 19 não é fonte literal individual deste registro, a remissão é complementar e deve ser controlada na origem do gerador. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lgpd",
         "norma": "Lei nº 13.709/2018 (LGPD)",
@@ -89,14 +89,14 @@
     {
       "id": "lgpd-33",
       "topico": "transferência internacional",
-      "pergunta_de_revisao": "Há armazenamento, suporte ou subprocessador fora do Brasil? Em caso positivo, a hipótese do art. 33 está identificada?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Há efetiva transferência internacional de dados pessoais, inclusive mediante acesso remoto do exterior, suporte ou subprocessamento? Qual hipótese do art. 33 e, quando aplicável, qual mecanismo do Regulamento aprovado pela Resolução CD/ANPD nº 19/2024 a ampara?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Localização estrangeira de fornecedor, isoladamente, não prova transferência. Para cláusulas-padrão, observar incorporação integral sem alterações e os requisitos regulamentares. Resolução 19/2024 é referência complementar; seu texto não integra o campo fonte.texto_literal. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lgpd",
         "norma": "Lei nº 13.709/2018 (LGPD)",
@@ -113,14 +113,14 @@
     {
       "id": "lgpd-37",
       "topico": "registro das operações",
-      "pergunta_de_revisao": "O contrato prevê a manutenção do registro das operações de tratamento por controlador e operador? A ausência de cláusula específica não configura, por si só, infração ao art. 37.",
-      "status": "inativa",
+      "pergunta_de_revisao": "Há disposições de cooperação, rastreabilidade ou manutenção de registros de operações de tratamento por controlador e operador, especialmente quando baseadas no legítimo interesse?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "O art. 37 impõe obrigação aos agentes, não necessariamente cláusula expressa em contrato. A falta de previsão contratual é alerta de governança, não infração automática. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lgpd",
         "norma": "Lei nº 13.709/2018 (LGPD)",
@@ -137,14 +137,14 @@
     {
       "id": "lgpd-39",
       "topico": "operador e instruções",
-      "pergunta_de_revisao": "O contrato define os papéis de controlador e operador e as instruções ao operador, ressalvado que a qualificação jurídica depende das atividades efetivamente desempenhadas?",
-      "status": "inativa",
+      "pergunta_de_revisao": "As instruções lícitas do controlador ao operador e a possibilidade de verificar seu cumprimento estão disciplinadas, considerando as funções efetivamente exercidas por cada agente?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "A designação contratual de controlador/operador não substitui análise fática dos papéis; art. 39 exige observância das instruções e verificação pelo controlador. Ausência de cláusula específica não comprova por si só descumprimento. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lgpd",
         "norma": "Lei nº 13.709/2018 (LGPD)",
@@ -161,14 +161,14 @@
     {
       "id": "lgpd-41",
       "topico": "encarregado",
-      "pergunta_de_revisao": "O contrato indica o encarregado (ou o canal) de cada parte, observadas as dispensas regulamentares e a distinção entre controlador e operador?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Quando exigível, há indicação e canal de contato acessível do encarregado do controlador, observadas as dispensas regulamentares e a possibilidade de atendimento por canal alternativo?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Dever do art. 41 dirige-se ao controlador, ressalvadas dispensas normativas, notadamente Resoluções CD/ANPD nº 18/2024 e nº 2/2022. Não exigir encarregado de todo operador nem inferir infração somente pela ausência de indicação no contrato. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lgpd",
         "norma": "Lei nº 13.709/2018 (LGPD)",
@@ -187,14 +187,14 @@
     {
       "id": "lgpd-42",
       "topico": "responsabilidade e ressarcimento",
-      "pergunta_de_revisao": "A cláusula de limitação de responsabilidade distingue a responsabilidade entre as partes da responsabilidade legal perante o titular, ou aparenta restringir a reparação devida a este por dano de tratamento irregular?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Há cláusula que pretenda opor a titulares limitações de responsabilidade por tratamento irregular, em vez de disciplinar apenas a repartição interna de riscos e eventual regresso entre contratantes?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Limites e indenizações entre contratantes não podem, por si, suprimir pretensões legais dos titulares. Responsabilidade e solidariedade requerem os pressupostos dos arts. 42 e 43; não presumir invalidade de toda limitação interna. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lgpd",
         "norma": "Lei nº 13.709/2018 (LGPD)",
@@ -211,14 +211,14 @@
     {
       "id": "lgpd-46",
       "topico": "segurança",
-      "pergunta_de_revisao": "O contrato prevê medidas de segurança técnicas e administrativas? A adequação efetiva ao risco dos dados exige análise material, não apenas textual.",
-      "status": "inativa",
+      "pergunta_de_revisao": "O contrato trata de medidas técnicas e administrativas de segurança, responsabilidades e cooperação? Há elementos concretos que permitam avaliar sua adequação ao tratamento, sem confundir ausência de cláusula com ausência de medidas efetivas?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "O art. 46 impõe proteção desde a concepção até a execução; análise textual apenas indica lacunas contratuais. Efetividade e suficiência dependem de verificação técnica e de risco. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lgpd",
         "norma": "Lei nº 13.709/2018 (LGPD)",
@@ -235,14 +235,14 @@
     {
       "id": "lgpd-48",
       "topico": "incidente de segurança",
-      "pergunta_de_revisao": "O contrato fixa prazo e procedimento para comunicar incidente de segurança à outra parte, de modo compatível com a obrigação do controlador de comunicar a ANPD e o titular?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Há procedimento de detecção, escalonamento e comunicação de incidente entre as partes em prazo que permita ao controlador cumprir, quando incidente possa acarretar risco ou dano relevante, as comunicações à ANPD e aos titulares, conforme Resolução CD/ANPD nº 15/2024?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "A Resolução CD/ANPD nº 15/2024 prevê, em regra, comunicação em três dias úteis pelo controlador, com ressalvas legais/regulatórias; esse não é necessariamente o prazo para notificação contratual do operador. Ajustar SLA contratual a tempo suficiente de resposta e apuração. A obrigação de comunicar exige análise de risco/dano relevante. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lgpd",
         "norma": "Lei nº 13.709/2018 (LGPD)",
@@ -258,7 +258,7 @@
     }
   ],
   "pendencias_de_fonte": [
-    "Regulamentos da ANPD: as Resoluções CD/ANPD nº 15/2024 (comunicação de incidente; lgpd-48) e nº 18/2024 (encarregado; lgpd-41) constam de rules/br/fontes/anpd.json como fonte complementar, lidas em páginas do DOU (Res. 15 completa, com os arts. 4º, 5º, 6º, 9º e 10 registrados; da Res. 18, os arts. 1º a 21, com os arts. 3º, 8º e 9º registrados; a página seguinte do DOU da Res. 18, se houver, não foi lida). A Resolução nº 19/2024 (transferência internacional e cláusulas-padrão; lgpd-33) consta completa em PDF do DOU, com os arts. 2º da resolução e 4º, 5º, 9º, 15, 16 e 17 do Regulamento registrados; o texto das cláusulas-padrão (Anexo II) não foi transcrito. A nº 2/2022 (agentes de pequeno porte) e a Res. CD/ANPD 32/2026 (decisão de adequação da União Europeia, mencionada em fonte secundária) ainda não foram incorporadas: decisão do revisor jurídico sobre quais artigos entram",
-    "lgpd-18: a pergunta remete ao art. 19 da Lei 13.709/2018, que consta do compilado guardado no repositório, mas ainda não é fonte própria da regra: decisão do revisor jurídico"
+    "Referências regulamentares complementares: as Resoluções CD/ANPD nº 15/2024 (lgpd-48), nº 18/2024 (lgpd-41) e nº 19/2024 (lgpd-33) constam de rules/br/fontes/anpd.json, com PDF do DOU, hash e texto literal de artigos selecionados; a nº 2/2022 (agentes de pequeno porte) e a nº 32/2026 (decisão de adequação da União Europeia) não foram incorporadas. Os hashes da LGPD não foram alterados.",
+    "lgpd-18 remete complementarmente ao art. 19 da LGPD: o prazo de 15 dias refere-se à declaração clara e completa sobre confirmação/acesso, sem generalização para todos os direitos."
   ]
 }

@@ -6,14 +6,14 @@
     {
       "id": "pi-195-xi",
       "topico": "sigilo: informação confidencial obtida por relação contratual (art. 195, XI)",
-      "pergunta_de_revisao": "A definição de informação confidencial exclui o que é de conhecimento público ou evidente para um técnico no assunto, e o fim do contrato é tratado de modo compatível com a ressalva 'mesmo após o término do contrato'?",
-      "status": "inativa",
+      "pergunta_de_revisao": "O contrato identifica as informações protegidas e disciplina sua utilização ou divulgação não autorizada, inclusive após o término da relação? As exceções para informações públicas ou evidentes a técnico no assunto são consideradas sem presumir obrigatória sua reprodução literal no NDA.",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "O art. 195, XI, da LPI é tipo penal de concorrência desleal, e não regra que imponha cláusulas obrigatórias ao NDA. A proteção legal pode subsistir após o contrato; a duração da obrigação contratual depende de seu conteúdo, da natureza das informações e do direito aplicável. Ausência de reprodução literal das ressalvas não configura irregularidade por si só. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lpi",
         "norma": "Lei nº 9.279/1996 (Lei da Propriedade Industrial)",
@@ -30,14 +30,14 @@
     {
       "id": "pi-195-xii",
       "topico": "sigilo: informação obtida por meio ilícito ou fraude (art. 195, XII)",
-      "pergunta_de_revisao": "O contrato trata expressamente do uso de informação confidencial obtida por meio ilícito ou mediante fraude, ou deixa essa hipótese apenas à lei?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Há cláusula que aparente autorizar divulgação, exploração ou uso não autorizado de informações confidenciais obtidas por meios ilícitos ou mediante fraude? Se a hipótese não estiver expressamente prevista, registrar que a proibição legal independe de cláusula contratual.",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Art. 195, XII, da LPI tipifica a conduta independentemente de cláusula. Não apontar como falha a mera ausência de disposição sobre obtenção fraudulenta ou ilícita. Ativada exclusivamente como alerta de eventual autorização contratual incompatível com a lei, sem inferência automática de crime. Ativação solicitada pelo titular em 30/10/2026; não constitui certificação de revisão por profissional do Direito."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Revisão feita por José Bonifácio de Aguiar Santos Júnior em 30/10/2026.",
       "fonte": {
         "norma_id": "lpi",
         "norma": "Lei nº 9.279/1996 (Lei da Propriedade Industrial)",
@@ -53,7 +53,8 @@
     }
   ],
   "pendencias_de_fonte": [
-    "Lei nº 9.279/1996, art. 195 tipifica crime de concorrência desleal; a via civil está nos arts. 207 e 209 da mesma lei (lidos na versão compilada, sem virar regra): decisão do revisor jurídico se entram no pacote",
-    "Prazo de vigência do dever de sigilo e foro: sem regra legal específica; decisão do revisor jurídico"
+    "Arts. 207 e 209 da LPI oferecem vias de tutela civil, sem criar cláusulas obrigatórias de NDA; eventual inclusão de novas regras exige fonte própria e revisão.",
+    "Não há prazo universal de confidencialidade nem foro obrigatório fundados no art. 195, XI e XII; avaliar a estipulação conforme conteúdo contratual e regime aplicável.",
+    "As duas regras estão ativas por ordem do titular, mas seu uso é limitado a alertas jurídicos, sem concluir crime, invalidade ou omissão contratual ilícita automaticamente."
   ]
 }
