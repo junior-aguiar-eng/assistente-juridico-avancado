@@ -62,6 +62,14 @@ Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia
 - Pendência de escopo mantida: aplicação do pacote a relações civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo. Pendentes de fonte: Res. CD/ANPD 2/2022 e 32/2026; arts. 207 e 209 da Lei 9.279/1996 (via civil).
 - Testes: `test_contrato` e `test_reconciliacao_org` passam a esperar 20 ativas e `civ-598` inativa; os cenários de rascunho usam `civ-598`.
 
+## CL-ANPD-2 — Res. CD/ANPD 2/2022 como fonte complementar de `lgpd-41` e `lgpd-48`, 30/10/2026
+
+- Decisão do titular, em chat: pediu que o Claude buscasse as resoluções pendentes em vez de aguardar PDFs. Responsável: Claude; só `rules/br/fontes/anpd.json`, o PDF e a extração em `tests/casos/regras_fontes/anpd/`, `scripts/regras.py` e `rules/br/lgpd.json` (só o texto da pendência), `tests/test_contrato.py` e este registro.
+- Origem: cópia em PDF da página do DOU (impressão de 28/01/2022, Edição 20, p. 6) hospedada no portal gov.br da Fundação Palmares. Não é a versão certificada do DOU; o PDF e a extração ficam guardados e o validador confere o hash. Registrados com texto literal os arts. 3º, 4º e 11 (condições do tratamento diferenciado, alto risco e dispensa de encarregado com canal de comunicação).
+- O art. 14, II, foi alterado pelo art. 2º da Res. CD/ANPD 15/2024 e não foi registrado na redação original de 2022.
+- Res. CD/ANPD 32/2026 (adequação da União Europeia): o texto em português só existe no DOU (`in.gov.br`), cujo acesso é recusado ao Claude; o gov.br/anpd traz apenas versões em inglês e espanhol, que não foram usadas. Não incorporada; depende de o titular fornecer o PDF e decidir se entra.
+- Não sustenta apontamento, não ativa nem altera regra.
+
 ## CL-ANPD-19 — Res. CD/ANPD 19/2024 como fonte complementar de `lgpd-33`, 30/10/2026
 
 - Decisão do titular, em chat: enviou o PDF da Res. CD/ANPD 19/2024 (DOU, edição 163, seção 1, página 123, 23/08/2024), na sequência de CL-ANPD. Responsável: Claude; só `rules/br/fontes/anpd.json`, o PDF e a extração em `tests/casos/regras_fontes/anpd/`, `scripts/regras.py` (texto da pendência), `tests/test_contrato.py` e este registro.
