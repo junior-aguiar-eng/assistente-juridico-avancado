@@ -62,7 +62,7 @@ NDA = [
      "Há cláusula que aparente autorizar divulgação, exploração ou uso não autorizado de informações confidenciais obtidas por meios ilícitos ou mediante fraude? Se a hipótese não estiver expressamente prevista, registrar que a proibição legal independe de cláusula contratual.", "lpi"),
 ]
 PENDENCIAS_LGPD = [
-    "Referências regulamentares complementares: as Resoluções CD/ANPD nº 15/2024 (lgpd-48), nº 18/2024 (lgpd-41) e nº 19/2024 (lgpd-33) constam de rules/br/fontes/anpd.json, com PDF do DOU, hash e texto literal de artigos selecionados; a nº 2/2022 (agentes de pequeno porte) e a nº 32/2026 (decisão de adequação da União Europeia) não foram incorporadas. Os hashes da LGPD não foram alterados.",
+    "Referências regulamentares complementares: as Resoluções CD/ANPD nº 15/2024 (lgpd-48), nº 18/2024 (lgpd-41) e nº 19/2024 (lgpd-33) constam de rules/br/fontes/anpd.json, com PDF do DOU, hash e texto literal de artigos selecionados; a nº 2/2022 (agentes de pequeno porte; lgpd-41 e lgpd-48) consta da mesma forma, em cópia da página do DOU hospedada em gov.br (não é a versão certificada), com os arts. 3º, 4º e 11 registrados; seu art. 14, II, foi alterado pela Res. 15/2024 e não foi registrado. A nº 32/2026 (decisão de adequação da União Europeia) só tem texto em português no DOU, não acessível a este fluxo, e não foi incorporada: depende de o titular fornecer o PDF e decidir se entra. Os hashes da LGPD não foram alterados.",
     "lgpd-18 remete complementarmente ao art. 19 da LGPD: o prazo de 15 dias refere-se à declaração clara e completa sobre confirmação/acesso, sem generalização para todos os direitos.",
 ]
 PENDENCIAS_SERVICOS_SAAS = [
