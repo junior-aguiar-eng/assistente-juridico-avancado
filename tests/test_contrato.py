@@ -15,6 +15,7 @@ import regras  # noqa: E402
 
 CC = RAIZ / "tests" / "casos" / "verificacao_stj" / "fontes" / "cc_compilado.md"
 LGPD = RAIZ / "tests" / "casos" / "regras_fontes" / "lgpd_compilado.md"
+LPI = RAIZ / "tests" / "casos" / "regras_fontes" / "l9279_compilado.md"
 REGRAS = RAIZ / "rules" / "br"
 
 
@@ -185,8 +186,8 @@ def test_sem_extracao_avisa_que_nao_conferiu_o_texto(ext_e_issue):
 
 # ------------------------------------------------------------------ pacotes de regras
 def test_pacotes_gerados_estao_inativos_sem_revisor_e_batem_com_a_fonte():
-    r = regras.validar(REGRAS, fontes={"cc": CC, "lgpd": LGPD})
-    assert r["erros"] == [] and r["regras"] == 19
+    r = regras.validar(REGRAS, fontes={"cc": CC, "lgpd": LGPD, "lpi": LPI})
+    assert r["erros"] == [] and r["regras"] == 21
     for arq in REGRAS.glob("*.json"):
         for regra in json.loads(arq.read_text(encoding="utf-8"))["regras"]:
             assert regra["status"] == "inativa" and regra["revisao"]["revisor"] is None
@@ -199,9 +200,29 @@ def test_carregar_nao_entrega_regra_inativa_a_menos_que_peca_e_ela_vem_marcada()
     assert len(com) == 9 and {r["uso"] for r in com} == {"RASCUNHO_NAO_REVISADO"}
 
 
-def test_pacote_nda_nao_tem_regra_inventada_e_lista_o_que_falta():
+def test_pacote_nda_tem_so_o_art_195_literal_inativo_e_lista_o_que_falta():
     nda = regras.carregar(REGRAS, "nda", incluir_inativas=True)
-    assert nda["regras"] == [] and len(nda["pendencias_de_fonte"]) == 2
+    assert regras.carregar(REGRAS, "nda")["regras"] == [] and len(nda["pendencias_de_fonte"]) == 2
+    assert {r["id"] for r in nda["regras"]} == {"pi-195-xi", "pi-195-xii"}
+    for r in nda["regras"]:
+        f = r["fonte"]
+        assert r["status"] == "inativa" and r["revisao"]["revisor"] is None and r["uso"] == "RASCUNHO_NAO_REVISADO"
+        assert f["norma_id"] == "lpi" and "9.279" in f["norma"] and f["url"].endswith("/leis/l9279.htm") and f["artigo"] == "195"
+        assert f["texto_literal"].startswith("Art. 195. Comete crime de concorrência desleal quem:")
+        assert "mesmo após o término do contrato" in f["texto_literal"] and "obtidos por meios ilícitos" in f["texto_literal"]
+        assert f["dispositivos_revogados"] == [] and "~~" not in f["texto_literal"] and "Vigência" not in f["texto_literal"]
+    assert any("arts. 207 e 209" in p for p in nda["pendencias_de_fonte"])  # a via civil ficou como decisão do revisor
+
+
+def test_pacote_nda_diverge_se_o_texto_for_alterado(tmp_path):
+    pasta = tmp_path / "r"
+    pasta.mkdir()
+    obj = json.loads((REGRAS / "nda.json").read_text(encoding="utf-8"))
+    f = obj["regras"][0]["fonte"]
+    f["texto_literal"] = f["texto_literal"].replace("sem autorização", "com autorização")
+    (pasta / "nda.json").write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    assert "texto_diverge_da_fonte" in [e["codigo"] for e in regras.validar(pasta, fontes={"lpi": LPI})["erros"]]
+    assert regras.validar(pasta)["erros"] == []  # sem a fonte, só a estrutura é conferida
 
 
 def test_ativar_sem_revisor_e_erro(tmp_path):
