@@ -2,6 +2,14 @@
 
 Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia as correções ou expansões listadas abaixo.
 
+## CL-PERGUNTAS — perguntas de revisão reescritas como rascunho, 30/10/2026
+
+- Pedido autorizado pelo titular, opção "reescrever perguntas, inativas", sobre o parecer registrado em CL-PARECER. Responsável: Claude; branch `claude/perguntas-regras-rascunho`.
+- Alterado: `pergunta_de_revisao` de 17 regras (7 do Código Civil e as 10 da LGPD); `civ-473`, `civ-598` e as 2 de NDA não foram alteradas, em `scripts/regras.py` e nos JSON de `rules/br/`; `pendencias_de_fonte` dos pacotes `lgpd` e `servicos_saas`, antes vazias, passam a registrar o que ficou de fora (resoluções da ANPD não lidas na fonte oficial, art. 19 como fonte de `lgpd-18`, escopo B2B/CDC, texto do Código Civil ausente do repositório, marcação de link no texto literal de `lgpd-7` e `lgpd-11`).
+- Não alterado: `status` (todas as 21 **inativas**), `revisao` (vazia), `nota` ("rascunho do mantenedor técnico") e texto literal das fontes. Nenhuma regra foi ativada. As perguntas seguem o parecer, que não tem autor identificado, e continuam sujeitas à revisão do titular; o Claude não as validou juridicamente.
+- Limite: a limpeza do texto literal de `lgpd-7` e `lgpd-11` (marcação de link) exige alterar a extração em `regras.py` e regerar o pacote; ficou como pendência, não feita aqui.
+- Verificação: `gerar` reproduz byte a byte `lgpd.json` e `nda.json` a partir das fontes do repositório; `validar` sem erros (21 regras); 82 testes aprovados nos módulos que tocam regras. O pacote do Código Civil não pôde ser regerado (compilado ausente): as perguntas dele foram editadas no JSON e em `regras.py` em paralelo. Suíte integral não executada localmente.
+
 ## CL-PARECER — decisões propostas para as 21 regras, 30/10/2026
 
 - Entrada: o titular anexou um "parecer jurídico objetivo" sobre as 21 regras. O arquivo **não identifica o autor** e traz resíduos de rascunho; é registrado como **insumo externo**, não como revisão: nenhuma regra recebeu `revisor`, `data` ou `observacao`, e **nenhuma foi ativada ou alterada**. A ativação continua exigindo o revisor identificado pelo titular (nome completo, data, observação), por PR. Responsável por este registro: Claude, só documentação.
