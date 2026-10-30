@@ -252,6 +252,18 @@ def test_extrair_artigo_recusa_artigo_inexistente_e_nao_confunde_421_com_421a():
     assert a421.startswith("Art. 421.") and "421-A" not in a421.split("\n")[0]
 
 
+def test_texto_literal_nao_guarda_marcacao_de_link_da_conversao_da_pagina(tmp_path):
+    fonte = tmp_path / "lei.md"
+    fonte.write_text(
+        "Art. 1º Aplica-se o disposto na [Lei nº 9.307, de 1996 (Lei de Arbitragem)](../../../LEIS/L9307.htm) e no "
+        "[art. 1º da Lei nº 12.527](../../_Ato/L12527.htm#art1).\n\nArt. 2º Outro.\n", encoding="utf-8")
+    texto = regras.extrair_artigo(fonte.read_text(encoding="utf-8"), "1")["texto_literal"]
+    assert "](" not in texto and "[" not in texto
+    assert "Lei nº 9.307, de 1996 (Lei de Arbitragem)" in texto and "art. 1º da Lei nº 12.527" in texto
+    for r in regras.carregar(REGRAS, "lgpd", incluir_inativas=True)["regras"]:
+        assert "](" not in r["fonte"]["texto_literal"], r["id"]
+
+
 def test_pacote_lgpd_tem_texto_literal_sem_dispositivo_revogado_ou_vetado():
     pacote = {r["id"]: r for r in regras.carregar(REGRAS, "lgpd", incluir_inativas=True)["regras"]}
     assert set(pacote) == {f"lgpd-{n}" for n in (7, 11, 18, 33, 37, 39, 41, 42, 46, 48)}
