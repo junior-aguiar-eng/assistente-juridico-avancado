@@ -53,6 +53,13 @@ Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia
 - Correções de documentação desta entrada: `docs/plano-principal.md` (revisão 15), `docs/uso-assistido.md`, `shared/dados.md` e `skills/br-revisar-contrato/SKILL.md` passam a dizer 21 regras inativas (19 de Código Civil/LGPD e 2 de NDA) e que o pacote NDA tem 2 regras-rascunho, em vez de "NDA vazio". Registros datados anteriores (por exemplo, `docs/validacao-fase5.md`) preservam a contagem da época e não foram alterados.
 - Verificação: ver o PR; a suíte integral não foi executada localmente.
 
+## CL-PERGUNTAS-SAAS — perguntas do pacote `servicos_saas` reescritas pelo titular, 30/10/2026
+
+- Autor das perguntas: o titular (revisor jurídico designado), que reescreveu no JSON local as 9 perguntas do Código Civil (`civ-412`, `413`, `421a`, `422`, `423`, `424`, `473`, `478`, `598`) e corrigiu a da `civ-473` ("a natureza e o vulto dos investimentos"). Responsável pela sincronização: Claude, só `scripts/regras.py` (fonte das perguntas) e `rules/br/servicos_saas.json`, que passa a ser reproduzido byte a byte pelo `gerar`.
+- Não houve ativação: as 9 regras continuam `inativa`, `revisao.revisor` e `revisao.data` nulos, `observacao` nula e a nota de rascunho do mantenedor mantida. Ativar é ato do revisor, em PR próprio, com nome completo, data e observação.
+- Texto legal, hash da fonte e data de leitura inalterados; `civ-598` mantém o alerta de que o enquadramento de SaaS, licenciamento ou contrato misto no regime de prestação de serviços não deve ser presumido.
+- Verificação: `validar` com as três fontes sem erros; testes dos módulos de regras aprovados (ver o PR).
+
 ## CL-FECH — fechamento da reconciliação do repositório, 30/10/2026
 
 - Pedido autorizado pelo titular, passo a passo. Responsável: Claude; apenas Git/GitHub e este registro, sem alteração de código, de regras ou de skills. O worktree do Codex não foi tocado.
