@@ -50,15 +50,23 @@ def marcadores(modelo: Path) -> list[str]:
     return achados
 
 
-def _bloco(extracoes, document_id, locator):
-    """Bloco do documento; None se o documento não existe, False se o localizador não existe nele."""
+def _bloco(extracoes, document_id, locator, trecho=None):
+    """Bloco do documento; None se o documento não existe, False se o localizador não existe nele.
+
+    Localizador exato tem prioridade. Por sufixo (ex.: 'par.2' para 'docx.par.2'), mais de um bloco pode servir:
+    com o trecho, escolhe o que o contém, em vez de tomar o primeiro que aparece."""
     for d in extracoes.get("documents", [extracoes] if "blocks" in extracoes else []):
         if d.get("document_id") == document_id:
-            for b in d["blocks"]:
-                loc = str(b.get("locator", ""))
-                if loc == locator or loc.endswith("." + str(locator)):
-                    return b
-            return False
+            blocos = d["blocks"]
+            candidatos = [b for b in blocos if str(b.get("locator", "")) == locator] \
+                or [b for b in blocos if str(b.get("locator", "")).endswith("." + str(locator))]
+            if not candidatos:
+                return False
+            if trecho is not None and len(candidatos) > 1:
+                for b in candidatos:
+                    if _ns(trecho) in _ns(b["text"]):
+                        return b
+            return candidatos[0]
     return None
 
 
@@ -123,7 +131,7 @@ def lint(campos: dict, modelo: Path | None = None, extracoes: dict | None = None
             elif isinstance(valor, str) and _ns(valor) not in _ns(f["trecho"]):
                 e("valor_fora_do_trecho", w, "o valor não aparece, literalmente, no trecho citado")
             elif extracoes is not None:
-                b = _bloco(extracoes, f["document_id"], f["locator"])
+                b = _bloco(extracoes, f["document_id"], f["locator"], f["trecho"])
                 if b is None:
                     e("documento_desconhecido", w, f"document_id {f['document_id']} não está na extração")
                 elif b is False:

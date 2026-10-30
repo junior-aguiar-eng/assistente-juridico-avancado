@@ -24,16 +24,27 @@ def _cli(script, *args, cwd):
     return r.returncode, json.loads(r.stdout.decode("utf-8"))
 
 
-@pytest.fixture
-def caso(tmp_path):
-    """Cópia do caso com extração refeita por caminhos relativos, como em um caso de verdade."""
-    pasta = tmp_path / "caso"
+@pytest.fixture(scope="module")
+def _caso_base(tmp_path_factory):
+    """Caso com a extração feita uma única vez por módulo (por caminhos relativos, como em um caso de verdade).
+
+    A extração do PDF é o passo caro (dezenas de segundos); cada teste recebe uma cópia, então
+    o que um teste altera na pasta não vaza para os outros."""
+    pasta = tmp_path_factory.mktemp("caso_base") / "caso"
     shutil.copytree(VERIF / "fontes", pasta / "fontes")
     shutil.copy(VERIF / "claims.json", pasta / "claims.json")
     shutil.copy(MAPA / "facts.json", pasta / "facts.json")
     cod, _ = _cli("extract.py", "fontes/stj_inteiro_teor.pdf", "fontes/cc_compilado.md", "--no-cache",
                   "--saida", "extracao.json", cwd=pasta)
     assert cod == 0
+    return pasta
+
+
+@pytest.fixture
+def caso(tmp_path, _caso_base):
+    """Cópia do caso já extraído; cada teste trabalha na sua."""
+    pasta = tmp_path / "caso"
+    shutil.copytree(_caso_base, pasta)
     return pasta
 
 

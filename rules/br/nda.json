@@ -2,9 +2,58 @@
   "schema_version": "1",
   "pacote": "nda",
   "jurisdicao": "BR",
-  "regras": [],
+  "regras": [
+    {
+      "id": "pi-195-xi",
+      "topico": "sigilo: informação confidencial obtida por relação contratual (art. 195, XI)",
+      "pergunta_de_revisao": "A definição de informação confidencial exclui o que é de conhecimento público ou evidente para um técnico no assunto, e o fim do contrato é tratado de modo compatível com a ressalva 'mesmo após o término do contrato'?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lpi",
+        "norma": "Lei nº 9.279/1996 (Lei da Propriedade Industrial)",
+        "artigo": "195",
+        "url": "https://www.planalto.gov.br/ccivil_03/leis/l9279.htm",
+        "arquivo_sha256": "1b46d18844ce118f93b078ebc4e50f7e0ed94fed74256ab30a71985bc64253d6",
+        "lido_em": "2026-10-29",
+        "versao": "compilada",
+        "texto_literal": "Art. 195. Comete crime de concorrência desleal quem:\nI - publica, por qualquer meio, falsa afirmação, em detrimento de concorrente, com o fim de obter vantagem;\nII - presta ou divulga, acerca de concorrente, falsa informação, com o fim de obter vantagem;\nIII - emprega meio fraudulento, para desviar, em proveito próprio ou alheio, clientela de outrem;\nIV - usa expressão ou sinal de propaganda alheios, ou os imita, de modo a criar confusão entre os produtos ou estabelecimentos;\nV - usa, indevidamente, nome comercial, título de estabelecimento ou insígnia alheios ou vende, expõe ou oferece à venda ou tem em estoque produto com essas referências;\nVI - substitui, pelo seu próprio nome ou razão social, em produto de outrem, o nome ou razão social deste, sem o seu consentimento;\nVII - atribui-se, como meio de propaganda, recompensa ou distinção que não obteve;\nVIII - vende ou expõe ou oferece à venda, em recipiente ou invólucro de outrem, produto adulterado ou falsificado, ou dele se utiliza para negociar com produto da mesma espécie, embora não adulterado ou falsificado, se o fato não constitui crime mais grave;\nIX - dá ou promete dinheiro ou outra utilidade a empregado de concorrente, para que o empregado, faltando ao dever do emprego, lhe proporcione vantagem;\nX - recebe dinheiro ou outra utilidade, ou aceita promessa de paga ou recompensa, para, faltando ao dever de empregado, proporcionar vantagem a concorrente do empregador;\nXI - divulga, explora ou utiliza-se, sem autorização, de conhecimentos, informações ou dados confidenciais, utilizáveis na indústria, comércio ou prestação de serviços, excluídos aqueles que sejam de conhecimento público ou que sejam evidentes para um técnico no assunto, a que teve acesso mediante relação contratual ou empregatícia, mesmo após o término do contrato;\nXII - divulga, explora ou utiliza-se, sem autorização, de conhecimentos ou informações a que se refere o inciso anterior, obtidos por meios ilícitos ou a que teve acesso mediante fraude; ou\nXIII - vende, expõe ou oferece à venda produto, declarando ser objeto de patente depositada, ou concedida, ou de desenho industrial registrado, que não o seja, ou menciona-o, em anúncio ou papel comercial, como depositado ou patenteado, ou registrado, sem o ser;\nXIV - divulga, explora ou utiliza-se, sem autorização, de resultados de testes ou outros dados não divulgados, cuja elaboração envolva esforço considerável e que tenham sido apresentados a entidades governamentais como condição para aprovar a comercialização de produtos.\nPena - detenção, de 3 (três) meses a 1 (um) ano, ou multa.\n§ 1º Inclui-se nas hipóteses a que se referem os incisos XI e XII o empregador, sócio ou administrador da empresa, que incorrer nas tipificações estabelecidas nos mencionados dispositivos.\n§ 2º O disposto no inciso XIV não se aplica quanto à divulgação por órgão governamental competente para autorizar a comercialização de produto, quando necessário para proteger o público.",
+        "redacao": [],
+        "dispositivos_revogados": []
+      }
+    },
+    {
+      "id": "pi-195-xii",
+      "topico": "sigilo: informação obtida por meio ilícito ou fraude (art. 195, XII)",
+      "pergunta_de_revisao": "O contrato trata expressamente do uso de informação confidencial obtida por meio ilícito ou mediante fraude, ou deixa essa hipótese apenas à lei?",
+      "status": "inativa",
+      "revisao": {
+        "revisor": null,
+        "data": null,
+        "observacao": null
+      },
+      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "fonte": {
+        "norma_id": "lpi",
+        "norma": "Lei nº 9.279/1996 (Lei da Propriedade Industrial)",
+        "artigo": "195",
+        "url": "https://www.planalto.gov.br/ccivil_03/leis/l9279.htm",
+        "arquivo_sha256": "1b46d18844ce118f93b078ebc4e50f7e0ed94fed74256ab30a71985bc64253d6",
+        "lido_em": "2026-10-29",
+        "versao": "compilada",
+        "texto_literal": "Art. 195. Comete crime de concorrência desleal quem:\nI - publica, por qualquer meio, falsa afirmação, em detrimento de concorrente, com o fim de obter vantagem;\nII - presta ou divulga, acerca de concorrente, falsa informação, com o fim de obter vantagem;\nIII - emprega meio fraudulento, para desviar, em proveito próprio ou alheio, clientela de outrem;\nIV - usa expressão ou sinal de propaganda alheios, ou os imita, de modo a criar confusão entre os produtos ou estabelecimentos;\nV - usa, indevidamente, nome comercial, título de estabelecimento ou insígnia alheios ou vende, expõe ou oferece à venda ou tem em estoque produto com essas referências;\nVI - substitui, pelo seu próprio nome ou razão social, em produto de outrem, o nome ou razão social deste, sem o seu consentimento;\nVII - atribui-se, como meio de propaganda, recompensa ou distinção que não obteve;\nVIII - vende ou expõe ou oferece à venda, em recipiente ou invólucro de outrem, produto adulterado ou falsificado, ou dele se utiliza para negociar com produto da mesma espécie, embora não adulterado ou falsificado, se o fato não constitui crime mais grave;\nIX - dá ou promete dinheiro ou outra utilidade a empregado de concorrente, para que o empregado, faltando ao dever do emprego, lhe proporcione vantagem;\nX - recebe dinheiro ou outra utilidade, ou aceita promessa de paga ou recompensa, para, faltando ao dever de empregado, proporcionar vantagem a concorrente do empregador;\nXI - divulga, explora ou utiliza-se, sem autorização, de conhecimentos, informações ou dados confidenciais, utilizáveis na indústria, comércio ou prestação de serviços, excluídos aqueles que sejam de conhecimento público ou que sejam evidentes para um técnico no assunto, a que teve acesso mediante relação contratual ou empregatícia, mesmo após o término do contrato;\nXII - divulga, explora ou utiliza-se, sem autorização, de conhecimentos ou informações a que se refere o inciso anterior, obtidos por meios ilícitos ou a que teve acesso mediante fraude; ou\nXIII - vende, expõe ou oferece à venda produto, declarando ser objeto de patente depositada, ou concedida, ou de desenho industrial registrado, que não o seja, ou menciona-o, em anúncio ou papel comercial, como depositado ou patenteado, ou registrado, sem o ser;\nXIV - divulga, explora ou utiliza-se, sem autorização, de resultados de testes ou outros dados não divulgados, cuja elaboração envolva esforço considerável e que tenham sido apresentados a entidades governamentais como condição para aprovar a comercialização de produtos.\nPena - detenção, de 3 (três) meses a 1 (um) ano, ou multa.\n§ 1º Inclui-se nas hipóteses a que se referem os incisos XI e XII o empregador, sócio ou administrador da empresa, que incorrer nas tipificações estabelecidas nos mencionados dispositivos.\n§ 2º O disposto no inciso XIV não se aplica quanto à divulgação por órgão governamental competente para autorizar a comercialização de produto, quando necessário para proteger o público.",
+        "redacao": [],
+        "dispositivos_revogados": []
+      }
+    }
+  ],
   "pendencias_de_fonte": [
-    "Lei nº 9.279/1996, art. 195, XI e XII (concorrência desleal e segredo de empresa): texto compilado ainda não lido",
+    "Lei nº 9.279/1996, art. 195 tipifica crime de concorrência desleal; a via civil está nos arts. 207 e 209 da mesma lei (lidos na versão compilada, sem virar regra): decisão do revisor jurídico se entram no pacote",
     "Prazo de vigência do dever de sigilo e foro: sem regra legal específica; decisão do revisor jurídico"
   ]
 }
