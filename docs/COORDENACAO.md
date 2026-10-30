@@ -2,6 +2,14 @@
 
 Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia as correções ou expansões listadas abaixo.
 
+## CL-NDA / H-07 — porte do trabalho do Claude sobre o `main`, 29/10/2026
+
+- Pedido autorizado pelo titular: “commit e push e pr”. Responsável: Claude, em cópia própria (clone novo de `main`, `3ab28e2`), branch `claude/porte-sobre-main`; o worktree do Codex e o checkout original do Claude não foram tocados. PR para `main`, sem merge.
+- Contexto: o checkout original do Claude estava em `fix/fase2-correcoes`, base `4e9989c`, e divergia do `main` em 16 commits (CX-01 a CX-04, R07/R10, peças, redline por issue). Do trabalho local foram portados somente os itens que o `main` ainda não tem; C-02 (redline por `issue_id`) e C-03 (localizador por sufixo em `preencher.py`) foram **descartados** por já existirem, de forma mais estrita, no `main`.
+- Portado: (1) pacote NDA com o art. 195 da Lei 9.279/1996 (texto literal da versão compilada lida em 2026-10-29, hash em `tests/casos/regras_fontes/registro.json`), duas regras **inativas** e sem revisor, `--fonte-lpi` em `regras.py`, com pendências do revisor mantidas (via civil, arts. 207 e 209; prazo do sigilo e foro); (2) H-07: a fixture `caso` de `tests/test_auditar.py` extrai o PDF uma vez por módulo, com cópia por teste; (3) `br-preencher-minuta`: o estado `informado` exige também `fala`.
+- Verificação: 207 testes aprovados e 2 falhas em `test_contrato_inventario_pecas.py` (`instante_invalido`, `instante_sem_fuso`), **idênticas no `main` limpo** neste ambiente por faltar `rfc3339-validator`; a suíte integral não foi executada. Antes da integração com o `main`, a mudança de H-07 reduziu a suíte de 483,6 s para 353,3 s no Windows do titular (mesmos 465 aprovados e 4 ignorados); o efeito sobre a base atual não foi medido.
+- Limites: as regras contratuais continuam inativas (21 no total, 2 delas novas); nenhuma ativação, revisão jurídica ou liberação. Conflitos antecipados com a branch antiga `fix/fase2-correcoes` (7 arquivos) tornam essa branch obsoleta para integração.
+
 ## F5-I01 — versionamento e integração autorizados, 22/10/2026
 
 - Autorização posterior do titular: “commit, push, pr e merge após”. Abrange os seis documentos da fase 5 e os commits locais anteriores da branch Codex. Executar commit, push e PR para `main`; merge somente depois de conferir revisão, head exato e CI. Não ativa regras, não aprova usos materiais e não autoriza instalação ou edição do checkout Claude.
