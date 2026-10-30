@@ -223,6 +223,6 @@
     }
   ],
   "pendencias_de_fonte": [
-    "Escopo proposto em parecer anexado pelo titular: aplicação prioritária a contratos civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo; decisão do revisor jurídico"
+    "Escopo decidido pelo revisor em 30/10/2026, conforme parecer anexado: aplicação prioritária a contratos civis e empresariais, com aviso de que o CDC pode incidir em contrato de consumo (aviso `cdc_pode_incidir`, emitido quando um apontamento cita regra deste pacote). O pacote não tem regras do CDC; a análise de consumo pelo CDC não é coberta por ele"
   ]
 }

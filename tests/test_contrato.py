@@ -368,6 +368,17 @@ def test_pacote_lgpd_diverge_se_o_texto_for_alterado(tmp_path):
     assert regras.validar(pasta)["erros"] == []  # sem a fonte, só a estrutura é conferida
 
 
+def test_apontamento_com_regra_civil_avisa_uma_vez_que_o_cdc_pode_incidir(ext_e_issue):
+    ext, iss = ext_e_issue  # base: civ-413, do pacote servicos_saas
+    r = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas")
+    assert r["erros"] == [] and [x["codigo"] for x in r["avisos"]].count("cdc_pode_incidir") == 1
+    iss["issues"].append(dict(iss["issues"][0], id="i2", base=[{"tipo": "regra", "rule_id": "civ-422"}]))
+    r2 = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas")
+    assert [x["codigo"] for x in r2["avisos"]].count("cdc_pode_incidir") == 1  # um aviso por validação, não por apontamento
+    iss["issues"] = [dict(iss["issues"][0], base=[{"tipo": "regra", "rule_id": "lgpd-42"}])]
+    assert "cdc_pode_incidir" not in [x["codigo"] for x in contrato.validar_issues(iss, ext, REGRAS, "lgpd")["avisos"]]
+
+
 def test_issue_pode_citar_regra_de_dois_pacotes(ext_e_issue, tmp_path):
     ext, iss = ext_e_issue
     rascunho = regras_com_civ598_inativa(tmp_path)

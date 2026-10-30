@@ -119,10 +119,13 @@ def validar_issues(obj: dict, extracoes: dict | None = None, regras_dir: Path | 
     if not obj.get("posicao_da_parte"):
         e("posicao_ausente", "posicao_da_parte", "diga qual parte o revisor representa: a severidade depende dela")
     regras = {}
+    ids_civis = set()  # regras do pacote servicos_saas (Código Civil: relações civis e empresariais)
     if regras_dir is not None and pacote:
         for nome in [x.strip() for x in str(pacote).split(",") if x.strip()]:  # vários pacotes: "servicos_saas,lgpd"
             carregado = regras_mod.carregar(Path(regras_dir), nome, incluir_inativas=True)
             regras.update({r["id"]: r for r in carregado["regras"]})
+            if nome == "servicos_saas":
+                ids_civis.update(r["id"] for r in carregado["regras"])
     blocos = {}
     if extracoes is not None:
         for d in _docs(extracoes):
@@ -212,6 +215,10 @@ def validar_issues(obj: dict, extracoes: dict | None = None, regras_dir: Path | 
             a("trecho_nao_conferido", w, "sem --extracoes: o texto da cláusula não foi conferido com o documento")
         if it.get("sugestao") and _ns(it["sugestao"]) == _ns(it.get("clause_text", "")):
             e("sugestao_igual_ao_original", w, "a sugestão repete a cláusula")
+    if any(b.get("tipo") == "regra" and b.get("rule_id") in ids_civis for it in lista for b in (it.get("base") or []) if isinstance(b, dict)):
+        a("cdc_pode_incidir", "pacote servicos_saas",
+          "As regras de servicos_saas são do Código Civil (relações civis e empresariais). Se o contrato for de consumo, o CDC pode incidir "
+          "e a análise por essas regras não o esgota: verificar a natureza da relação antes de concluir.")
     return {"erros": erros, "avisos": avisos, "issues": len(lista), "rascunho": rascunho_usado,
             "avaliacao_juridica_pendente": juridica_pendente,
             "base_juridica_nao_conferida": base_nao_conferida,

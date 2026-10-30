@@ -62,6 +62,12 @@ Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia
 - Pendência de escopo mantida: aplicação do pacote a relações civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo. Pendentes de fonte: Res. CD/ANPD 2/2022 e 32/2026; arts. 207 e 209 da Lei 9.279/1996 (via civil).
 - Testes: `test_contrato` e `test_reconciliacao_org` passam a esperar 20 ativas e `civ-598` inativa; os cenários de rascunho usam `civ-598`.
 
+## CL-AVISO-CDC — aviso de que o CDC pode incidir, 30/10/2026
+
+- Decisão do titular, em chat: o escopo de `servicos_saas` fica com o aviso de que o CDC pode incidir ("aviso de que o cdc pode incidir"), sem criar pacote de regras do CDC. Responsável: Claude; `scripts/contrato.py`, `scripts/regras.py` e `rules/br/servicos_saas.json` (só o texto da pendência de escopo), `tests/test_contrato.py`, `skills/br-revisar-contrato/SKILL.md`, `docs/plano-principal.md` e este registro.
+- Comportamento: em `contrato.validar_issues`, se ao menos um apontamento cita regra do pacote `servicos_saas`, a validação emite um único aviso `cdc_pode_incidir` ("as regras são do Código Civil (relações civis e empresariais); se o contrato for de consumo, o CDC pode incidir e a análise por elas não o esgota"). É aviso, não erro: não bloqueia a entrega, mas a auditoria documental marca o gate G14 como `alerta`, para o revisor verificar a natureza da relação.
+- Fora do escopo: regras do próprio CDC (arts. 6º, 47, 51, 52 e 54, entre outros). Se o revisor quiser cobrir o consumo, é um pacote novo, com texto literal, perguntas e ativação pelo revisor.
+
 ## CL-CIV-598 — ativação da `civ-598` e orientações gerais de `servicos_saas`, 30/10/2026
 
 - Decisão do titular, em chat: atualizou `servicos_saas.json` no checkout local (as 8 regras ativas ganharam "Orientação geral" em `revisao.observacao`; a `civ-598` foi marcada `ativa` com ressalva de enquadramento) e pediu "corrija" quando o Claude apontou os problemas da `civ-598`. Responsável: Claude; só `rules/br/servicos_saas.json`, testes e documentos de estado, e este registro.
