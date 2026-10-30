@@ -40,5 +40,8 @@ def test_regras_recuperadas_nao_ativam_pacotes_locais():
     regras = []
     for caminho in (RAIZ / "rules/br").glob("*.json"):
         regras.extend(json.loads(caminho.read_text(encoding="utf-8"))["regras"])
-    assert len(regras) == 21  # 19 anteriores + 2 do pacote NDA (art. 195 da Lei 9.279/1996), todas inativas
-    assert all(r["status"] == "inativa" for r in regras)
+    assert len(regras) == 21  # 19 anteriores + 2 do pacote NDA (art. 195 da Lei 9.279/1996)
+    ativas = {r["id"] for r in regras if r["status"] == "ativa"}
+    # ativação é ato do revisor (30/10/2026): 8 regras do Código Civil; as demais seguem inativas
+    assert ativas == {"civ-412", "civ-413", "civ-421a", "civ-422", "civ-423", "civ-424", "civ-473", "civ-478"}
+    assert all(r["revisao"]["revisor"] and r["revisao"]["data"] for r in regras if r["id"] in ativas)

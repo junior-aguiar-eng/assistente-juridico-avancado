@@ -228,7 +228,7 @@ def test_juntar_extracoes_separadas_preserva_conferencia_dos_campos_e_clausulas(
 
 def test_regra_inativa_nao_e_contornada_por_nao_avaliada(pacote):
     obj = json.loads(pacote["issues"].read_text(encoding="utf-8"))
-    obj["issues"][0]["base"] = [{"tipo": "regra", "rule_id": "civ-422"}]
+    obj["issues"][0]["base"] = [{"tipo": "regra", "rule_id": "civ-598"}]  # inativa: as demais do CC foram ativadas pelo titular
     gravar(pacote["issues"], obj)
     q = executar(pacote)
     assert gates(q)["G14_apontamentos_contratuais"] == "reprovado"
