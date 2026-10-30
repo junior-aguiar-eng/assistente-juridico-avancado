@@ -139,6 +139,42 @@
           "texto_literal": "Art. 17. O controlador deverá disponibilizar ao titular, em caso de solicitação, a íntegra das cláusulas utilizadas para a realização da transferência internacional de dados, observados os segredos comercial e industrial.\n§ 1º O prazo para atendimento da solicitação é de 15 (quinze) dias, ressalvada a hipótese de prazo distinto estabelecido em regulamentação específica da ANPD.\n§ 2º O controlador deverá ainda publicar em sua página na Internet documento contendo informações em língua portuguesa, em linguagem simples, clara, precisa e acessível sobre a realização da transferência internacional de dados, incluindo, pelo menos, informações sobre:\nI - a forma, a duração e a finalidade específica da transferência internacional;\nII - o país de destino dos dados transferidos;\nIII - a identificação e os contatos do controlador;\nIV - o uso compartilhado de dados pelo controlador e a finalidade;\nV - as responsabilidades dos agentes que realizarão o tratamento e as medidas de segurança adotadas; e\nVI - os direitos do titular e os meios para o seu exercício, incluindo canal de fácil acesso e o direito de peticionar contra o controlador perante a ANPD.\n§ 3º O documento referido no § 2º poderá ser disponibilizado em página específica ou integrado, de forma destacada e de fácil acesso, à Política de Privacidade ou a instrumento equivalente."
         }
       ]
+    },
+    {
+      "id": "anpd-2-2022",
+      "norma": "Resolução CD/ANPD nº 2, de 27 de janeiro de 2022 (Regulamento de aplicação da LGPD para agentes de tratamento de pequeno porte)",
+      "orgao": "Autoridade Nacional de Proteção de Dados (ANPD), Conselho Diretor",
+      "publicacao": "Diário Oficial da União, Seção 1, Edição 20, p. 6, 28/01/2022",
+      "url": "https://www.in.gov.br/en/web/dou/-/resolucao-cd/anpd-n-2-de-27-de-janeiro-de-2022-376562019",
+      "origem": "Cópia em PDF da página do DOU (impressão de 28/01/2022 do endereço acima), hospedada no portal gov.br da Fundação Palmares; baixada em 30/10/2026. Não é a versão certificada do DOU.",
+      "lido_em": "2026-10-30",
+      "cobertura": "Texto da resolução e do Regulamento (4 páginas), na redação publicada em 28/01/2022. O art. 14, II, foi alterado pelo art. 2º da Res. CD/ANPD 15/2024 e por isso não é registrado aqui. Registrados com texto literal apenas os arts. 3º, 4º e 11.",
+      "aplica_a": [
+        "lgpd-41",
+        "lgpd-48"
+      ],
+      "arquivos": [
+        {
+          "descricao": "DOU Edição 20, 28/01/2022, p. 6 (cópia hospedada em gov.br/palmares)",
+          "arquivo": "tests/casos/regras_fontes/anpd/res_cd_anpd_2_2022_dou_2022-01-28.pdf",
+          "arquivo_sha256": "3b0695cf24a05ec292eb12d29f426cc4abf084248d84e7814f57ef43327c83c7",
+          "texto_extraido": "tests/casos/regras_fontes/anpd/res_cd_anpd_2_2022_dou_2022-01-28.txt"
+        }
+      ],
+      "artigos": [
+        {
+          "artigo": "3",
+          "texto_literal": "Art. 3º Não poderão se beneficiar do tratamento jurídico diferenciado previsto neste Regulamento os agentes de tratamento de pequeno porte que:\nI - realizem tratamento de alto risco para os titulares, ressalvada a hipótese prevista no art. 8º;\nII - aufiram receita bruta superior ao limite estabelecido no art. 3º, II, da Lei Complementar nº 123, de 2006 ou, no caso de startups, no art. 4º, § 1º, I, da Lei Complementar nº 182, de 2021; ou\nIII - pertençam a grupo econômico de fato ou de direito, cuja receita global ultrapasse os limites referidos no inciso II, conforme o caso."
+        },
+        {
+          "artigo": "4",
+          "texto_literal": "Art. 4º Para fins deste regulamento, e sem prejuízo do disposto no art. 16, será considerado de alto risco o tratamento de dados pessoais que atender cumulativamente a pelo menos um critério geral e um critério específico, dentre os a seguir indicados:\nI - critérios gerais:\na) tratamento de dados pessoais em larga escala; ou\nb) tratamento de dados pessoais que possa afetar significativamente interesses e direitos fundamentais dos titulares;\nII - critérios específicos:\na) uso de tecnologias emergentes ou inovadoras;\nb) vigilância ou controle de zonas acessíveis ao público;\nc) decisões tomadas unicamente com base em tratamento automatizado de dados pessoais, inclusive aquelas destinadas a definir o perfil pessoal, profissional, de saúde, de consumo e de crédito ou os aspectos da personalidade do titular; ou\nd) utilização de dados pessoais sensíveis ou de dados pessoais de crianças, de adolescentes e de idosos.\n§ 1º O tratamento de dados pessoais em larga escala será caracterizado quando abranger número significativo de titulares, considerando-se, ainda, o volume de dados envolvidos, bem como a duração, a frequência e a extensão geográfica do tratamento realizado.\n§ 2º O tratamento de dados pessoais que possa afetar significativamente interesses e direitos fundamentais será caracterizado, dentre outras situações, naquelas em que a atividade de tratamento puder impedir o exercício de direitos ou a utilização de um serviço, assim como ocasionar danos materiais ou morais aos titulares, tais como discriminação, violação à integridade física, ao direito à imagem e à reputação, fraudes financeiras ou roubo de identidade.\n§ 3º A ANPD poderá disponibilizar guias e orientações com o objetivo de auxiliar os agentes de tratamento de pequeno porte na avaliação do tratamento de alto risco."
+        },
+        {
+          "artigo": "11",
+          "texto_literal": "Art. 11. Os agentes de tratamento de pequeno porte não são obrigados a indicar o encarregado pelo tratamento de dados pessoais exigido no art. 41 da LGPD.\n§ 1º O agente de tratamento de pequeno porte que não indicar um encarregado deve disponibilizar um canal de comunicação com o titular de dados para atender o disposto no art. 41, § 2º, I da LGPD.\n§ 2º A indicação de encarregado por parte dos agentes de tratamento de pequeno porte será considerada política de boas práticas e governança para fins do disposto no art. 52, §1º, IX da LGPD."
+        }
+      ]
     }
   ]
 }
