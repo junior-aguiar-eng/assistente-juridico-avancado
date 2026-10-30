@@ -88,6 +88,57 @@
           "texto_literal": "Art. 9º A identidade e as informações de contato do encarregado deverão ser divulgadas publicamente, de forma clara e objetiva, em local de destaque e de fácil acesso, no sítio eletrônico do agente de tratamento, ressalvada a hipótese do § 3º deste artigo.\n§ 1º A divulgação da identidade do encarregado abrangerá, no mínimo:\nI - o nome completo, se for pessoa natural; ou\nII - o nome empresarial ou o título do estabelecimento, bem como o nome completo da pessoa natural responsável, se pessoa jurídica.\n§ 2º A divulgação das informações de contato do encarregado abrangerá, no mínimo, os dados referentes aos meios de comunicação que viabilizem o exercício dos direitos dos titulares junto ao controlador e possibilitem o recebimento de comunicações da ANPD.\n§ 3º O agente de tratamento que não possuir sítio eletrônico poderá realizar a divulgação da identidade e das informações de contato do encarregado por quaisquer outros meios de comunicação disponíveis, especialmente aqueles usualmente utilizados para contato com os titulares."
         }
       ]
+    },
+    {
+      "id": "anpd-19-2024",
+      "norma": "Resolução CD/ANPD nº 19, de 23 de agosto de 2024 (Regulamento de Transferência Internacional de Dados e conteúdo das cláusulas-padrão contratuais)",
+      "orgao": "Autoridade Nacional de Proteção de Dados (ANPD), Conselho Diretor",
+      "publicacao": "Diário Oficial da União, Seção 1, edição 163, página 123, 23/08/2024",
+      "url": "https://www.in.gov.br/en/web/dou/-/resolucao-cd/anpd-n-19-de-23-de-agosto-de-2024-580095396",
+      "origem": "PDF do DOU (impressão da página da Imprensa Nacional) fornecido pelo titular em 30/10/2026",
+      "lido_em": "2026-10-30",
+      "cobertura": "Ato completo, em 20 páginas: resolução (arts. 1º e 2º), Anexo I (Regulamento, arts. 1º a 34) e Anexo II (cláusulas-padrão contratuais). Registrados com texto literal o art. 2º da resolução (incluído o prazo de 12 meses para incorporar as cláusulas-padrão, contado de 23/08/2024) e os arts. 4º, 5º, 9º, 15, 16 e 17 do Regulamento. O Anexo II (texto das cláusulas-padrão) consta do PDF guardado e não foi transcrito aqui.",
+      "aplica_a": [
+        "lgpd-33"
+      ],
+      "arquivos": [
+        {
+          "descricao": "DOU edição 163, 23/08/2024, ato completo (20 páginas)",
+          "arquivo": "tests/casos/regras_fontes/anpd/res_cd_anpd_19_2024_dou_2024-08-23.pdf",
+          "arquivo_sha256": "8c37bfc3742d61d46957e06d13e4a49c3390a19b5f6ffbb10b5f363d2e2d5cac",
+          "texto_extraido": "tests/casos/regras_fontes/anpd/res_cd_anpd_19_2024_dou_2024-08-23.txt"
+        }
+      ],
+      "artigos": [
+        {
+          "artigo": "2 (Resolução)",
+          "texto_literal": "Art. 2º Esta Resolução entra em vigor na data de sua publicação.\nParágrafo único. Os agentes de tratamento que utilizam cláusulas contratuais para realizar transferências internacionais de dados deverão incorporar as cláusulas-padrão contratuais aprovadas pela ANPD aos seus respectivos instrumentos contratuais, no prazo de até 12 (doze) meses, contados da data de publicação desta Resolução."
+        },
+        {
+          "artigo": "4",
+          "texto_literal": "Art. 4º Cabe ao controlador verificar, nos termos da Lei nº 13.709, de 14 de agosto de 2018, e deste Regulamento, se a operação de tratamento:\nI - caracteriza transferência internacional de dados;\nII - submete-se à legislação nacional de proteção de dados pessoais; e\nIII - está amparada em hipótese legal e em mecanismo de transferência internacional válidos.\n§ 1º O operador prestará auxílio ao controlador mediante o fornecimento das informações de que dispuser e que se demonstrarem necessárias para o atendimento ao disposto no caput deste artigo.\n§ 2º O controlador e o operador deverão adotar medidas eficazes e capazes de comprovar a observância e o cumprimento das normas de proteção de dados pessoais e da eficácia dessas medidas, de forma compatível com o grau de risco do tratamento e com o mecanismo de transferência internacional utilizado."
+        },
+        {
+          "artigo": "5",
+          "texto_literal": "Art. 5º A transferência internacional de dados será caracterizada quando o exportador transferir dados pessoais para o importador."
+        },
+        {
+          "artigo": "9",
+          "texto_literal": "Art. 9º A transferência internacional de dados somente poderá ser realizada para atender a propósitos legítimos, específicos, explícitos e informados ao titular, sem possibilidade de tratamento posterior de forma incompatível com essas finalidades, e desde que amparada em:\nI - uma das hipóteses legais previstas no art. 7º ou no art. 11 da Lei nº 13.709, de 14 de agosto de 2018; e\nII - um dos seguintes mecanismos válidos de realização da transferência internacional:\na) para países ou organismos internacionais que proporcionem grau de proteção de dados pessoais adequado ao previsto na Lei nº 13.709, de 14 de agosto de 2018, e em normas complementares, conforme reconhecido por decisão de adequação emitida pela ANPD;\nb) cláusulas-padrão contratuais, normas corporativas globais ou cláusulas contratuais específicas, na forma deste Regulamento; ou\nc) nas hipóteses previstas nos incisos II, \"d\", e III a IX do art. 33 da Lei nº 13.709, de 14 de agosto de 2018.\nParágrafo único. A transferência internacional de dados deverá se limitar ao mínimo necessário para o alcance de suas finalidades, com abrangência dos dados pertinentes, proporcionais e não excessivos em relação às finalidades do tratamento de dados."
+        },
+        {
+          "artigo": "15",
+          "texto_literal": "Art. 15. As cláusulas-padrão contratuais, elaboradas e aprovadas pela ANPD na forma do Anexo II, estabelecem garantias mínimas e condições válidas para a realização de transferências internacionais de dados baseadas no inciso II, alínea \"b\", do art. 33 da Lei nº 13.709, de 14 de agosto de 2018.\nParágrafo único. As cláusulas-padrão contratuais visam garantir a adoção das salvaguardas adequadas para o cumprimento dos princípios, dos direitos do titular e do regime de proteção de dados previstos na Lei nº 13.709, de 14 de agosto de 2018, incluindo as determinações da ANPD."
+        },
+        {
+          "artigo": "16",
+          "texto_literal": "Art. 16. A validade da transferência internacional de dados, quando amparada na adoção das cláusulas-padrão, pressupõe a adoção integral e sem alteração do texto disponibilizado no Anexo II, mediante instrumento contratual firmado entre o exportador e o importador.\n§ 1º As cláusulas-padrão contratuais poderão integrar:\nI - contrato celebrado para reger especificamente transferências internacionais de dados;\nII - contrato com objeto mais amplo, inclusive mediante a assinatura de termo aditivo pelo exportador e pelo importador envolvidos na operação de transferência internacional de dados.\n§ 2º As demais disposições, previstas no instrumento contratual ou em contratos coligados firmados pelas partes, não poderão excluir, modificar ou contrariar, direta ou indiretamente, o disposto nas cláusulas-padrão contratuais.\n§ 3º Na hipótese do inciso II do § 1º deste artigo, as Seções I, II e III do Anexo II deverão figurar como documento anexo do instrumento contratual assinado entre exportador e importador."
+        },
+        {
+          "artigo": "17",
+          "texto_literal": "Art. 17. O controlador deverá disponibilizar ao titular, em caso de solicitação, a íntegra das cláusulas utilizadas para a realização da transferência internacional de dados, observados os segredos comercial e industrial.\n§ 1º O prazo para atendimento da solicitação é de 15 (quinze) dias, ressalvada a hipótese de prazo distinto estabelecido em regulamentação específica da ANPD.\n§ 2º O controlador deverá ainda publicar em sua página na Internet documento contendo informações em língua portuguesa, em linguagem simples, clara, precisa e acessível sobre a realização da transferência internacional de dados, incluindo, pelo menos, informações sobre:\nI - a forma, a duração e a finalidade específica da transferência internacional;\nII - o país de destino dos dados transferidos;\nIII - a identificação e os contatos do controlador;\nIV - o uso compartilhado de dados pelo controlador e a finalidade;\nV - as responsabilidades dos agentes que realizarão o tratamento e as medidas de segurança adotadas; e\nVI - os direitos do titular e os meios para o seu exercício, incluindo canal de fácil acesso e o direito de peticionar contra o controlador perante a ANPD.\n§ 3º O documento referido no § 2º poderá ser disponibilizado em página específica ou integrado, de forma destacada e de fácil acesso, à Política de Privacidade ou a instrumento equivalente."
+        }
+      ]
     }
   ]
 }

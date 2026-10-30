@@ -53,6 +53,13 @@ Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia
 - Correções de documentação desta entrada: `docs/plano-principal.md` (revisão 15), `docs/uso-assistido.md`, `shared/dados.md` e `skills/br-revisar-contrato/SKILL.md` passam a dizer 21 regras inativas (19 de Código Civil/LGPD e 2 de NDA) e que o pacote NDA tem 2 regras-rascunho, em vez de "NDA vazio". Registros datados anteriores (por exemplo, `docs/validacao-fase5.md`) preservam a contagem da época e não foram alterados.
 - Verificação: ver o PR; a suíte integral não foi executada localmente.
 
+## CL-ANPD-19 — Res. CD/ANPD 19/2024 como fonte complementar de `lgpd-33`, 30/10/2026
+
+- Decisão do titular, em chat: enviou o PDF da Res. CD/ANPD 19/2024 (DOU, edição 163, seção 1, página 123, 23/08/2024), na sequência de CL-ANPD. Responsável: Claude; só `rules/br/fontes/anpd.json`, o PDF e a extração em `tests/casos/regras_fontes/anpd/`, `scripts/regras.py` (texto da pendência), `tests/test_contrato.py` e este registro.
+- Cobertura: ato completo (20 páginas), com a resolução, o Regulamento (arts. 1º a 34) e o Anexo II (cláusulas-padrão). Registrados com texto literal o art. 2º da resolução, com o prazo de 12 meses (contado de 23/08/2024) para incorporar as cláusulas-padrão, e os arts. 4º, 5º, 9º, 15, 16 e 17 do Regulamento (verificação do controlador, caracterização, hipótese legal e mecanismo válidos, adoção integral das cláusulas-padrão e transparência ao titular, com prazo de 15 dias). O texto do Anexo II fica no PDF guardado e não foi transcrito.
+- Ligada a `lgpd-33`; não sustenta apontamento, não ativa nem altera regra. As 10 da LGPD continuam inativas.
+- Ainda não incorporadas: Res. CD/ANPD 2/2022 (agentes de pequeno porte) e a Res. 32/2026 (decisão de adequação da União Europeia, citada em fonte secundária, não lida).
+
 ## CL-ANPD — Res. CD/ANPD 15/2024 e 18/2024 como fontes complementares da LGPD, 30/10/2026
 
 - Decisão do titular, em chat: "sim para ANPD", com os PDFs do DOU anexados por ele (a página `in.gov.br` não pode ser lida pelo Claude; o robots do site recusa). Responsável: Claude; só `rules/br/fontes/anpd.json` (novo), `tests/casos/regras_fontes/anpd/` (os dois PDFs e a extração de texto), `scripts/regras.py`, `rules/br/lgpd.json` (só `pendencias_de_fonte`), `tests/test_contrato.py` e este registro.

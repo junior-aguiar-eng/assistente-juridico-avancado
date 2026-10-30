@@ -220,8 +220,8 @@ def test_fontes_complementares_anpd_conferem_com_o_arquivo_guardado_e_nao_ativam
     r = regras.validar(REGRAS, fontes={"cc": CC, "lgpd": LGPD, "lpi": LPI})
     assert r["erros"] == [] and not [a for a in r["avisos"] if a["codigo"].startswith("fonte_complementar")]
     lgpd = regras.carregar(REGRAS, "lgpd", incluir_inativas=True)
-    assert {f["id"]: f["aplica_a"] for f in lgpd["fontes_complementares"]} == {"anpd-15-2024": ["lgpd-48"], "anpd-18-2024": ["lgpd-41"]}
-    assert [len(f["arquivos"]) for f in lgpd["fontes_complementares"]] == [2, 1]
+    assert {f["id"]: f["aplica_a"] for f in lgpd["fontes_complementares"]} == {"anpd-15-2024": ["lgpd-48"], "anpd-18-2024": ["lgpd-41"], "anpd-19-2024": ["lgpd-33"]}
+    assert [len(f["arquivos"]) for f in lgpd["fontes_complementares"]] == [2, 1, 1]
     assert regras.carregar(REGRAS, "lgpd")["regras"] == []  # fonte complementar não ativa nada
     art6 = next(a for f in lgpd["fontes_complementares"] for a in f["artigos"] if a["artigo"] == "6" and f["id"] == "anpd-15-2024")
     assert "prazo de três dias úteis" in art6["texto_literal"] and "vinte dias úteis" in art6["texto_literal"]
