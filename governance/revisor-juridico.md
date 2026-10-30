@@ -2,7 +2,7 @@
 
 **Designado:** José Bonifácio de Aguiar Santos Júnior, em 2026-10-18 (indicação feita pelo titular do projeto, em conversa).
 
-**Situação da revisão:** nenhuma revisão foi realizada. A designação não ativa nada por si: skills continuam "escritas e testadas mecanicamente", e as regras de `rules/br` continuam `inativa`.
+**Situação da revisão:** em 30/10/2026 o revisor designado ativou 8 regras do Código Civil (`civ-412`, `413`, `421a`, `422`, `423`, `424`, `473` e `478`), com nome, data e observação em `revisao`. `civ-598`, as 10 da LGPD e as 2 de NDA continuam `inativa`. A designação em si não ativa nada: skills continuam "escritas e testadas mecanicamente".
 
 ## O que cabe ao revisor
 

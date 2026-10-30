@@ -53,6 +53,15 @@ Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia
 - Correções de documentação desta entrada: `docs/plano-principal.md` (revisão 15), `docs/uso-assistido.md`, `shared/dados.md` e `skills/br-revisar-contrato/SKILL.md` passam a dizer 21 regras inativas (19 de Código Civil/LGPD e 2 de NDA) e que o pacote NDA tem 2 regras-rascunho, em vez de "NDA vazio". Registros datados anteriores (por exemplo, `docs/validacao-fase5.md`) preservam a contagem da época e não foram alterados.
 - Verificação: ver o PR; a suíte integral não foi executada localmente.
 
+## CL-ATIVA-CC — ativação de 8 regras do Código Civil pelo revisor, 30/10/2026
+
+- Decisão do titular, em chat: "eu já aprovei e quero ativar tudo. pode ativar"; ao escolher o alcance, optou por "8 do CC, sem civ-598" e pelo registro sugerido. Responsável pela edição: Claude, a pedido e sob a decisão do revisor; o ato de ativação é o merge do titular.
+- Ativadas: `civ-412`, `civ-413`, `civ-421a`, `civ-422`, `civ-423`, `civ-424`, `civ-473` e `civ-478`, com `revisao.revisor` = José Bonifácio de Aguiar Santos Júnior, `revisao.data` = 2026-10-30 e observação: "Pergunta conferida com o texto do dispositivo (Código Civil compilado do Planalto, lido em 18/10/2026); revisão do titular." A `nota` de rascunho dessas regras foi substituída por referência à revisão.
+- Continuam inativas, sem revisor: `civ-598` (o enquadramento de SaaS, licenciamento ou contrato misto no regime de prestação de serviços segue em aberto), as 10 da LGPD (pendências: art. 19 em `lgpd-18`, resoluções da ANPD) e as 2 de NDA (art. 195 é tipo penal; via civil e prazo do sigilo em aberto).
+- Pendência de escopo mantida: o pacote cobre relações civis e empresariais; em contrato de consumo, o CDC pode prevalecer sobre os arts. 412, 413, 423 e 424. Decisão do revisor.
+- Testes: `test_contrato`, `test_auditoria_documental` e `test_reconciliacao_org` passam a esperar 8 ativas e 13 inativas; os cenários de "regra de rascunho" usam `civ-598`. Documentos de estado atualizados (README, plano principal, uso assistido, governança, skill `br-revisar-contrato`); relatórios históricos de 19 regras inativas não foram alterados.
+- Esta ativação não torna entregável nenhum apontamento por si: a skill continua sujeita à auditoria e à conferência do contrato real.
+
 ## CL-PERGUNTAS-SAAS — perguntas do pacote `servicos_saas` reescritas pelo titular, 30/10/2026
 
 - Autor das perguntas: o titular (revisor jurídico designado), que reescreveu no JSON local as 9 perguntas do Código Civil (`civ-412`, `413`, `421a`, `422`, `423`, `424`, `473`, `478`, `598`) e corrigiu a da `civ-473` ("a natureza e o vulto dos investimentos"). Responsável pela sincronização: Claude, só `scripts/regras.py` (fonte das perguntas) e `rules/br/servicos_saas.json`, que passa a ser reproduzido byte a byte pelo `gerar`.
