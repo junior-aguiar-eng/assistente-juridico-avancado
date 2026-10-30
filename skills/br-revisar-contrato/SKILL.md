@@ -10,7 +10,11 @@ owner: "José Bonifácio de Aguiar Santos Júnior (revisor jurídico designado e
 
 Regras comuns: [garantias](../../shared/garantias.md), [estados](../../shared/estados.md), [formatos](../../shared/dados.md), [falhas jurídicas](../../shared/falhas-juridicas.md), [escalação](../../shared/escalacao.md).
 
-**Estado desta skill: rascunho.** Das regras de revisão (`rules/br`), **as 21 foram ativadas pelo revisor jurídico em 30/10/2026** (9 do Código Civil, as 10 da LGPD e as 2 de NDA) e sustentam apontamento, como alerta a verificar, nunca como conclusão automática de infração ou crime. A `civ-598` (prazo máximo de quatro anos) está ativa com ressalva do revisor: o enquadramento no regime típico de prestação de serviços não se presume para SaaS, licenciamento ou contrato misto (ver `revisao.observacao`). As regras de `servicos_saas` são do Código Civil (relações civis e empresariais): ao citá-las, a validação emite o aviso `cdc_pode_incidir`, e o revisor verifica se o contrato é de consumo, caso em que o CDC pode incidir e essas regras não esgotam a análise. Qualquer apontamento sustentado só por regra inativa (de rascunho) sai marcado `RASCUNHO_NAO_REVISADO` e **não pode ser entregue como conclusão**.
+**Estado desta skill: rascunho.** Das regras de revisão (`rules/br`), **as 21 foram ativadas pelo revisor jurídico em 30/10/2026** (9 do Código Civil, as 10 da LGPD e as 2 de NDA) e sustentam apontamento, como alerta a verificar, nunca como conclusão automática de infração ou crime. A `civ-598` (prazo máximo de quatro anos) está ativa com ressalva do revisor: o enquadramento no regime típico de prestação de serviços não se presume para SaaS, licenciamento ou contrato misto (ver `revisao.observacao`).
+
+As regras de `servicos_saas` são do Código Civil (relações civis e empresariais): ao citá-las, a validação emite o aviso `cdc_pode_incidir`, e o revisor verifica se o contrato é de consumo, caso em que o CDC pode incidir e essas regras não esgotam a análise.
+
+Qualquer apontamento sustentado só por regra inativa (de rascunho) sai marcado `RASCUNHO_NAO_REVISADO` e **não pode ser entregue como conclusão**.
 
 ## Público e natureza do trabalho
 
