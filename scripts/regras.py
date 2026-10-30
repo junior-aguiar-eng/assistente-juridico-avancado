@@ -63,11 +63,10 @@ NDA = [
 PENDENCIAS_LGPD = [
     "Regulamentos da ANPD apontados em parecer anexado pelo titular e ainda não incorporados como fonte (texto oficial não lido, data e hash a registrar): Resolução CD/ANPD nº 19/2024 (transferência internacional e cláusulas-padrão), nº 18/2024 (encarregado), nº 15/2024 (comunicação de incidente; prazo de 3 dias úteis informado só por fonte secundária) e nº 2/2022 (agentes de pequeno porte): decisão do revisor jurídico se entram no pacote",
     "lgpd-18: a pergunta remete ao art. 19 da Lei 13.709/2018, que consta do compilado guardado no repositório, mas ainda não é fonte própria da regra: decisão do revisor jurídico",
-    "lgpd-7 e lgpd-11: o texto literal guardado traz marcação de link da conversão da página (por exemplo, no inciso VI do art. 7): forma a limpar na extração, sem alterar o texto legal, antes de qualquer ativação",
+    "lgpd-7, lgpd-11, lgpd-18, lgpd-33, lgpd-42 e lgpd-46: o texto literal pode conter quebras de linha no meio de frases, herdadas da conversão da página (a marcação de link já foi removida na extração): forma a revisar sem alterar o texto legal, antes de qualquer ativação",
 ]
 PENDENCIAS_SERVICOS_SAAS = [
     "Escopo proposto em parecer anexado pelo titular: aplicação prioritária a contratos civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo; decisão do revisor jurídico",
-    "O texto compilado do Código Civil não está no repositório: sem --fonte-cc, a validação não confere o texto literal destas regras",
 ]
 PENDENCIAS = {"lgpd": PENDENCIAS_LGPD, "servicos_saas": PENDENCIAS_SERVICOS_SAAS}
 PENDENCIAS_NDA = [
@@ -78,6 +77,7 @@ PENDENCIAS_NDA = [
 _CABECALHO = re.compile(r"^(Art\.\s*\d|LIVRO|T[ÍI]TULO|CAP[ÍI]TULO|Se[cç][aã]o|Subse[cç][aã]o|\*\*)")
 _DISP_REVOGADO = re.compile(r"^((?:§\s*\d+[º°o]?|[IVXLC]+|[a-z]\)|Parágrafo único)[^()]{0,12})\((?:Revogad[oa]|VETAD[OA])[^)]*\)\.?$", re.I)
 _REDACAO = re.compile(r"\[\((?P<n>[^\]]*?)\)\]\([^)]*\)", re.S)
+_LINK_MD = re.compile(r"\[([^\]\n]+)\]\([^)\s]*\)")  # [texto](url) da conversão da página: fica só o texto
 
 
 def _ns(s: str) -> str:
@@ -121,7 +121,7 @@ def extrair_artigo(texto: str, numero: str) -> dict:
     if "~~" in bruto or re.search(r"\((?:Revogad|VETAD)", bruto, re.I):
         raise ValueError(f"art. {numero} tem trecho tachado ou revogado fora de um dispositivo isolado: não é fonte de regra")
     redacao = list(dict.fromkeys(_ns(m.group("n")) for m in _REDACAO.finditer(bruto)))
-    limpo = _REDACAO.sub("", bruto)
+    limpo = _LINK_MD.sub(r"\1", _REDACAO.sub("", bruto))
     paragrafos = [_ns(p) for p in re.split(r"\n\s*\n", limpo) if _ns(p)]
     return {"texto_literal": "\n".join(paragrafos), "redacao": redacao, "dispositivos_revogados": revogados}
 
