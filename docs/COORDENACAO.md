@@ -2,6 +2,19 @@
 
 Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia as correções ou expansões listadas abaixo.
 
+## CL-FECH — fechamento da reconciliação do repositório, 30/10/2026
+
+- Pedido autorizado pelo titular, passo a passo. Responsável: Claude; apenas Git/GitHub e este registro, sem alteração de código, de regras ou de skills. O worktree do Codex não foi tocado.
+- Integrado no `main`: PR #7 (pacote NDA, H-07 e correção da skill `br-preencher-minuta`; CI verde nos quatro jobs) e PR #9 (`pypdf` 6.19.0 → 6.21.2 em `requirements-dev.txt`, mesmo diff do PR #6 do Dependabot; CI verde). Os merges foram feitos pelo titular.
+- Causa do PR #9: o PR #6 do Dependabot havia entrado em `fix/fase2-correcoes`, que era a branch padrão do GitHub, e não chegou ao `main`.
+- Branch padrão do GitHub trocada para `main` pelo titular (Settings → Default branch). Depois disso o Dependabot passa a abrir PRs contra `main`.
+- `fix/fase2-correcoes`: obsoleta. Os 7 commits que existiam só no checkout local do Claude foram preservados e integrados nela pelo PR #8 (merge do titular, antes da troca da branch padrão); não passam para o `main` e conflitam com ele em 7 arquivos. As branches `arquivo/fase2-local-2026-10-29` e `claude/pypdf-6-21-2` foram apagadas pelo titular. Restam no GitHub, sem uso corrente: `fix/fase2-correcoes` e `claude/porte-sobre-main` (integrada pelo PR #7).
+- Documentos de plano e backlog do Claude de 29/10/2026 (`docs/plano-aprimoramentos-2026-10-29.md`, `docs/estado-backlog-2026-10-29.md`) e `tests/casos/README.md`: escritos sobre base obsoleta, **não** portados ao `main`; só existem em `fix/fase2-correcoes`. Se forem retomados, devem ser reescritos sobre o `main`.
+- Checkout local do titular alinhado ao `origin/main` (`5561813`), com árvore limpa. O checkout de origem foi atualizado por bundle, porque a VM da ponte não tem credenciais do GitHub.
+- Pendente do Codex: no worktree dele, a branch `codex/organizacao-colaboracao` tem o commit `785d4ce` ("feat: validar e renderizar análise estruturada") que não está no GitHub nem no `main`. Não foi verificado nem enviado pelo Claude. Cabe ao Codex abrir o PR ou dizer se ele ainda vale sobre o `main` atual.
+- Pendentes do titular, sem prazo técnico: revisão jurídica das 21 regras contratuais, todas **inativas** (nenhuma ativação ocorreu); decisão sobre o modo padrão de `auditar.py` (`analise` ou `fundamentada`).
+- Verificação: `git status` limpo após o alinhamento; CI dos PRs #7 e #9 verde. Suíte integral não executada no ambiente do Claude.
+
 ## CL-NDA / H-07 — porte do trabalho do Claude sobre o `main`, 29/10/2026
 
 - Pedido autorizado pelo titular: “commit e push e pr”. Responsável: Claude, em cópia própria (clone novo de `main`, `3ab28e2`), branch `claude/porte-sobre-main`; o worktree do Codex e o checkout original do Claude não foram tocados. PR para `main`, sem merge.
