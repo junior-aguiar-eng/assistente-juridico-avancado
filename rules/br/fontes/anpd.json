@@ -1,0 +1,93 @@
+{
+  "schema_version": "1",
+  "tipo": "fontes_complementares",
+  "pacote": "lgpd",
+  "jurisdicao": "BR",
+  "aviso": "Fontes complementares de consulta do revisor jurídico. Não sustentam apontamento por si, não ativam nem alteram regra e não substituem a lei do campo `fonte` de cada regra. O texto literal é conferido contra a extração do PDF guardado.",
+  "fontes": [
+    {
+      "id": "anpd-15-2024",
+      "norma": "Resolução CD/ANPD nº 15, de 24 de abril de 2024 (Regulamento de Comunicação de Incidente de Segurança)",
+      "orgao": "Autoridade Nacional de Proteção de Dados (ANPD), Conselho Diretor",
+      "publicacao": "Diário Oficial da União, Seção 1, nº 81, 26/04/2024",
+      "url": "https://www.in.gov.br/en/web/dou/-/resolucao-cd/anpd-n-15-de-24-de-abril-de-2024-556243024",
+      "origem": "PDFs do DOU fornecidos pelo titular em 30/10/2026",
+      "lido_em": "2026-10-30",
+      "cobertura": "Duas páginas do DOU fornecidas pelo titular, que juntas trazem a resolução (arts. 1º a 3º) e o Regulamento completo (arts. 1º a 24). Registrados abaixo com texto literal os arts. 4º, 5º, 6º, 9º e 10.",
+      "aplica_a": [
+        "lgpd-48"
+      ],
+      "arquivos": [
+        {
+          "descricao": "DOU nº 81, 26/04/2024, página com a resolução e os arts. 1º a 6º do Regulamento",
+          "arquivo": "tests/casos/regras_fontes/anpd/res_cd_anpd_15_2024_dou_2024-04-26.pdf",
+          "arquivo_sha256": "d49a9a51c57daba8b089f30587f33703038e114bfa29fc4c07d3375ab7537911",
+          "texto_extraido": "tests/casos/regras_fontes/anpd/res_cd_anpd_15_2024_dou_2024-04-26.txt"
+        },
+        {
+          "descricao": "DOU nº 81, 26/04/2024, página seguinte, com os arts. 7º a 24 do Regulamento",
+          "arquivo": "tests/casos/regras_fontes/anpd/res_cd_anpd_15_2024_dou_2024-04-26_parte2.pdf",
+          "arquivo_sha256": "756ae24f7658a6cbe34dc20ee43f42c8dd2dd3edfeaace752c840c171b30abf4",
+          "texto_extraido": "tests/casos/regras_fontes/anpd/res_cd_anpd_15_2024_dou_2024-04-26_parte2.txt"
+        }
+      ],
+      "artigos": [
+        {
+          "artigo": "4",
+          "texto_literal": "Art. 4º O controlador deverá comunicar à ANPD e ao titular a ocorrência de incidente de segurança que possa acarretar risco ou dano relevante aos titulares."
+        },
+        {
+          "artigo": "5",
+          "texto_literal": "Art. 5º O incidente de segurança pode acarretar risco ou dano relevante aos titulares quando puder afetar significativamente interesses e direitos fundamentais dos titulares e, cumulativamente, envolver, pelo menos, um dos seguintes critérios:\nI - dados pessoais sensíveis;\nII - dados de crianças, de adolescentes ou de idosos;\nIII - dados financeiros;\nIV - dados de autenticação em sistemas;\nV - dados protegidos por sigilo legal, judicial ou profissional; ou\nVI - dados em larga escala.\n§ 1º O incidente de segurança que possa afetar significativamente interesses e direitos fundamentais será caracterizado, dentre outras situações, naquelas em que a atividade de tratamento puder impedir o exercício de direitos ou a utilização de um serviço, assim como ocasionar danos materiais ou morais aos titulares, tais como discriminação, violação à integridade física, ao direito à imagem e à reputação, fraudes financeiras ou roubo de identidade.\n§ 2º Considera-se incidente com dados em larga escala aquele que abranger número significativo de titulares, considerando, ainda, o volume de dados envolvidos, bem como a duração, a frequência e a extensão geográfica de localização dos titulares.\n§ 3º A ANPD poderá publicar orientações com o objetivo de auxiliar os agentes de tratamento na avaliação do incidente que possa acarretar risco ou dano relevante aos titulares."
+        },
+        {
+          "artigo": "6",
+          "texto_literal": "Art. 6º A comunicação de incidente de segurança à ANPD deverá ser realizada pelo controlador no prazo de três dias úteis, ressalvada a existência de prazo para comunicação previsto em legislação específica.\n§ 1º O prazo a que se refere o caput será contado do conhecimento pelo controlador de que o incidente afetou dados pessoais.\n§ 2º A comunicação de incidente de segurança deverá conter as seguintes informações:\nI - a descrição da natureza e da categoria de dados pessoais afetados;\nII - o número de titulares afetados, discriminando, quando aplicável, o número de crianças, de adolescentes ou de idosos;\nIII - as medidas técnicas e de segurança utilizadas para a proteção dos dados pessoais, adotadas antes e após o incidente, observados os segredos comercial e industrial;\nIV - os riscos relacionados ao incidente com identificação dos possíveis impactos aos titulares;\nV - os motivos da demora, no caso de a comunicação não ter sido realizada no prazo previsto no caput deste artigo;\nVI - as medidas que foram ou que serão adotadas para reverter ou mitigar os efeitos do incidente sobre os titulares;\nVII - a data da ocorrência do incidente, quando possível determiná-la, e a de seu conhecimento pelo controlador;\nVIII - os dados do encarregado ou de quem represente o controlador;\nIX - a identificação do controlador e, se for o caso, declaração de que se trata de agente de tratamento de pequeno porte;\nX - a identificação do operador, quando aplicável;\nXI - a descrição do incidente, incluindo a causa principal, caso seja possível identificá-la; e\nXII - o total de titulares cujos dados são tratados nas atividades de tratamento afetadas pelo incidente.\n§ 3º As informações poderão ser complementadas, de maneira fundamentada, no prazo de vinte dias úteis, a contar da data da comunicação.\n§ 4º A comunicação de incidente de segurança deverá ocorrer por meio de formulário eletrônico disponibilizado pela ANPD.\n§ 5º A comunicação de incidente de segurança deverá ser realizada pelo controlador, por meio do encarregado, acompanhada de documento comprobatório de vínculo contratual, empregatício ou funcional, ou por meio de representante constituído, acompanhada de instrumento com poderes de representação junto à ANPD.\n§ 6º Os documentos de que trata o § 5º deverão ser apresentados juntamente com a comunicação do incidente de segurança, no prazo previsto no caput deste artigo.\n§ 7º No caso de descumprimento do previsto no § 6º, a ANPD poderá apurar a ocorrência do incidente de segurança por meio do procedimento de apuração de incidente de segurança.\n§ 8º Os prazos constantes no caput e no § 3º deste artigo são contados em dobro para os agentes de pequeno porte, nos termos do disposto no Regulamento de aplicação da Lei nº 13.709, de 14 de agosto de 2018, Lei Geral de Proteção de Dados Pessoais (LGPD), aos agentes de tratamento de pequeno porte, aprovado pela Resolução CD/ANPD nº 2, de 27 de janeiro de 2022."
+        },
+        {
+          "artigo": "9",
+          "texto_literal": "Art. 9º A comunicação de incidente de segurança ao titular deverá ser realizada pelo controlador no prazo de três dias úteis contados do conhecimento pelo controlador de que o incidente afetou dados pessoais, e deverá conter as seguintes informações:\nI - a descrição da natureza e da categoria de dados pessoais afetados;\nII - as medidas técnicas e de segurança utilizadas para a proteção dos dados, observados os segredos comercial e industrial;\nIII - os riscos relacionados ao incidente com identificação dos possíveis impactos aos titulares;\nIV - os motivos da demora, no caso de a comunicação não ter sido feita no prazo do caput deste artigo;\nV - as medidas que foram ou que serão adotadas para reverter ou mitigar os efeitos do incidente, quando cabíveis;\nVI - a data do conhecimento do incidente de segurança; e\nVII - o contato para obtenção de informações e, quando aplicável, os dados de contato do encarregado.\n§ 1º A comunicação do incidente aos titulares de dados deverá atender aos seguintes critérios:\nI - fazer uso de linguagem simples e de fácil entendimento; e\nII - ocorrer de forma direta e individualizada, caso seja possível identificá-los.\n§ 2º Considera-se comunicação de forma direta e individualizada aquela realizada pelos meios usualmente utilizados pelo controlador para contatar o titular, tais como telefone, e-mail, mensagem eletrônica ou carta.\n§ 3º Caso a comunicação direta e individualizada mostre-se inviável ou não seja possível identificar, parcial ou integralmente, os titulares afetados, o controlador deverá comunicar a ocorrência do incidente, no prazo e com as informações definidas no caput, pelos meios de divulgação disponíveis, tais como seu sítio eletrônico, aplicativos, suas mídias sociais e canais de atendimento ao titular, de modo que a comunicação permita o conhecimento amplo, com direta e fácil visualização, pelo período de, no mínimo, três meses.\n§ 4º O controlador deverá juntar ao processo de comunicação de incidente uma declaração de que foi realizada a comunicação aos titulares, constando os meios de comunicação ou divulgação utilizados, em até três dias úteis, contados do término do prazo de que trata o caput deste artigo.\n§ 5º Poderá ser considerada boa prática, para fins do disposto no art. 52, § 1º, IX, da LGPD, a inclusão, na comunicação ao titular, de recomendações aptas a reverter ou mitigar os efeitos do incidente.\n§ 6º O prazo constante no caput deste artigo é contado em dobro para os agentes de pequeno porte, nos termos do disposto no Regulamento de aplicação da Lei nº 13.709, de 14 de agosto de 2018, Lei Geral de Proteção de Dados Pessoais (LGPD) aos agentes de tratamento de pequeno porte, aprovado pela Resolução CD/ANPD nº 2, de 27 de janeiro de 2022."
+        },
+        {
+          "artigo": "10",
+          "texto_literal": "Art. 10. O controlador deverá manter o registro do incidente de segurança, inclusive daquele não comunicado à ANPD e aos titulares, pelo prazo mínimo de cinco anos, contado a partir da data do registro, exceto se constatadas obrigações adicionais que demandem maior prazo de manutenção.\n§ 1º O registro do incidente deverá conter, no mínimo:\nI - a data de conhecimento do incidente;\nII - a descrição geral das circunstâncias em que o incidente ocorreu;\nIII - a natureza e a categoria de dados afetados;\nIV - o número de titulares afetados;\nV - a avaliação do risco e os possíveis danos aos titulares;\nVI - as medidas de correção e mitigação dos efeitos do incidente, quando aplicável;\nVII - a forma e o conteúdo da comunicação, se o incidente tiver sido comunicado à ANPD e aos titulares; e\nVIII - os motivos da ausência de comunicação, quando for o caso.\n§ 2º Os prazos de guarda previstos neste artigo não se aplicam às entidades previstas no art. 23 da LGPD, desde que sejam observadas as regras aplicáveis aos documentos de guarda permanente previstas na tabela de temporalidade própria ou definidas pelo Conselho Nacional de Arquivos."
+        }
+      ]
+    },
+    {
+      "id": "anpd-18-2024",
+      "norma": "Resolução CD/ANPD nº 18, de 16 de julho de 2024 (Regulamento sobre a atuação do encarregado pelo tratamento de dados pessoais)",
+      "orgao": "Autoridade Nacional de Proteção de Dados (ANPD), Conselho Diretor",
+      "publicacao": "Diário Oficial da União, Seção 1, nº 136, 17/07/2024",
+      "url": "https://www.in.gov.br/en/web/dou/-/resolucao-cd/anpd-n-18-de-16-de-julho-de-2024-572632074",
+      "origem": "PDFs do DOU fornecidos pelo titular em 30/10/2026",
+      "lido_em": "2026-10-30",
+      "cobertura": "Página avulsa do DOU fornecida pelo titular, assinada digitalmente (ICP-Brasil): resolução (arts. 1º e 2º) e arts. 1º a 21 do Regulamento. Artigos seguintes, se houver, estão na página seguinte do DOU e não foram lidos. Registrados abaixo apenas os arts. 3º, 8º e 9º.",
+      "aplica_a": [
+        "lgpd-41"
+      ],
+      "arquivos": [
+        {
+          "descricao": "DOU nº 136, 17/07/2024, página com a resolução e os arts. 1º a 21 do Regulamento",
+          "arquivo": "tests/casos/regras_fontes/anpd/res_cd_anpd_18_2024_dou_2024-07-17.pdf",
+          "arquivo_sha256": "f54908c8062651832086531046a10055ebe51a17218a4813784204fbb9cbcd49",
+          "texto_extraido": "tests/casos/regras_fontes/anpd/res_cd_anpd_18_2024_dou_2024-07-17.txt"
+        }
+      ],
+      "artigos": [
+        {
+          "artigo": "3",
+          "texto_literal": "Art. 3º A indicação do encarregado deve ser realizada por ato formal do agente de tratamento, do qual constem as formas de atuação e as atividades a serem desempenhadas.\n§ 1º Entende-se por ato formal o documento escrito, datado e assinado, que, de maneira clara e inequívoca, demonstre a intenção do agente de tratamento em designar como encarregado uma pessoa natural ou uma pessoa jurídica.\n§ 2º O documento referido no caput deverá ser apresentado à ANPD, quando solicitado.\n§ 3º Os Agentes de Tratamento de Pequeno Porte dispensados de indicar encarregado devem disponibilizar um canal de comunicação com o titular de dados, nos termos do art. 11 do Regulamento de aplicação da LGPD para Agentes de Tratamento de Pequeno Porte, aprovado pela Resolução CD/ANPD nº 2, de 27 de janeiro de 2022."
+        },
+        {
+          "artigo": "8",
+          "texto_literal": "Art. 8º O agente de tratamento deverá divulgar e manter atualizadas a identidade e as informações de contato do encarregado."
+        },
+        {
+          "artigo": "9",
+          "texto_literal": "Art. 9º A identidade e as informações de contato do encarregado deverão ser divulgadas publicamente, de forma clara e objetiva, em local de destaque e de fácil acesso, no sítio eletrônico do agente de tratamento, ressalvada a hipótese do § 3º deste artigo.\n§ 1º A divulgação da identidade do encarregado abrangerá, no mínimo:\nI - o nome completo, se for pessoa natural; ou\nII - o nome empresarial ou o título do estabelecimento, bem como o nome completo da pessoa natural responsável, se pessoa jurídica.\n§ 2º A divulgação das informações de contato do encarregado abrangerá, no mínimo, os dados referentes aos meios de comunicação que viabilizem o exercício dos direitos dos titulares junto ao controlador e possibilitem o recebimento de comunicações da ANPD.\n§ 3º O agente de tratamento que não possuir sítio eletrônico poderá realizar a divulgação da identidade e das informações de contato do encarregado por quaisquer outros meios de comunicação disponíveis, especialmente aqueles usualmente utilizados para contato com os titulares."
+        }
+      ]
+    }
+  ]
+}

@@ -7,6 +7,9 @@
 Uma regra só é usada se `status` for "ativa" **e** houver `revisao.revisor` e `revisao.data`. Este script nunca ativa
 regra: a ativação é um ato do revisor jurídico, editando o arquivo. O texto literal vem da versão compilada do Planalto;
 parâmetro de mercado ou regra de outra jurisdição não vira regra brasileira.
+
+rules/br/fontes/*.json guarda fontes complementares (regulamentos da ANPD) para consulta do revisor: não ativam nem alteram regra;
+`validar` confere o hash do arquivo guardado e se cada texto literal consta da extração dele.
 """
 from __future__ import annotations
 
@@ -61,7 +64,7 @@ NDA = [
      "ou deixa essa hipótese apenas à lei?", "lpi"),
 ]
 PENDENCIAS_LGPD = [
-    "Regulamentos da ANPD apontados em parecer anexado pelo titular e ainda não incorporados como fonte (texto oficial não lido, data e hash a registrar): Resolução CD/ANPD nº 19/2024 (transferência internacional e cláusulas-padrão), nº 18/2024 (encarregado), nº 15/2024 (comunicação de incidente; prazo de 3 dias úteis informado só por fonte secundária) e nº 2/2022 (agentes de pequeno porte): decisão do revisor jurídico se entram no pacote",
+    "Regulamentos da ANPD: as Resoluções CD/ANPD nº 15/2024 (comunicação de incidente; lgpd-48) e nº 18/2024 (encarregado; lgpd-41) constam de rules/br/fontes/anpd.json como fonte complementar, lidas em páginas do DOU (Res. 15 completa, com os arts. 4º, 5º, 6º, 9º e 10 registrados; da Res. 18, os arts. 1º a 21, com os arts. 3º, 8º e 9º registrados; a página seguinte do DOU da Res. 18, se houver, não foi lida). A Resolução nº 19/2024 (transferência internacional e cláusulas-padrão; lgpd-33) e a nº 2/2022 (agentes de pequeno porte) ainda não foram incorporadas: decisão do revisor jurídico sobre quais artigos entram",
     "lgpd-18: a pergunta remete ao art. 19 da Lei 13.709/2018, que consta do compilado guardado no repositório, mas ainda não é fonte própria da regra: decisão do revisor jurídico",
 ]
 PENDENCIAS_SERVICOS_SAAS = [
@@ -169,6 +172,38 @@ def _ativa(r: dict) -> bool:
     return r.get("status") == "ativa" and bool(rev.get("revisor")) and bool(rev.get("data"))
 
 
+def _validar_fontes_complementares(dir_: Path, ids: set, erros: list, avisos: list) -> None:
+    """Fontes complementares (rules/br/fontes/*.json) são consulta do revisor: não ativam regra. Confere estrutura, `aplica_a`,
+    o hash do arquivo guardado e se cada texto literal consta da extração desse arquivo."""
+    raiz = dir_.resolve().parents[1] if len(dir_.resolve().parents) > 1 else dir_
+    for arq in sorted((dir_ / "fontes").glob("*.json")):
+        obj = json.loads(arq.read_text(encoding="utf-8"))
+        for f in obj.get("fontes", []):
+            w = f"fontes/{arq.name}:{f.get('id')}"
+            if not all(f.get(k) for k in ("id", "norma", "publicacao", "url", "lido_em", "arquivos", "cobertura", "aplica_a", "artigos")):
+                erros.append({"codigo": "fonte_complementar_incompleta", "onde": w})
+                continue
+            for rid in f["aplica_a"]:
+                if rid not in ids:
+                    erros.append({"codigo": "fonte_complementar_regra_inexistente", "onde": w, "mensagem": rid})
+            textos, conferivel = [], True
+            for a in f["arquivos"]:
+                pdf, ext = raiz / a.get("arquivo", ""), raiz / a.get("texto_extraido", "")
+                if not (pdf.is_file() and ext.is_file()):
+                    avisos.append({"codigo": "fonte_complementar_nao_conferida", "onde": w, "mensagem": "arquivo guardado ou extração não encontrados; hash e texto não conferidos"})
+                    conferivel = False
+                    break
+                if _sha(pdf.read_bytes()) != a.get("arquivo_sha256"):
+                    erros.append({"codigo": "fonte_complementar_hash_diverge", "onde": w, "mensagem": a.get("arquivo")})
+                textos.append(ext.read_text(encoding="utf-8"))
+            if not conferivel:
+                continue
+            base = _ns("\n".join(textos))
+            for a in f["artigos"]:
+                if _ns(a.get("texto_literal", "")) not in base:
+                    erros.append({"codigo": "fonte_complementar_texto_diverge", "onde": w, "mensagem": f"art. {a.get('artigo')}"})
+
+
 def validar(dir_: Path, fonte: Path | None = None, fontes: dict[str, Path] | None = None) -> dict:
     """`fonte` (compat.) é o Código Civil; `fontes` mapeia norma_id -> arquivo. Só regras com fonte fornecida têm o texto conferido."""
     erros, avisos = [], []
@@ -201,6 +236,7 @@ def validar(dir_: Path, fonte: Path | None = None, fontes: dict[str, Path] | Non
                     erros.append({"codigo": "artigo_indisponivel", "onde": w, "mensagem": str(e)})
         for p in obj.get("pendencias_de_fonte", []):
             avisos.append({"codigo": "pendencia_de_fonte", "onde": arq.name, "mensagem": p})
+    _validar_fontes_complementares(Path(dir_), ids, erros, avisos)
     return {"erros": erros, "avisos": avisos, "regras": len(ids)}
 
 
@@ -216,7 +252,13 @@ def carregar(dir_: Path, pacote: str, incluir_inativas: bool = False) -> dict:
             usadas.append({**r, "uso": "revisada" if _ativa(r) else "RASCUNHO_NAO_REVISADO"})
         else:
             excluidas.append({"id": r["id"], "motivo": "inativa ou sem revisor jurídico"})
-    return {"pacote": pacote, "regras": usadas, "excluidas": excluidas, "pendencias_de_fonte": obj.get("pendencias_de_fonte", [])}
+    complementares = []
+    for f in sorted((Path(dir_) / "fontes").glob("*.json")):
+        c = json.loads(f.read_text(encoding="utf-8"))
+        if c.get("pacote") == pacote:
+            complementares += c.get("fontes", [])
+    return {"pacote": pacote, "regras": usadas, "excluidas": excluidas, "pendencias_de_fonte": obj.get("pendencias_de_fonte", []),
+            "fontes_complementares": complementares}
 
 
 def main(argv=None) -> int:

@@ -208,6 +208,47 @@ def test_carregar_nao_entrega_regra_inativa_a_menos_que_peca_e_ela_vem_marcada()
     assert regras.carregar(REGRAS, "lgpd")["regras"] == []
 
 
+def _copia_com_fontes(tmp_path):
+    import shutil
+    raiz = tmp_path / "repo"
+    shutil.copytree(REGRAS, raiz / "rules" / "br")
+    shutil.copytree(RAIZ / "tests" / "casos" / "regras_fontes" / "anpd", raiz / "tests" / "casos" / "regras_fontes" / "anpd")
+    return raiz, raiz / "rules" / "br"
+
+
+def test_fontes_complementares_anpd_conferem_com_o_arquivo_guardado_e_nao_ativam_regra():
+    r = regras.validar(REGRAS, fontes={"cc": CC, "lgpd": LGPD, "lpi": LPI})
+    assert r["erros"] == [] and not [a for a in r["avisos"] if a["codigo"].startswith("fonte_complementar")]
+    lgpd = regras.carregar(REGRAS, "lgpd", incluir_inativas=True)
+    assert {f["id"]: f["aplica_a"] for f in lgpd["fontes_complementares"]} == {"anpd-15-2024": ["lgpd-48"], "anpd-18-2024": ["lgpd-41"]}
+    assert [len(f["arquivos"]) for f in lgpd["fontes_complementares"]] == [2, 1]
+    assert regras.carregar(REGRAS, "lgpd")["regras"] == []  # fonte complementar não ativa nada
+    art6 = next(a for f in lgpd["fontes_complementares"] for a in f["artigos"] if a["artigo"] == "6" and f["id"] == "anpd-15-2024")
+    assert "prazo de três dias úteis" in art6["texto_literal"] and "vinte dias úteis" in art6["texto_literal"]
+
+
+def test_fonte_complementar_com_texto_alterado_hash_errado_ou_regra_inexistente_e_erro(tmp_path):
+    raiz, pasta = _copia_com_fontes(tmp_path)
+    arq = pasta / "fontes" / "anpd.json"
+    ok = json.loads(arq.read_text(encoding="utf-8"))
+    assert regras.validar(pasta)["erros"] == []
+
+    obj = json.loads(json.dumps(ok))
+    obj["fontes"][0]["artigos"][2]["texto_literal"] = obj["fontes"][0]["artigos"][2]["texto_literal"].replace("três dias úteis", "cinco dias úteis")
+    arq.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    assert "fonte_complementar_texto_diverge" in [e["codigo"] for e in regras.validar(pasta)["erros"]]
+
+    obj = json.loads(json.dumps(ok))
+    obj["fontes"][0]["arquivos"][1]["arquivo_sha256"] = "0" * 64
+    arq.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    assert "fonte_complementar_hash_diverge" in [e["codigo"] for e in regras.validar(pasta)["erros"]]
+
+    obj = json.loads(json.dumps(ok))
+    obj["fontes"][1]["aplica_a"] = ["lgpd-999"]
+    arq.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    assert "fonte_complementar_regra_inexistente" in [e["codigo"] for e in regras.validar(pasta)["erros"]]
+
+
 def test_pacote_nda_tem_so_o_art_195_literal_inativo_e_lista_o_que_falta():
     nda = regras.carregar(REGRAS, "nda", incluir_inativas=True)
     assert regras.carregar(REGRAS, "nda")["regras"] == [] and len(nda["pendencias_de_fonte"]) == 2
