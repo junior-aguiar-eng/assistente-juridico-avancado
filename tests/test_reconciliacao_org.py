@@ -40,5 +40,5 @@ def test_regras_recuperadas_nao_ativam_pacotes_locais():
     regras = []
     for caminho in (RAIZ / "rules/br").glob("*.json"):
         regras.extend(json.loads(caminho.read_text(encoding="utf-8"))["regras"])
-    assert len(regras) == 19
+    assert len(regras) == 21  # 19 anteriores + 2 do pacote NDA (art. 195 da Lei 9.279/1996), todas inativas
     assert all(r["status"] == "inativa" for r in regras)
