@@ -63,7 +63,6 @@ NDA = [
 PENDENCIAS_LGPD = [
     "Regulamentos da ANPD apontados em parecer anexado pelo titular e ainda não incorporados como fonte (texto oficial não lido, data e hash a registrar): Resolução CD/ANPD nº 19/2024 (transferência internacional e cláusulas-padrão), nº 18/2024 (encarregado), nº 15/2024 (comunicação de incidente; prazo de 3 dias úteis informado só por fonte secundária) e nº 2/2022 (agentes de pequeno porte): decisão do revisor jurídico se entram no pacote",
     "lgpd-18: a pergunta remete ao art. 19 da Lei 13.709/2018, que consta do compilado guardado no repositório, mas ainda não é fonte própria da regra: decisão do revisor jurídico",
-    "lgpd-7, lgpd-11, lgpd-18, lgpd-33, lgpd-42 e lgpd-46: o texto literal pode conter quebras de linha no meio de frases, herdadas da conversão da página (a marcação de link já foi removida na extração): forma a revisar sem alterar o texto legal, antes de qualquer ativação",
 ]
 PENDENCIAS_SERVICOS_SAAS = [
     "Escopo proposto em parecer anexado pelo titular: aplicação prioritária a contratos civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo; decisão do revisor jurídico",
@@ -123,6 +122,18 @@ def extrair_artigo(texto: str, numero: str) -> dict:
     redacao = list(dict.fromkeys(_ns(m.group("n")) for m in _REDACAO.finditer(bruto)))
     limpo = _LINK_MD.sub(r"\1", _REDACAO.sub("", bruto))
     paragrafos = [_ns(p) for p in re.split(r"\n\s*\n", limpo) if _ns(p)]
+    # a fonte grafa "caput" em itálico, sozinho num parágrafo, o que quebra a frase em três: cola ao anterior e ao seguinte
+    colados, colar = [], False
+    for p in paragrafos:
+        if colar:
+            colados[-1] += " " + p
+            colar = False
+        elif p == "caput" and colados:
+            colados[-1] += " " + p
+            colar = True
+        else:
+            colados.append(p)
+    paragrafos = colados
     return {"texto_literal": "\n".join(paragrafos), "redacao": redacao, "dispositivos_revogados": revogados}
 
 
