@@ -14,7 +14,7 @@
 </div>
 
 > [!WARNING]
-> **Este pacote não substitui advogado.** A revisão jurídica das regras e a aprovação das entregas continuam separadas da validação técnica ([governança](governance/revisor-juridico.md)). As oito skills têm [avaliação ORG-05 com casos reais e sintéticos](docs/avaliacao-skills-org05.md); P01/P02 possuem gabaritos estruturais conferidos pelo titular. Isso não confere os inventários propostos nem o mérito jurídico. As 19 regras contratuais permanecem **inativas**. Use como apoio de organização e conferência; a decisão e a responsabilidade são de quem assina.
+> **Este pacote não substitui advogado.** A revisão jurídica das regras e a aprovação das entregas continuam separadas da validação técnica ([governança](governance/revisor-juridico.md)). As oito skills têm [avaliação ORG-05 com casos reais e sintéticos](docs/avaliacao-skills-org05.md); P01/P02 possuem gabaritos estruturais conferidos pelo titular. Isso não confere os inventários propostos nem o mérito jurídico. As 21 regras contratuais permanecem **inativas**. Use como apoio de organização e conferência; a decisão e a responsabilidade são de quem assina.
 
 ---
 
@@ -145,7 +145,7 @@ Apontamento sem avaliação jurídica usa `severidade_juridica: "nao_avaliada"` 
 `motivo_nao_avaliada`, mantendo a severidade negocial separada. Não atribua risco baixo a uma
 preferência comercial. O validador retorna avaliação pendente e `entregavel: false`, mesmo quando
 não há erro mecânico; seu código de saída zero não é liberação jurídica. Registros antigos não são
-migrados automaticamente. As 19 regras permanecem inativas e aprovação humana é etapa distinta.
+migrados automaticamente. As 21 regras permanecem inativas e aprovação humana é etapa distinta.
 
 ### Segurança da leitura
 
@@ -196,6 +196,6 @@ O inventário usa [contrato v1](docs/contratos/pecas-v1.md), validador semântic
 
 No fluxo integrado, `triagem.py pecas`, `validate.py`, `cronologia.py` e `auditar.py` recebem `--extracoes E.json --pecas PECAS.json ORIGINAL.pdf`; revisão posterior exige `--pecas-anterior ANTERIOR.json`. `--exigir-pecas` exige referência nas fontes de documentos paginados. Fontes de facts/claims levam a extensão [`peca`](shared/dados.md#referência-de-peça-por-uso--org-04), preservando documento, bloco e trecho. A análise mostra pendências; uso fundamentado, exposição de fatos e entrega externa recusam pendências materiais do uso. `supported`/`unsupported` também recusam fonte pendente em análise. G16 e os hashes dos insumos acrescentam rastreabilidade ao QC, sem autenticar o revisor ou aprovar mérito. O fluxo legado sem extensão e sem esses parâmetros continua disponível, sem comprovar análise integrada de autos. Implementação, testes e limites: [ORG-04](docs/integracao-org04.md).
 
-As **19 regras permanecem inativas**. R07/TJMG e R10/Picos públicos não foram substituídos pelos privados recuperados: estes agora são `ORG-R07-PRIVADO` e `ORG-R10-PRIVADO`, com gabaritos próprios e arquivos ausentes ([mapa do corpus](docs/corpus-reconciliado.md)).
+As **21 regras permanecem inativas**. R07/TJMG e R10/Picos públicos não foram substituídos pelos privados recuperados: estes agora são `ORG-R07-PRIVADO` e `ORG-R10-PRIVADO`, com gabaritos próprios e arquivos ausentes ([mapa do corpus](docs/corpus-reconciliado.md)).
 
 A [ORG-05](docs/validacao-org05.md) registra dois novos processos públicos, métricas por coorte/modalidade e a [segunda avaliação das oito skills](docs/avaliacao-skills-org05.md). O avaliador offline `scripts/avaliar_pecas.py` recebe manifesto e destino externo novo; [comando, corpus e limites](tests/casos/org05/README.md). São referências técnicas, sem eventos humanos: o detector se absteve do tipo nos dois casos novos e o uso continua assistido. A avaliação inicial congelada é separada das regressões das correções encontradas; nenhum resultado libera autos completos ou regras.
