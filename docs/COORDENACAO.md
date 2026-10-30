@@ -55,8 +55,15 @@ Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia
 - Documentos de plano e backlog do Claude de 29/10/2026 (`docs/plano-aprimoramentos-2026-10-29.md`, `docs/estado-backlog-2026-10-29.md`) e `tests/casos/README.md`: escritos sobre base obsoleta, **não** portados ao `main`; só existem em `fix/fase2-correcoes`. Se forem retomados, devem ser reescritos sobre o `main`.
 - Checkout local do titular alinhado ao `origin/main` (`5561813`), com árvore limpa. O checkout de origem foi atualizado por bundle, porque a VM da ponte não tem credenciais do GitHub.
 - Pendente do Codex: no worktree dele, a branch `codex/organizacao-colaboracao` tem o commit `785d4ce` ("feat: validar e renderizar análise estruturada") que não está no GitHub nem no `main`. Não foi verificado nem enviado pelo Claude. Cabe ao Codex abrir o PR ou dizer se ele ainda vale sobre o `main` atual.
-- Pendentes do titular, sem prazo técnico: revisão jurídica das 21 regras contratuais, todas **inativas** (nenhuma ativação ocorreu); decisão sobre o modo padrão de `auditar.py` (`analise` ou `fundamentada`).
+- Pendentes do titular, sem prazo técnico: revisão jurídica das 21 regras contratuais, todas **inativas** (nenhuma ativação ocorreu); o modo padrão de `auditar.py` foi decidido em 30/10/2026 (ver CL-MODO).
 - Verificação: `git status` limpo após o alinhamento; CI dos PRs #7 e #9 verde. Suíte integral não executada no ambiente do Claude.
+
+## CL-MODO — padrão de `auditar.py` passa a `fundamentada`, 30/10/2026
+
+- Decisão do titular, em chat: "em auditar.py para > fundamentada". Responsável: Claude; só `scripts/auditar.py` (padrão da CLI `--modo` e do parâmetro `modo` de `auditar()`), o hash desse arquivo em `tests/casos/org05/manifesto.json` (`produto_sha256`, normalização LF), a skill `br-auditar-entrega` e este registro.
+- Efeito: sem `--modo`, ausência de extração, de fontes lidas ou de teses centrais passa a reprovar, e não a alertar. A análise interna exploratória continua disponível com `--modo analise`, que os exemplos de `docs/uso-assistido.md` já passam de forma explícita. Entregas externas já reprovavam nos dois modos. `validate.py` e `cronologia.py` mantêm `analise` como padrão: a decisão do titular foi só sobre `auditar.py`.
+- O manifesto da ORG-05 guarda o hash do código avaliado; ele foi atualizado só para o novo `auditar.py`, sem tocar nos demais hashes, nos casos nem nas referências. A avaliação congelada (`docs/resultado-org05-congelado.json`) não foi alterada.
+- Verificação: suíte integral rodou no ambiente do Claude com 3 falhas que já existem em `main` e não vêm desta mudança (`test_contrato_inventario_pecas` ×2, `test_triagem::test_travar_marca_originais_como_somente_leitura`); as demais passaram, incluindo `test_avaliar_pecas`, `test_auditar*`, `test_rigor` e `test_gates_integridade`. O CI do PR é a referência final.
 
 ## CL-NDA / H-07 — porte do trabalho do Claude sobre o `main`, 29/10/2026
 
