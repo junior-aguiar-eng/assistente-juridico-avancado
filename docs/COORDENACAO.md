@@ -62,6 +62,13 @@ Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia
 - Pendência de escopo mantida: aplicação do pacote a relações civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo. Pendentes de fonte: Res. CD/ANPD 2/2022 e 32/2026; arts. 207 e 209 da Lei 9.279/1996 (via civil).
 - Testes: `test_contrato` e `test_reconciliacao_org` passam a esperar 20 ativas e `civ-598` inativa; os cenários de rascunho usam `civ-598`.
 
+## CL-ANPD-32 — Res. CD/ANPD 32/2026 como fonte complementar de `lgpd-33`, 30/10/2026
+
+- Decisão do titular, em chat: enviou o PDF da página 49 do DOU nº 18 (27/01/2026), que traz a Res. CD/ANPD 32/2026. Responsável: Claude; só `rules/br/fontes/anpd.json`, o recorte e a extração em `tests/casos/regras_fontes/anpd/`, `scripts/regras.py` e `rules/br/lgpd.json` (só o texto da pendência), `tests/test_contrato.py` e este registro.
+- A página traz atos de terceiros sem relação com o projeto (decisões sobre pedidos de naturalização, com nomes de particulares). O repositório guarda só um recorte da área da resolução; o PDF original completo não foi guardado e seu SHA-256 consta em `origem`. O recorte perde a assinatura digital da página. O texto extraído do recorte confere palavra por palavra com o da página original.
+- Registrados com texto literal os arts. 1º (com o parágrafo único, que autoriza a transferência com base no art. 33, I, da LGPD), 2º (exclusões: segurança pública, defesa nacional, segurança do Estado e persecução penal), 4º (monitoramento e reavaliação em quatro anos) e 5º (os demais mecanismos do art. 33 continuam disponíveis).
+- Ligada a `lgpd-33`; não sustenta apontamento, não ativa nem altera regra. Com isso, não resta resolução ANPD pendente.
+
 ## CL-ANPD-2 — Res. CD/ANPD 2/2022 como fonte complementar de `lgpd-41` e `lgpd-48`, 30/10/2026
 
 - Decisão do titular, em chat: pediu que o Claude buscasse as resoluções pendentes em vez de aguardar PDFs. Responsável: Claude; só `rules/br/fontes/anpd.json`, o PDF e a extração em `tests/casos/regras_fontes/anpd/`, `scripts/regras.py` e `rules/br/lgpd.json` (só o texto da pendência), `tests/test_contrato.py` e este registro.
