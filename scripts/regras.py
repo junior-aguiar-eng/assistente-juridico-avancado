@@ -29,27 +29,27 @@ RASCUNHO = "Rascunho do mantenedor técnico: pergunta de revisão não revisada 
 
 # (id, pacote, artigo, tópico, pergunta de revisão, norma)
 CODIGO_CIVIL = [
-    ("civ-412", "servicos_saas", "412", "cláusula penal: teto", "A cláusula penal ou multa ultrapassa o valor da obrigação principal?", "cc"),
-    ("civ-413", "servicos_saas", "413", "cláusula penal: redução", "O valor da multa é manifestamente excessivo para a natureza e a finalidade do negócio, ou há cumprimento parcial?", "cc"),
-    ("civ-421a", "servicos_saas", "421-A", "paridade e alocação de riscos", "A alocação de riscos e as regras de revisão foram previstas e respeitadas, ou há elemento concreto que afasta a presunção de paridade?", "cc"),
-    ("civ-422", "servicos_saas", "422", "boa-fé", "Alguma cláusula impede a conduta de boa-fé na conclusão ou na execução do contrato?", "cc"),
-    ("civ-423", "servicos_saas", "423", "adesão: ambiguidade", "O contrato é de adesão e tem cláusula ambígua ou contraditória a interpretar a favor do aderente?", "cc"),
-    ("civ-424", "servicos_saas", "424", "adesão: renúncia antecipada", "O contrato é de adesão e a cláusula renuncia antecipadamente a direito resultante da natureza do negócio?", "cc"),
+    ("civ-412", "servicos_saas", "412", "cláusula penal: teto", "Alguma cláusula penal ou multa (inclusive por inadimplemento ou rescisão antecipada) pode exceder o valor da obrigação principal, identificada concretamente neste contrato, sem presumir que seja a mensalidade ou o valor integral?", "cc"),
+    ("civ-413", "servicos_saas", "413", "cláusula penal: redução", "Há indício de cumprimento parcial ou de penalidade manifestamente excessiva para a natureza e a finalidade do negócio, a sinalizar ao revisor para eventual redução equitativa, sem calcular o valor da redução?", "cc"),
+    ("civ-421a", "servicos_saas", "421-A", "paridade e alocação de riscos", "Em contrato civil ou empresarial, a alocação de riscos e as regras de revisão estão previstas, e há elemento concreto que afaste a presunção de paridade e simetria? Em contrato de consumo, sinalizar a possível incidência do CDC.", "cc"),
+    ("civ-422", "servicos_saas", "422", "boa-fé", "Alguma cláusula é, concretamente, incompatível com os deveres de cooperação, lealdade e boa-fé objetiva na conclusão ou na execução do contrato?", "cc"),
+    ("civ-423", "servicos_saas", "423", "adesão: ambiguidade", "O contrato tem cláusulas predispostas unilateralmente, sem possibilidade substancial de negociação, e alguma delas é ambígua ou contraditória a ponto de dever ser interpretada a favor do aderente?", "cc"),
+    ("civ-424", "servicos_saas", "424", "adesão: renúncia antecipada", "Em contrato de adesão, alguma cláusula renuncia antecipadamente a direito resultante da natureza do negócio, a sinalizar como possível nulidade?", "cc"),
     ("civ-473", "servicos_saas", "473", "resilição unilateral", "A denúncia unilateral respeita o aviso e o investimento considerável feito pela outra parte?", "cc"),
-    ("civ-478", "servicos_saas", "478", "onerosidade excessiva", "Em contrato de execução continuada, há cláusula que afasta a resolução por onerosidade excessiva?", "cc"),
+    ("civ-478", "servicos_saas", "478", "onerosidade excessiva", "Em contrato de execução continuada, há cláusula que exclui a resolução por onerosidade excessiva? Sinalizar para avaliar os requisitos legais, a alocação de riscos e a validade da cláusula, sem tratá-la como inválida automaticamente.", "cc"),
     ("civ-598", "servicos_saas", "598", "prestação de serviço: prazo máximo", "O prazo de prestação de serviço regido pelo Código Civil passa de quatro anos?", "cc"),
 ]
 LGPD = [
-    ("lgpd-7", "lgpd", "7", "base legal do tratamento", "Cada tratamento de dado pessoal previsto no contrato tem uma hipótese do art. 7 que o sustente?", "lgpd"),
-    ("lgpd-11", "lgpd", "11", "dado sensível", "O contrato trata dado pessoal sensível? Em caso positivo, a hipótese do art. 11 está identificada?", "lgpd"),
-    ("lgpd-18", "lgpd", "18", "direitos do titular", "O contrato permite que o controlador atenda os pedidos do titular (acesso, correção, eliminação, portabilidade) dentro do prazo?", "lgpd"),
-    ("lgpd-33", "lgpd", "33", "transferência internacional", "Há armazenamento, suporte ou subprocessador fora do Brasil? A hipótese do art. 33 está identificada?", "lgpd"),
-    ("lgpd-37", "lgpd", "37", "registro das operações", "O contrato prevê o registro das operações de tratamento por controlador e operador?", "lgpd"),
-    ("lgpd-39", "lgpd", "39", "operador e instruções", "O contrato define quem é controlador e quem é operador, e obriga o operador a seguir as instruções do controlador?", "lgpd"),
-    ("lgpd-41", "lgpd", "41", "encarregado", "O contrato identifica o encarregado (ou o canal) de cada parte?", "lgpd"),
-    ("lgpd-42", "lgpd", "42", "responsabilidade e ressarcimento", "A limitação de responsabilidade do contrato afasta ou restringe a reparação por dano de tratamento irregular de dados?", "lgpd"),
-    ("lgpd-46", "lgpd", "46", "segurança", "O contrato fixa medidas de segurança técnicas e administrativas compatíveis com o risco dos dados tratados?", "lgpd"),
-    ("lgpd-48", "lgpd", "48", "incidente de segurança", "O contrato fixa prazo e forma para comunicar incidente de segurança à outra parte, de modo a permitir a comunicação à ANPD e ao titular?", "lgpd"),
+    ("lgpd-7", "lgpd", "7", "base legal do tratamento", "Cada operação de tratamento identificada no contrato tem uma hipótese legal do art. 7 que a sustente?", "lgpd"),
+    ("lgpd-11", "lgpd", "11", "dado sensível", "O contrato prevê tratamento de dado pessoal sensível? Em caso positivo, a hipótese específica do art. 11 está identificada?", "lgpd"),
+    ("lgpd-18", "lgpd", "18", "direitos do titular", "O contrato prevê mecanismos para o controlador atender os pedidos do titular (acesso, correção, eliminação, portabilidade) e, quanto à confirmação de existência e ao acesso, os prazos do art. 19 (resposta simplificada imediata ou declaração completa em até 15 dias)?", "lgpd"),
+    ("lgpd-33", "lgpd", "33", "transferência internacional", "Há armazenamento, suporte ou subprocessador fora do Brasil? Em caso positivo, a hipótese do art. 33 está identificada?", "lgpd"),
+    ("lgpd-37", "lgpd", "37", "registro das operações", "O contrato prevê a manutenção do registro das operações de tratamento por controlador e operador? A ausência de cláusula específica não configura, por si só, infração ao art. 37.", "lgpd"),
+    ("lgpd-39", "lgpd", "39", "operador e instruções", "O contrato define os papéis de controlador e operador e as instruções ao operador, ressalvado que a qualificação jurídica depende das atividades efetivamente desempenhadas?", "lgpd"),
+    ("lgpd-41", "lgpd", "41", "encarregado", "O contrato indica o encarregado (ou o canal) de cada parte, observadas as dispensas regulamentares e a distinção entre controlador e operador?", "lgpd"),
+    ("lgpd-42", "lgpd", "42", "responsabilidade e ressarcimento", "A cláusula de limitação de responsabilidade distingue a responsabilidade entre as partes da responsabilidade legal perante o titular, ou aparenta restringir a reparação devida a este por dano de tratamento irregular?", "lgpd"),
+    ("lgpd-46", "lgpd", "46", "segurança", "O contrato prevê medidas de segurança técnicas e administrativas? A adequação efetiva ao risco dos dados exige análise material, não apenas textual.", "lgpd"),
+    ("lgpd-48", "lgpd", "48", "incidente de segurança", "O contrato fixa prazo e procedimento para comunicar incidente de segurança à outra parte, de modo compatível com a obrigação do controlador de comunicar a ANPD e o titular?", "lgpd"),
 ]
 # O art. 195 da Lei 9.279/1996 é o texto literal inteiro; as duas regras separam as perguntas de revisão (incisos XI e XII).
 NDA = [
@@ -60,6 +60,16 @@ NDA = [
      "O contrato trata expressamente do uso de informação confidencial obtida por meio ilícito ou mediante fraude, "
      "ou deixa essa hipótese apenas à lei?", "lpi"),
 ]
+PENDENCIAS_LGPD = [
+    "Regulamentos da ANPD apontados em parecer anexado pelo titular e ainda não incorporados como fonte (texto oficial não lido, data e hash a registrar): Resolução CD/ANPD nº 19/2024 (transferência internacional e cláusulas-padrão), nº 18/2024 (encarregado), nº 15/2024 (comunicação de incidente; prazo de 3 dias úteis informado só por fonte secundária) e nº 2/2022 (agentes de pequeno porte): decisão do revisor jurídico se entram no pacote",
+    "lgpd-18: a pergunta remete ao art. 19 da Lei 13.709/2018, que consta do compilado guardado no repositório, mas ainda não é fonte própria da regra: decisão do revisor jurídico",
+    "lgpd-7 e lgpd-11: o texto literal guardado traz marcação de link da conversão da página (por exemplo, no inciso VI do art. 7): forma a limpar na extração, sem alterar o texto legal, antes de qualquer ativação",
+]
+PENDENCIAS_SERVICOS_SAAS = [
+    "Escopo proposto em parecer anexado pelo titular: aplicação prioritária a contratos civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo; decisão do revisor jurídico",
+    "O texto compilado do Código Civil não está no repositório: sem --fonte-cc, a validação não confere o texto literal destas regras",
+]
+PENDENCIAS = {"lgpd": PENDENCIAS_LGPD, "servicos_saas": PENDENCIAS_SERVICOS_SAAS}
 PENDENCIAS_NDA = [
     "Lei nº 9.279/1996, art. 195 tipifica crime de concorrência desleal; a via civil está nos arts. 207 e 209 da mesma lei "
     "(lidos na versão compilada, sem virar regra): decisão do revisor jurídico se entram no pacote",
@@ -137,7 +147,7 @@ def gerar(fontes: dict[str, Path], saida_dir: Path, lido_em: str | None = None) 
     escritos = []
     for nome, regras in pacotes.items():
         obj = {"schema_version": "1", "pacote": nome, "jurisdicao": "BR", "regras": regras,
-               "pendencias_de_fonte": PENDENCIAS_NDA if nome == "nda" else []}
+               "pendencias_de_fonte": PENDENCIAS_NDA if nome == "nda" else PENDENCIAS.get(nome, [])}
         (saida_dir / f"{nome}.json").write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
         escritos.append({"pacote": nome, "regras": len(regras)})
     return {"escritos": escritos, "status": "todas inativas e sem revisão", "lido_em": lido_em}

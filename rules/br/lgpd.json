@@ -6,7 +6,7 @@
     {
       "id": "lgpd-7",
       "topico": "base legal do tratamento",
-      "pergunta_de_revisao": "Cada tratamento de dado pessoal previsto no contrato tem uma hipótese do art. 7 que o sustente?",
+      "pergunta_de_revisao": "Cada operação de tratamento identificada no contrato tem uma hipótese legal do art. 7 que a sustente?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -36,7 +36,7 @@
     {
       "id": "lgpd-11",
       "topico": "dado sensível",
-      "pergunta_de_revisao": "O contrato trata dado pessoal sensível? Em caso positivo, a hipótese do art. 11 está identificada?",
+      "pergunta_de_revisao": "O contrato prevê tratamento de dado pessoal sensível? Em caso positivo, a hipótese específica do art. 11 está identificada?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -63,7 +63,7 @@
     {
       "id": "lgpd-18",
       "topico": "direitos do titular",
-      "pergunta_de_revisao": "O contrato permite que o controlador atenda os pedidos do titular (acesso, correção, eliminação, portabilidade) dentro do prazo?",
+      "pergunta_de_revisao": "O contrato prevê mecanismos para o controlador atender os pedidos do titular (acesso, correção, eliminação, portabilidade) e, quanto à confirmação de existência e ao acesso, os prazos do art. 19 (resposta simplificada imediata ou declaração completa em até 15 dias)?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -89,7 +89,7 @@
     {
       "id": "lgpd-33",
       "topico": "transferência internacional",
-      "pergunta_de_revisao": "Há armazenamento, suporte ou subprocessador fora do Brasil? A hipótese do art. 33 está identificada?",
+      "pergunta_de_revisao": "Há armazenamento, suporte ou subprocessador fora do Brasil? Em caso positivo, a hipótese do art. 33 está identificada?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -113,7 +113,7 @@
     {
       "id": "lgpd-37",
       "topico": "registro das operações",
-      "pergunta_de_revisao": "O contrato prevê o registro das operações de tratamento por controlador e operador?",
+      "pergunta_de_revisao": "O contrato prevê a manutenção do registro das operações de tratamento por controlador e operador? A ausência de cláusula específica não configura, por si só, infração ao art. 37.",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -137,7 +137,7 @@
     {
       "id": "lgpd-39",
       "topico": "operador e instruções",
-      "pergunta_de_revisao": "O contrato define quem é controlador e quem é operador, e obriga o operador a seguir as instruções do controlador?",
+      "pergunta_de_revisao": "O contrato define os papéis de controlador e operador e as instruções ao operador, ressalvado que a qualificação jurídica depende das atividades efetivamente desempenhadas?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -161,7 +161,7 @@
     {
       "id": "lgpd-41",
       "topico": "encarregado",
-      "pergunta_de_revisao": "O contrato identifica o encarregado (ou o canal) de cada parte?",
+      "pergunta_de_revisao": "O contrato indica o encarregado (ou o canal) de cada parte, observadas as dispensas regulamentares e a distinção entre controlador e operador?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -187,7 +187,7 @@
     {
       "id": "lgpd-42",
       "topico": "responsabilidade e ressarcimento",
-      "pergunta_de_revisao": "A limitação de responsabilidade do contrato afasta ou restringe a reparação por dano de tratamento irregular de dados?",
+      "pergunta_de_revisao": "A cláusula de limitação de responsabilidade distingue a responsabilidade entre as partes da responsabilidade legal perante o titular, ou aparenta restringir a reparação devida a este por dano de tratamento irregular?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -211,7 +211,7 @@
     {
       "id": "lgpd-46",
       "topico": "segurança",
-      "pergunta_de_revisao": "O contrato fixa medidas de segurança técnicas e administrativas compatíveis com o risco dos dados tratados?",
+      "pergunta_de_revisao": "O contrato prevê medidas de segurança técnicas e administrativas? A adequação efetiva ao risco dos dados exige análise material, não apenas textual.",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -235,7 +235,7 @@
     {
       "id": "lgpd-48",
       "topico": "incidente de segurança",
-      "pergunta_de_revisao": "O contrato fixa prazo e forma para comunicar incidente de segurança à outra parte, de modo a permitir a comunicação à ANPD e ao titular?",
+      "pergunta_de_revisao": "O contrato fixa prazo e procedimento para comunicar incidente de segurança à outra parte, de modo compatível com a obrigação do controlador de comunicar a ANPD e o titular?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -257,5 +257,9 @@
       }
     }
   ],
-  "pendencias_de_fonte": []
+  "pendencias_de_fonte": [
+    "Regulamentos da ANPD apontados em parecer anexado pelo titular e ainda não incorporados como fonte (texto oficial não lido, data e hash a registrar): Resolução CD/ANPD nº 19/2024 (transferência internacional e cláusulas-padrão), nº 18/2024 (encarregado), nº 15/2024 (comunicação de incidente; prazo de 3 dias úteis informado só por fonte secundária) e nº 2/2022 (agentes de pequeno porte): decisão do revisor jurídico se entram no pacote",
+    "lgpd-18: a pergunta remete ao art. 19 da Lei 13.709/2018, que consta do compilado guardado no repositório, mas ainda não é fonte própria da regra: decisão do revisor jurídico",
+    "lgpd-7 e lgpd-11: o texto literal guardado traz marcação de link da conversão da página (por exemplo, no inciso VI do art. 7): forma a limpar na extração, sem alterar o texto legal, antes de qualquer ativação"
+  ]
 }

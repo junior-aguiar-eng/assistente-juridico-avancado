@@ -6,7 +6,7 @@
     {
       "id": "civ-412",
       "topico": "cláusula penal: teto",
-      "pergunta_de_revisao": "A cláusula penal ou multa ultrapassa o valor da obrigação principal?",
+      "pergunta_de_revisao": "Alguma cláusula penal ou multa (inclusive por inadimplemento ou rescisão antecipada) pode exceder o valor da obrigação principal, identificada concretamente neste contrato, sem presumir que seja a mensalidade ou o valor integral?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -30,7 +30,7 @@
     {
       "id": "civ-413",
       "topico": "cláusula penal: redução",
-      "pergunta_de_revisao": "O valor da multa é manifestamente excessivo para a natureza e a finalidade do negócio, ou há cumprimento parcial?",
+      "pergunta_de_revisao": "Há indício de cumprimento parcial ou de penalidade manifestamente excessiva para a natureza e a finalidade do negócio, a sinalizar ao revisor para eventual redução equitativa, sem calcular o valor da redução?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -54,7 +54,7 @@
     {
       "id": "civ-421a",
       "topico": "paridade e alocação de riscos",
-      "pergunta_de_revisao": "A alocação de riscos e as regras de revisão foram previstas e respeitadas, ou há elemento concreto que afasta a presunção de paridade?",
+      "pergunta_de_revisao": "Em contrato civil ou empresarial, a alocação de riscos e as regras de revisão estão previstas, e há elemento concreto que afaste a presunção de paridade e simetria? Em contrato de consumo, sinalizar a possível incidência do CDC.",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -80,7 +80,7 @@
     {
       "id": "civ-422",
       "topico": "boa-fé",
-      "pergunta_de_revisao": "Alguma cláusula impede a conduta de boa-fé na conclusão ou na execução do contrato?",
+      "pergunta_de_revisao": "Alguma cláusula é, concretamente, incompatível com os deveres de cooperação, lealdade e boa-fé objetiva na conclusão ou na execução do contrato?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -104,7 +104,7 @@
     {
       "id": "civ-423",
       "topico": "adesão: ambiguidade",
-      "pergunta_de_revisao": "O contrato é de adesão e tem cláusula ambígua ou contraditória a interpretar a favor do aderente?",
+      "pergunta_de_revisao": "O contrato tem cláusulas predispostas unilateralmente, sem possibilidade substancial de negociação, e alguma delas é ambígua ou contraditória a ponto de dever ser interpretada a favor do aderente?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -128,7 +128,7 @@
     {
       "id": "civ-424",
       "topico": "adesão: renúncia antecipada",
-      "pergunta_de_revisao": "O contrato é de adesão e a cláusula renuncia antecipadamente a direito resultante da natureza do negócio?",
+      "pergunta_de_revisao": "Em contrato de adesão, alguma cláusula renuncia antecipadamente a direito resultante da natureza do negócio, a sinalizar como possível nulidade?",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -176,7 +176,7 @@
     {
       "id": "civ-478",
       "topico": "onerosidade excessiva",
-      "pergunta_de_revisao": "Em contrato de execução continuada, há cláusula que afasta a resolução por onerosidade excessiva?",
+      "pergunta_de_revisao": "Em contrato de execução continuada, há cláusula que exclui a resolução por onerosidade excessiva? Sinalizar para avaliar os requisitos legais, a alocação de riscos e a validade da cláusula, sem tratá-la como inválida automaticamente.",
       "status": "inativa",
       "revisao": {
         "revisor": null,
@@ -222,5 +222,8 @@
       }
     }
   ],
-  "pendencias_de_fonte": []
+  "pendencias_de_fonte": [
+    "Escopo proposto em parecer anexado pelo titular: aplicação prioritária a contratos civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo; decisão do revisor jurídico",
+    "O texto compilado do Código Civil não está no repositório: sem --fonte-cc, a validação não confere o texto literal destas regras"
+  ]
 }
