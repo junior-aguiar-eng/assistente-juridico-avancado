@@ -42,6 +42,6 @@ def test_ativacao_exige_registro_do_revisor_nas_regras_ativas():
         regras.extend(json.loads(caminho.read_text(encoding="utf-8"))["regras"])
     assert len(regras) == 21  # 19 anteriores + 2 do pacote NDA (art. 195 da Lei 9.279/1996)
     ativas = {r["id"] for r in regras if r["status"] == "ativa"}
-    # ativação é ato do revisor (30/10/2026): 20 regras; só a civ-598 segue inativa
-    assert len(ativas) == 20 and {r["id"] for r in regras} - ativas == {"civ-598"}
+    # ativação é ato do revisor (30/10/2026): as 21 regras
+    assert len(ativas) == 21 and {r["id"] for r in regras} == ativas
     assert all(r["revisao"]["revisor"] and r["revisao"]["data"] for r in regras if r["id"] in ativas)

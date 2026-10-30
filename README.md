@@ -60,7 +60,7 @@ Dois fluxos principais: **mapear um caso** (triagem → mapear-autos → cronolo
 | [`br-pesquisa-juridica`](skills/br-pesquisa-juridica/SKILL.md) | pontes prévias para Planalto, Senado, STJ, STF etc., conforme a política de confidencialidade do caso | ✅ escrita e testada |
 | [`br-verificar-citacoes`](skills/br-verificar-citacoes/SKILL.md) | confere se a fonte lida realmente apoia cada proposição (`supported`, `partial`, `unsupported`) | ✅ escrita e testada |
 | [`br-auditar-entrega`](skills/br-auditar-entrega/SKILL.md) | gates G00–G16 conforme os insumos, faixa de confiança e aprovação humana separada | ✅ escrita e testada |
-| [`br-revisar-contrato`](skills/br-revisar-contrato/SKILL.md) | pré-checagem, `issues.json` com dois eixos de severidade, redline com alterações rastreadas | 🟡 rascunho: 20 das 21 regras ativadas pelo revisor em 30/10/2026 (só `civ-598` inativa); uso limitado a alertas |
+| [`br-revisar-contrato`](skills/br-revisar-contrato/SKILL.md) | pré-checagem, `issues.json` com dois eixos de severidade, redline com alterações rastreadas | 🟡 rascunho: 21 regras ativadas pelo revisor em 30/10/2026; uso limitado a alertas |
 | [`br-preencher-minuta`](skills/br-preencher-minuta/SKILL.md) | preenche modelo DOCX; campo sem prova vira marcador amarelo | ✅ escrita e testada com casos sintéticos |
 
 ## Uso assistido
@@ -109,7 +109,7 @@ python scripts/auditar.py auditar --help
 | `contrato.py precheck\|validar-issues` | campo em branco, anexo ausente, remissão quebrada, assinatura; valida `issues.json` |
 | `redline_docx.py ORIG.docx EDICOES.json SAIDA.docx` | alterações rastreadas; o original não muda |
 | `preencher.py lint\|gerar` | preenche `{{campo}}` com seis estados de procedência |
-| `regras.py gerar\|validar\|listar` | pacotes `rules/br` (serviços/SaaS, LGPD e NDA, com texto literal do Planalto); 20 ativas por decisão do revisor (só `civ-598` inativa) |
+| `regras.py gerar\|validar\|listar` | pacotes `rules/br` (serviços/SaaS, LGPD e NDA, com texto literal do Planalto); 21 ativas por decisão do revisor |
 | `revisar_skill.py "skills/*/SKILL.md"` | estrutura, atualidade e superfície de confiança das skills |
 
 </details>
@@ -145,7 +145,7 @@ Apontamento sem avaliação jurídica usa `severidade_juridica: "nao_avaliada"` 
 `motivo_nao_avaliada`, mantendo a severidade negocial separada. Não atribua risco baixo a uma
 preferência comercial. O validador retorna avaliação pendente e `entregavel: false`, mesmo quando
 não há erro mecânico; seu código de saída zero não é liberação jurídica. Registros antigos não são
-migrados automaticamente. Das 21 regras, 20 foram ativadas pelo revisor em 30/10/2026 (só `civ-598` segue inativa); aprovação humana é etapa distinta.
+migrados automaticamente. As 21 regras foram ativadas pelo revisor em 30/10/2026; aprovação humana é etapa distinta.
 
 ### Segurança da leitura
 
@@ -172,7 +172,7 @@ Os resultados e limites de R07/R10 estão no [registro de validação de 19/10/2
 skills/        8 skills (SKILL.md) e referências
 scripts/       extração, validação, auditoria e apoio por skill
 shared/        regras comuns: garantias, estados, formatos, fontes, falhas jurídicas, escalação
-rules/br/      regras de revisão contratual (20 ativas; `civ-598` inativa)
+rules/br/      regras de revisão contratual (21 ativas)
 governance/    checklist de revisão de skill e política de upstream
 docs/          planejamento, revisão crítica, comparação com referências, sondagem das fontes
 tests/         testes e casos (tests/casos)
@@ -196,6 +196,6 @@ O inventário usa [contrato v1](docs/contratos/pecas-v1.md), validador semântic
 
 No fluxo integrado, `triagem.py pecas`, `validate.py`, `cronologia.py` e `auditar.py` recebem `--extracoes E.json --pecas PECAS.json ORIGINAL.pdf`; revisão posterior exige `--pecas-anterior ANTERIOR.json`. `--exigir-pecas` exige referência nas fontes de documentos paginados. Fontes de facts/claims levam a extensão [`peca`](shared/dados.md#referência-de-peça-por-uso--org-04), preservando documento, bloco e trecho. A análise mostra pendências; uso fundamentado, exposição de fatos e entrega externa recusam pendências materiais do uso. `supported`/`unsupported` também recusam fonte pendente em análise. G16 e os hashes dos insumos acrescentam rastreabilidade ao QC, sem autenticar o revisor ou aprovar mérito. O fluxo legado sem extensão e sem esses parâmetros continua disponível, sem comprovar análise integrada de autos. Implementação, testes e limites: [ORG-04](docs/integracao-org04.md).
 
-Das **21 regras, 20 foram ativadas pelo revisor em 30/10/2026**; só a `civ-598` segue inativa. R07/TJMG e R10/Picos públicos não foram substituídos pelos privados recuperados: estes agora são `ORG-R07-PRIVADO` e `ORG-R10-PRIVADO`, com gabaritos próprios e arquivos ausentes ([mapa do corpus](docs/corpus-reconciliado.md)).
+As **21 regras foram ativadas pelo revisor em 30/10/2026**. R07/TJMG e R10/Picos públicos não foram substituídos pelos privados recuperados: estes agora são `ORG-R07-PRIVADO` e `ORG-R10-PRIVADO`, com gabaritos próprios e arquivos ausentes ([mapa do corpus](docs/corpus-reconciliado.md)).
 
 A [ORG-05](docs/validacao-org05.md) registra dois novos processos públicos, métricas por coorte/modalidade e a [segunda avaliação das oito skills](docs/avaliacao-skills-org05.md). O avaliador offline `scripts/avaliar_pecas.py` recebe manifesto e destino externo novo; [comando, corpus e limites](tests/casos/org05/README.md). São referências técnicas, sem eventos humanos: o detector se absteve do tipo nos dois casos novos e o uso continua assistido. A avaliação inicial congelada é separada das regressões das correções encontradas; nenhum resultado libera autos completos ou regras.

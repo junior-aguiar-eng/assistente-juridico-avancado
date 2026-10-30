@@ -227,10 +227,20 @@ def test_juntar_extracoes_separadas_preserva_conferencia_dos_campos_e_clausulas(
 
 
 def test_regra_inativa_nao_e_contornada_por_nao_avaliada(pacote):
+    # as 21 regras reais estão ativas: usa-se uma cópia com a civ-598 inativa
+    rascunho = pacote["base"] / "regras_rascunho"
+    rascunho.mkdir()
+    for arq in (Path(__file__).resolve().parents[1] / "rules" / "br").glob("*.json"):
+        o = json.loads(arq.read_text(encoding="utf-8"))
+        for r in o["regras"]:
+            if r["id"] == "civ-598":
+                r["status"] = "inativa"
+                r["revisao"] = {"revisor": None, "data": None, "observacao": None}
+        (rascunho / arq.name).write_text(json.dumps(o, ensure_ascii=False), encoding="utf-8")
     obj = json.loads(pacote["issues"].read_text(encoding="utf-8"))
-    obj["issues"][0]["base"] = [{"tipo": "regra", "rule_id": "civ-598"}]  # inativa: as demais do CC foram ativadas pelo titular
+    obj["issues"][0]["base"] = [{"tipo": "regra", "rule_id": "civ-598"}]  # inativa nesta cópia
     gravar(pacote["issues"], obj)
-    q = executar(pacote)
+    q = executar(pacote, regras_dir=rascunho)
     assert gates(q)["G14_apontamentos_contratuais"] == "reprovado"
     assert "regra_nao_revisada" in {e["codigo"] for e in q["documentos"]["apontamentos"]["erros"]}
 
