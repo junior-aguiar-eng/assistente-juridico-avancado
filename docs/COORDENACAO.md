@@ -53,6 +53,16 @@ Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia
 - Correções de documentação desta entrada: `docs/plano-principal.md` (revisão 15), `docs/uso-assistido.md`, `shared/dados.md` e `skills/br-revisar-contrato/SKILL.md` passam a dizer 21 regras inativas (19 de Código Civil/LGPD e 2 de NDA) e que o pacote NDA tem 2 regras-rascunho, em vez de "NDA vazio". Registros datados anteriores (por exemplo, `docs/validacao-fase5.md`) preservam a contagem da época e não foram alterados.
 - Verificação: ver o PR; a suíte integral não foi executada localmente.
 
+## CL-ANPD — Res. CD/ANPD 15/2024 e 18/2024 como fontes complementares da LGPD, 30/10/2026
+
+- Decisão do titular, em chat: "sim para ANPD", com os PDFs do DOU anexados por ele (a página `in.gov.br` não pode ser lida pelo Claude; o robots do site recusa). Responsável: Claude; só `rules/br/fontes/anpd.json` (novo), `tests/casos/regras_fontes/anpd/` (os dois PDFs e a extração de texto), `scripts/regras.py`, `rules/br/lgpd.json` (só `pendencias_de_fonte`), `tests/test_contrato.py` e este registro.
+- Formato: as resoluções ficam em arquivo próprio, fora do campo `fonte` das regras. Elas complementam, não sustentam apontamento e não ativam nem alteram regra; a base de cada regra continua a lei. `aplica_a` liga cada fonte à regra: Res. 15/2024 → `lgpd-48`; Res. 18/2024 → `lgpd-41`. Cada fonte lista seus `arquivos` (PDF, hash e extração de texto). `regras.py listar --pacote lgpd` devolve `fontes_complementares`.
+- Cobertura real: os PDFs são páginas do DOU. Res. 15/2024: duas páginas (nº 81, 26/04/2024), com a resolução e o Regulamento completo (arts. 1º a 24); registrados com texto literal os arts. 4º, 5º, 6º, 9º e 10 (critérios de comunicação, prazo de três dias úteis à ANPD e ao titular, complementação em vinte dias úteis, dobro para agentes de pequeno porte, registro do incidente por no mínimo cinco anos). Res. 18/2024: uma página (nº 136, 17/07/2024), com a resolução e os arts. 1º a 21 do Regulamento; registrados os arts. 3º, 8º e 9º. Se o Regulamento da Res. 18 tem artigos além do 21, eles estão na página seguinte do DOU e não foram lidos.
+- O prazo de três dias úteis deixa de depender de fonte secundária: consta do art. 6º, caput, do texto oficial lido.
+- Validação nova: `validar` confere o hash do PDF guardado e se cada texto literal consta da extração dele (alteração do texto, hash errado ou `aplica_a` inexistente viram erro).
+- Ainda não incorporadas: Res. CD/ANPD 19/2024 (transferência internacional; `lgpd-33`) e 2/2022 (agentes de pequeno porte). Há também a Res. CD/ANPD 32/2026, mencionada em fonte secundária como relevante para `lgpd-33`, não lida. Decisão do revisor sobre quais artigos entram.
+- Nenhuma regra foi ativada ou alterada; as 10 da LGPD continuam inativas e sem revisor.
+
 ## CL-ATIVA-CC — ativação de 8 regras do Código Civil pelo revisor, 30/10/2026
 
 - Decisão do titular, em chat: "eu já aprovei e quero ativar tudo. pode ativar"; ao escolher o alcance, optou por "8 do CC, sem civ-598" e pelo registro sugerido. Responsável pela edição: Claude, a pedido e sob a decisão do revisor; o ato de ativação é o merge do titular.
