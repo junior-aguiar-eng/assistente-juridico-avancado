@@ -138,7 +138,7 @@ Forneça `--extracoes E.json --pecas PECAS.json ORIGINAL.pdf` aos consumidores; 
 
 O QC acrescenta `G16_inventario_pecas` quando aplicável e vincula inventário, revisão anterior, extração e original em `artefatos`; alterações posteriores invalidam o pacote em `status`. A cronologia preserva `peca`/`block_id` nas fontes e registra `inventarios_pecas`, `pendencias_pecas`, `modo_pecas` e `exigir_pecas`. Conferir essa cronologia exige os mesmos insumos; trocar revisão sem atualizar as referências não remapeia fatos antigos.
 
-O formato do inventário e seus eventos humanos permanecem no [contrato v1](../docs/contratos/pecas-v1.md). Conferência registrada em arquivo editável não autentica a pessoa, e nenhum desses estados certifica mérito ou prova jurídica. As 19 regras contratuais continuam inativas.
+O formato do inventário e seus eventos humanos permanecem no [contrato v1](../docs/contratos/pecas-v1.md). Conferência registrada em arquivo editável não autentica a pessoa, e nenhum desses estados certifica mérito ou prova jurídica. As 21 regras contratuais continuam inativas.
 
 ## Apontamentos contratuais e auditoria documental
 

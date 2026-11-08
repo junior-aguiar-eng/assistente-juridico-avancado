@@ -15,6 +15,7 @@ import regras  # noqa: E402
 
 CC = RAIZ / "tests" / "casos" / "verificacao_stj" / "fontes" / "cc_compilado.md"
 LGPD = RAIZ / "tests" / "casos" / "regras_fontes" / "lgpd_compilado.md"
+LPI = RAIZ / "tests" / "casos" / "regras_fontes" / "l9279_compilado.md"
 REGRAS = RAIZ / "rules" / "br"
 
 
@@ -87,6 +88,22 @@ def ext_e_issue(tmp_path):
     return ext, {"schema_version": "1", "posicao_da_parte": "contratante", "issues": [issue]}
 
 
+# as 21 regras foram ativadas pelo revisor em 30/10/2026 (a civ-598 com ressalva de enquadramento)
+def regras_com_civ598_inativa(tmp_path):
+    """Cópia de rules/br com a civ-598 inativa: cenário de regra de rascunho, já que as 21 regras reais estão ativas."""
+    pasta = tmp_path / "regras_rascunho"
+    pasta.mkdir()
+    for arq in REGRAS.glob("*.json"):
+        obj = json.loads(arq.read_text(encoding="utf-8"))
+        for r in obj["regras"]:
+            if r["id"] == "civ-598":
+                r["status"] = "inativa"
+                r["revisao"] = {"revisor": None, "data": None, "observacao": None}
+                r["nota"] = "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito."
+        (pasta / arq.name).write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    return pasta
+
+
 def cods(r):
     return [x["codigo"] for x in r["erros"]]
 
@@ -126,11 +143,13 @@ def test_regra_nao_conferida_nao_libera_graduacao_comercial(ext_e_issue):
     assert "regra_nao_conferida" in {a["codigo"] for a in r["avisos"]}
 
 
-def test_issue_com_regra_rascunho_e_barrada_e_com_permissao_vira_aviso(ext_e_issue):
+def test_issue_com_regra_rascunho_e_barrada_e_com_permissao_vira_aviso(ext_e_issue, tmp_path):
     ext, iss = ext_e_issue
-    r = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas")
+    rascunho = regras_com_civ598_inativa(tmp_path)
+    iss["issues"][0]["base"] = [{"tipo": "regra", "rule_id": "civ-598"}]  # inativa nesta cópia
+    r = contrato.validar_issues(iss, ext, rascunho, "servicos_saas")
     assert cods(r) == ["regra_nao_revisada"]
-    r2 = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas", permitir_rascunho=True)
+    r2 = contrato.validar_issues(iss, ext, rascunho, "servicos_saas", permitir_rascunho=True)
     assert r2["erros"] == [] and "regra_rascunho" in [x["codigo"] for x in r2["avisos"]]
 
 
@@ -184,34 +203,104 @@ def test_sem_extracao_avisa_que_nao_conferiu_o_texto(ext_e_issue):
 
 
 # ------------------------------------------------------------------ pacotes de regras
-def test_pacotes_gerados_estao_inativos_sem_revisor_e_batem_com_a_fonte():
-    r = regras.validar(REGRAS, fontes={"cc": CC, "lgpd": LGPD})
-    assert r["erros"] == [] and r["regras"] == 19
+def test_pacotes_so_tem_ativas_as_regras_revisadas_e_batem_com_a_fonte():
+    r = regras.validar(REGRAS, fontes={"cc": CC, "lgpd": LGPD, "lpi": LPI})
+    assert r["erros"] == [] and r["regras"] == 21
     for arq in REGRAS.glob("*.json"):
         for regra in json.loads(arq.read_text(encoding="utf-8"))["regras"]:
-            assert regra["status"] == "inativa" and regra["revisao"]["revisor"] is None
+            assert regra["status"] == "ativa" and regra["revisao"]["revisor"] and regra["revisao"]["data"]
             assert regra["fonte"]["url"].startswith("https://www.planalto.gov.br/") and regra["fonte"]["versao"] == "compilada"
 
 
-def test_carregar_nao_entrega_regra_inativa_a_menos_que_peca_e_ela_vem_marcada():
-    assert regras.carregar(REGRAS, "servicos_saas")["regras"] == []
+def test_carregar_nao_entrega_regra_inativa_a_menos_que_peca_e_ela_vem_marcada(tmp_path):
+    assert {r["id"] for r in regras.carregar(REGRAS, "servicos_saas")["regras"]} == {"civ-412", "civ-413", "civ-421a", "civ-422", "civ-423", "civ-424", "civ-473", "civ-478", "civ-598"}
     com = regras.carregar(REGRAS, "servicos_saas", incluir_inativas=True)["regras"]
-    assert len(com) == 9 and {r["uso"] for r in com} == {"RASCUNHO_NAO_REVISADO"}
+    assert len(com) == 9 and not [r for r in com if r["uso"] == "RASCUNHO_NAO_REVISADO"]
+    # numa cópia com a civ-598 inativa, ela só vem se pedida e marcada como rascunho
+    rascunho = regras_com_civ598_inativa(tmp_path)
+    assert "civ-598" not in {r["id"] for r in regras.carregar(rascunho, "servicos_saas")["regras"]}
+    inc = regras.carregar(rascunho, "servicos_saas", incluir_inativas=True)["regras"]
+    assert {r["id"] for r in inc if r["uso"] == "RASCUNHO_NAO_REVISADO"} == {"civ-598"}
+    assert len(regras.carregar(REGRAS, "lgpd")["regras"]) == 10 and regras.carregar(REGRAS, "lgpd")["excluidas"] == []
 
 
-def test_pacote_nda_nao_tem_regra_inventada_e_lista_o_que_falta():
+def _copia_com_fontes(tmp_path):
+    import shutil
+    raiz = tmp_path / "repo"
+    shutil.copytree(REGRAS, raiz / "rules" / "br")
+    shutil.copytree(RAIZ / "tests" / "casos" / "regras_fontes" / "anpd", raiz / "tests" / "casos" / "regras_fontes" / "anpd")
+    return raiz, raiz / "rules" / "br"
+
+
+def test_fontes_complementares_anpd_conferem_com_o_arquivo_guardado_e_nao_ativam_regra():
+    r = regras.validar(REGRAS, fontes={"cc": CC, "lgpd": LGPD, "lpi": LPI})
+    assert r["erros"] == [] and not [a for a in r["avisos"] if a["codigo"].startswith("fonte_complementar")]
+    lgpd = regras.carregar(REGRAS, "lgpd", incluir_inativas=True)
+    assert {f["id"]: f["aplica_a"] for f in lgpd["fontes_complementares"]} == {"anpd-2-2022": ["lgpd-41", "lgpd-48"], "anpd-15-2024": ["lgpd-48"], "anpd-18-2024": ["lgpd-41"], "anpd-19-2024": ["lgpd-33"], "anpd-32-2026": ["lgpd-33"]}
+    assert [len(f["arquivos"]) for f in lgpd["fontes_complementares"]] == [2, 1, 1, 1, 1]
+    # fonte complementar não ativa nem desativa regra: o status vem só do campo da regra
+    assert all(r["uso"] == "revisada" for r in regras.carregar(REGRAS, "lgpd")["regras"])
+    art6 = next(a for f in lgpd["fontes_complementares"] for a in f["artigos"] if a["artigo"] == "6" and f["id"] == "anpd-15-2024")
+    assert "prazo de três dias úteis" in art6["texto_literal"] and "vinte dias úteis" in art6["texto_literal"]
+
+
+def test_fonte_complementar_com_texto_alterado_hash_errado_ou_regra_inexistente_e_erro(tmp_path):
+    raiz, pasta = _copia_com_fontes(tmp_path)
+    arq = pasta / "fontes" / "anpd.json"
+    ok = json.loads(arq.read_text(encoding="utf-8"))
+    assert regras.validar(pasta)["erros"] == []
+
+    obj = json.loads(json.dumps(ok))
+    obj["fontes"][0]["artigos"][2]["texto_literal"] = obj["fontes"][0]["artigos"][2]["texto_literal"].replace("três dias úteis", "cinco dias úteis")
+    arq.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    assert "fonte_complementar_texto_diverge" in [e["codigo"] for e in regras.validar(pasta)["erros"]]
+
+    obj = json.loads(json.dumps(ok))
+    obj["fontes"][0]["arquivos"][1]["arquivo_sha256"] = "0" * 64
+    arq.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    assert "fonte_complementar_hash_diverge" in [e["codigo"] for e in regras.validar(pasta)["erros"]]
+
+    obj = json.loads(json.dumps(ok))
+    obj["fontes"][1]["aplica_a"] = ["lgpd-999"]
+    arq.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    assert "fonte_complementar_regra_inexistente" in [e["codigo"] for e in regras.validar(pasta)["erros"]]
+
+
+def test_pacote_nda_tem_so_o_art_195_literal_ativado_pelo_revisor_e_lista_o_que_falta():
     nda = regras.carregar(REGRAS, "nda", incluir_inativas=True)
-    assert nda["regras"] == [] and len(nda["pendencias_de_fonte"]) == 2
+    assert {r["id"] for r in regras.carregar(REGRAS, "nda")["regras"]} == {"pi-195-xi", "pi-195-xii"} and len(nda["pendencias_de_fonte"]) == 3
+    assert {r["id"] for r in nda["regras"]} == {"pi-195-xi", "pi-195-xii"}
+    for r in nda["regras"]:
+        f = r["fonte"]
+        assert r["status"] == "ativa" and r["revisao"]["revisor"] and r["revisao"]["data"] and r["uso"] == "revisada"
+        assert f["norma_id"] == "lpi" and "9.279" in f["norma"] and f["url"].endswith("/leis/l9279.htm") and f["artigo"] == "195"
+        assert f["texto_literal"].startswith("Art. 195. Comete crime de concorrência desleal quem:")
+        assert "mesmo após o término do contrato" in f["texto_literal"] and "obtidos por meios ilícitos" in f["texto_literal"]
+        assert f["dispositivos_revogados"] == [] and "~~" not in f["texto_literal"] and "Vigência" not in f["texto_literal"]
+    assert any("207 e 209" in p for p in nda["pendencias_de_fonte"])  # a via civil segue fora das regras
+
+
+def test_pacote_nda_diverge_se_o_texto_for_alterado(tmp_path):
+    pasta = tmp_path / "r"
+    pasta.mkdir()
+    obj = json.loads((REGRAS / "nda.json").read_text(encoding="utf-8"))
+    f = obj["regras"][0]["fonte"]
+    f["texto_literal"] = f["texto_literal"].replace("sem autorização", "com autorização")
+    (pasta / "nda.json").write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    assert "texto_diverge_da_fonte" in [e["codigo"] for e in regras.validar(pasta, fontes={"lpi": LPI})["erros"]]
+    assert regras.validar(pasta)["erros"] == []  # sem a fonte, só a estrutura é conferida
 
 
 def test_ativar_sem_revisor_e_erro(tmp_path):
     pasta = tmp_path / "r"
     pasta.mkdir()
     pacote = json.loads((REGRAS / "servicos_saas.json").read_text(encoding="utf-8"))
-    pacote["regras"][0]["status"] = "ativa"
+    r598 = next(r for r in pacote["regras"] if r["id"] == "civ-598")
+    assert r598["status"] == "ativa"
+    r598["revisao"] = {"revisor": None, "data": None, "observacao": None}  # ativa, mas sem o registro do revisor
     (pasta / "servicos_saas.json").write_text(json.dumps(pacote, ensure_ascii=False), encoding="utf-8")
     assert "ativa_sem_revisor" in [e["codigo"] for e in regras.validar(pasta)["erros"]]
-    assert regras.carregar(pasta, "servicos_saas")["regras"] == []  # e ela continua sem ser usada
+    assert "civ-598" not in {r["id"] for r in regras.carregar(pasta, "servicos_saas")["regras"]}  # e ela continua sem ser usada
 
 
 def test_texto_alterado_a_mao_diverge_da_fonte(tmp_path):
@@ -231,6 +320,30 @@ def test_extrair_artigo_recusa_artigo_inexistente_e_nao_confunde_421_com_421a():
     assert a421.startswith("Art. 421.") and "421-A" not in a421.split("\n")[0]
 
 
+def test_texto_literal_nao_guarda_marcacao_de_link_da_conversao_da_pagina(tmp_path):
+    fonte = tmp_path / "lei.md"
+    fonte.write_text(
+        "Art. 1º Aplica-se o disposto na [Lei nº 9.307, de 1996 (Lei de Arbitragem)](../../../LEIS/L9307.htm) e no "
+        "[art. 1º da Lei nº 12.527](../../_Ato/L12527.htm#art1).\n\nArt. 2º Outro.\n", encoding="utf-8")
+    texto = regras.extrair_artigo(fonte.read_text(encoding="utf-8"), "1")["texto_literal"]
+    assert "](" not in texto and "[" not in texto
+    assert "Lei nº 9.307, de 1996 (Lei de Arbitragem)" in texto and "art. 1º da Lei nº 12.527" in texto
+    for r in regras.carregar(REGRAS, "lgpd", incluir_inativas=True)["regras"]:
+        assert "](" not in r["fonte"]["texto_literal"], r["id"]
+
+
+def test_texto_literal_cola_o_caput_isolado_sem_perder_a_alinea_separada(tmp_path):
+    fonte = tmp_path / "lei.md"
+    fonte.write_text(
+        "Art. 1º Texto.\n\n§ 1º A exceção do inciso I do\n\ncaput\n\ndeste artigo vale.\n\n"
+        "II - garantia, ou\n\ng) item separado.\n\nArt. 2º Outro.\n", encoding="utf-8")
+    texto = regras.extrair_artigo(fonte.read_text(encoding="utf-8"), "1")["texto_literal"]
+    assert "§ 1º A exceção do inciso I do caput deste artigo vale." in texto.split("\n")
+    assert "g) item separado." in texto.split("\n")
+    for r in regras.carregar(REGRAS, "lgpd", incluir_inativas=True)["regras"]:
+        assert "\ncaput\n" not in "\n" + r["fonte"]["texto_literal"] + "\n", r["id"]
+
+
 def test_pacote_lgpd_tem_texto_literal_sem_dispositivo_revogado_ou_vetado():
     pacote = {r["id"]: r for r in regras.carregar(REGRAS, "lgpd", incluir_inativas=True)["regras"]}
     assert set(pacote) == {f"lgpd-{n}" for n in (7, 11, 18, 33, 37, 39, 41, 42, 46, 48)}
@@ -242,7 +355,7 @@ def test_pacote_lgpd_tem_texto_literal_sem_dispositivo_revogado_ou_vetado():
         f = r["fonte"]
         assert f["norma_id"] == "lgpd" and "13.709" in f["norma"] and f["url"].endswith("l13709compilado.htm")
         assert "Vigência" not in f["texto_literal"] and "Seção" not in f["texto_literal"]
-        assert r["status"] == "inativa" and r["revisao"]["revisor"] is None
+        assert r["status"] == "ativa" and r["revisao"]["revisor"] and r["revisao"]["data"]
 
 
 def test_pacote_lgpd_diverge_se_o_texto_for_alterado(tmp_path):
@@ -255,18 +368,30 @@ def test_pacote_lgpd_diverge_se_o_texto_for_alterado(tmp_path):
     assert regras.validar(pasta)["erros"] == []  # sem a fonte, só a estrutura é conferida
 
 
-def test_issue_pode_citar_regra_de_dois_pacotes(ext_e_issue):
-    ext, iss = ext_e_issue
-    iss["issues"][0]["base"] = [{"tipo": "regra", "rule_id": "civ-413"}, {"tipo": "regra", "rule_id": "lgpd-42"}]
-    r = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas,lgpd", permitir_rascunho=True)
-    assert r["erros"] == [] and [a["codigo"] for a in r["avisos"]].count("regra_rascunho") == 2
-    assert "regra_inexistente" in cods(contrato.validar_issues(iss, ext, REGRAS, "servicos_saas", permitir_rascunho=True))
+def test_apontamento_com_regra_civil_avisa_uma_vez_que_o_cdc_pode_incidir(ext_e_issue):
+    ext, iss = ext_e_issue  # base: civ-413, do pacote servicos_saas
+    r = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas")
+    assert r["erros"] == [] and [x["codigo"] for x in r["avisos"]].count("cdc_pode_incidir") == 1
+    iss["issues"].append(dict(iss["issues"][0], id="i2", base=[{"tipo": "regra", "rule_id": "civ-422"}]))
+    r2 = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas")
+    assert [x["codigo"] for x in r2["avisos"]].count("cdc_pode_incidir") == 1  # um aviso por validação, não por apontamento
+    iss["issues"] = [dict(iss["issues"][0], base=[{"tipo": "regra", "rule_id": "lgpd-42"}])]
+    assert "cdc_pode_incidir" not in [x["codigo"] for x in contrato.validar_issues(iss, ext, REGRAS, "lgpd")["avisos"]]
 
 
-def test_critica_apoiada_so_em_rascunho_nunca_passa_nem_com_permissao(ext_e_issue):
+def test_issue_pode_citar_regra_de_dois_pacotes(ext_e_issue, tmp_path):
     ext, iss = ext_e_issue
-    iss["issues"][0].update(severidade_juridica="critica", base=[{"tipo": "regra", "rule_id": "civ-413"}])
-    r = contrato.validar_issues(iss, ext, REGRAS, "servicos_saas", permitir_rascunho=True)
+    rascunho = regras_com_civ598_inativa(tmp_path)
+    iss["issues"][0]["base"] = [{"tipo": "regra", "rule_id": "civ-598"}, {"tipo": "regra", "rule_id": "lgpd-42"}]
+    r = contrato.validar_issues(iss, ext, rascunho, "servicos_saas,lgpd", permitir_rascunho=True)
+    assert r["erros"] == [] and [a["codigo"] for a in r["avisos"]].count("regra_rascunho") == 1  # só civ-598 é rascunho
+    assert "regra_inexistente" in cods(contrato.validar_issues(iss, ext, rascunho, "servicos_saas", permitir_rascunho=True))
+
+
+def test_critica_apoiada_so_em_rascunho_nunca_passa_nem_com_permissao(ext_e_issue, tmp_path):
+    ext, iss = ext_e_issue
+    iss["issues"][0].update(severidade_juridica="critica", base=[{"tipo": "regra", "rule_id": "civ-598"}])
+    r = contrato.validar_issues(iss, ext, regras_com_civ598_inativa(tmp_path), "servicos_saas", permitir_rascunho=True)
     assert "critica_sem_base_juridica" in cods(r) and r["rascunho"] is True and r["entregavel"] is False
 
 

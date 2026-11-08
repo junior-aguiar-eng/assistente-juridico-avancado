@@ -1,5 +1,163 @@
 # Coordenação entre Claude e Codex
 
+## INT-CODEX — proposta de conciliação, 07/11/2026
+
+- Pedido: integrar o commit `785d4ce` e as alterações locais, preservando as decisões da main. Responsável: Codex; proposta preparada em cópia temporária, sem alterar o checkout do outro agente ou o índice da branch Codex.
+- Base da proposta: `origin/main` em `5568347`; inclui EV-01, avaliador EV-02 e registros locais da revisão P01/P02. Conflitos de documentação conciliados preservando registros históricos e as 21 regras ativas. Não altera regras jurídicas, dependências ou gates.
+- Aceitação: comparação da proposta com a base, testes offline e revisão mecânica das skills; não representa aprovação jurídica ou liberação material. A integração Git e suas etapas de publicação permanecem distintas.
+- Verificação da cópia conciliada: suíte offline com 1155 aprovados e 5 ignorados; oito skills PRONTA. Ambiente isolado existente com `rfc3339-validator` instalado e `pypdf` 6.19.0, enquanto `requirements-dev.txt` fixa 6.21.4. Uma execução anterior no Python global falhou em data RFC 3339 por ausência da dependência declarada. Testes não comprovam revisão jurídica, CI ou instalação.
+
+Registro inicial: 18/10/2026. Esta preparação organiza o trabalho; não inicia as correções ou expansões listadas abaixo.
+
+## CL-QUEBRAS — quebras de linha no texto literal da LGPD, 30/10/2026
+
+- Decisão do titular, após ler o arquivo de revisão dos 21 trechos marcados: "obviamente precisamos unir os trechos". Responsável: Claude; só `scripts/regras.py`, `rules/br/lgpd.json`, `tests/test_contrato.py` e este registro. Todas as 21 regras continuam **inativas** e sem revisor.
+- Causa: a fonte compilada grafa "caput" (itálico) sozinho num parágrafo, o que partia a frase em três linhas. `extrair_artigo` passa a colar esse parágrafo ao anterior e ao seguinte. Nenhuma outra quebra foi alterada: a alínea "g" do art. 11, que a heurística de revisão marcou por engano, continua em linha própria.
+- Efeito: 20 quebras removidas em `lgpd-7` (4), `lgpd-11` (4), `lgpd-18` (2), `lgpd-33` (2), `lgpd-42` (2) e `lgpd-46` (6). Conferido: com espaços normalizados, o texto de cada regra é idêntico ao anterior; só mudou a forma. Hash da fonte, data de leitura e demais campos inalterados; os pacotes do Código Civil e de NDA saem idênticos na regeração.
+- A pendência de `pendencias_de_fonte` sobre quebras de linha foi retirada; restam duas no pacote `lgpd` (resoluções da ANPD como fontes complementares; art. 19 como fonte de `lgpd-18`).
+- Verificação: `validar` com as três fontes, zero erros, 21 regras; `gerar` reproduz byte a byte `lgpd.json`, `servicos_saas.json` e `nda.json`; testes dos módulos que tocam regras aprovados (ver o PR). Suíte integral não executada localmente.
+
+## CL-TEXTO — texto literal sem marcação de link e correção de erro sobre o compilado do Código Civil, 30/10/2026
+
+- Pedido: "continue o projeto". Responsável: Claude; só `scripts/regras.py`, `rules/br/lgpd.json`, `rules/br/servicos_saas.json`, `tests/test_contrato.py` e este registro. Todas as 21 regras continuam **inativas** e sem revisor.
+- **Erro do Claude, corrigido:** entradas e PRs de hoje (CL-PARECER, CL-PERGUNTAS, pauta enviada ao titular e `pendencias_de_fonte` de `servicos_saas`) afirmavam que o texto compilado do Código Civil não está no repositório. Está: `tests/casos/verificacao_stj/fontes/cc_compilado.md` (SHA-256 `0c83b287…`, o mesmo registrado nas 9 regras). Com `--fonte-cc` apontando para ele, `regras.py validar` confere o texto literal das 9 regras do CC sem erros, e `gerar` reproduz `servicos_saas.json` regra a regra. A pendência errada foi retirada de `regras.py` e do JSON.
+- `extrair_artigo` passa a desfazer `[texto](url)` da conversão da página, mantendo só o texto (`_LINK_MD`). Efeito: `texto_literal` de `lgpd-7`, `lgpd-11` e `lgpd-33` deixa de ter marcação de link; conteúdo legal inalterado. Teste novo em `tests/test_contrato.py`.
+- Pendência que permanece: quebras de linha no meio de frases no texto literal de `lgpd-7`, `-11`, `-18`, `-33`, `-42` e `-46` (herdadas da fonte); registrada em `pendencias_de_fonte` do pacote `lgpd`.
+- Verificação: `validar` com as três fontes (CC, LGPD e art. 195): zero erros, 21 regras; `gerar` reproduz `lgpd.json`, `nda.json` e `servicos_saas.json`; 83 testes aprovados nos módulos que tocam regras. Suíte integral não executada localmente.
+
+## CL-CODEX — push do `785d4ce` pelo Codex e conflito pendente, 30/10/2026
+
+- O titular informou que o Codex enviou o commit `785d4ce` ("feat: validar e renderizar análise estruturada"). Conferido pelo Claude no GitHub: `origin/codex/organizacao-colaboracao` está em `785d4ce`, sobre a base `3ab28e2` (PR #5); é o único commit da branch que o `main` não tem. Isso substitui a pendência de CL-FECH ("só no worktree do Codex"). Não há PR aberto para ele.
+- Conteúdo, por `git show --stat`: 9 arquivos, 3.882 linhas: `scripts/analise_estruturada.py`, `docs/contratos/analise-v1.md` e `.schema.json`, `tests/casos/analise_contrato/exemplos.json`, `tests/test_analise_estruturada.py`, documentos de especificação e alterações em `docs/COORDENACAO.md` e `docs/plano-principal.md`. O Claude não revisou nem executou esse código.
+- Merge simulado contra o `main` (`d81f8b4`, `git merge-tree`, sem alterar nada): **um conflito**, em `docs/plano-principal.md` (o `main` passou para a revisão 15 em 30/10/2026: 21 regras inativas e NDA com 2 regras). `docs/COORDENACAO.md` mescla sem conflito; não há conflito em código.
+- Responsável pela resolução e pelo PR: Codex, no worktree dele; o Claude não tocou na branch. A resolução deve preservar o texto do `main` sobre as 21 regras (19 de Código Civil/LGPD e 2 de NDA, todas inativas) e acrescentar o que o commit do Codex introduz. Merge só com CI verde e revisão, por decisão do titular.
+
+## CL-PERGUNTAS — perguntas de revisão reescritas como rascunho, 30/10/2026
+
+- Pedido autorizado pelo titular, opção "reescrever perguntas, inativas", sobre o parecer registrado em CL-PARECER. Responsável: Claude; branch `claude/perguntas-regras-rascunho`.
+- Alterado: `pergunta_de_revisao` de 17 regras (7 do Código Civil e as 10 da LGPD); `civ-473`, `civ-598` e as 2 de NDA não foram alteradas, em `scripts/regras.py` e nos JSON de `rules/br/`; `pendencias_de_fonte` dos pacotes `lgpd` e `servicos_saas`, antes vazias, passam a registrar o que ficou de fora (resoluções da ANPD não lidas na fonte oficial, art. 19 como fonte de `lgpd-18`, escopo B2B/CDC, marcação de link no texto literal de `lgpd-7` e `lgpd-11`; a pendência sobre o texto do Código Civil constava por erro e foi retirada em CL-TEXTO).
+- Não alterado: `status` (todas as 21 **inativas**), `revisao` (vazia), `nota` ("rascunho do mantenedor técnico") e texto literal das fontes. Nenhuma regra foi ativada. As perguntas seguem o parecer, que não tem autor identificado, e continuam sujeitas à revisão do titular; o Claude não as validou juridicamente.
+- Limite: a limpeza do texto literal de `lgpd-7` e `lgpd-11` (marcação de link) exige alterar a extração em `regras.py` e regerar o pacote; ficou como pendência, não feita aqui.
+- Verificação: `gerar` reproduz byte a byte `lgpd.json` e `nda.json` a partir das fontes do repositório; `validar` sem erros (21 regras); 82 testes aprovados nos módulos que tocam regras. **Erro corrigido em CL-TEXTO:** o pacote do Código Civil foi tratado como não regerável por suposto compilado ausente; o compilado existe em `tests/casos/verificacao_stj/fontes/cc_compilado.md`. As perguntas dele foram editadas no JSON e em `regras.py` em paralelo. Suíte integral não executada localmente.
+
+## CL-PARECER — decisões propostas para as 21 regras, 30/10/2026
+
+- Entrada: o titular anexou um "parecer jurídico objetivo" sobre as 21 regras. O arquivo **não identifica o autor** e traz resíduos de rascunho; é registrado como **insumo externo**, não como revisão: nenhuma regra recebeu `revisor`, `data` ou `observacao`, e **nenhuma foi ativada ou alterada**. A ativação continua exigindo o revisor identificado pelo titular (nome completo, data, observação), por PR. Responsável por este registro: Claude, só documentação.
+- Contagem corrigida: o parecer traz três totais incompatíveis ("15/4/2" no início, "15/2/1" na seção 4 e uma tabela final). Somando as decisões regra a regra: **1** ativar como está, **17** ajustar e ativar, **2** manter inativas, **1** descartar (total 21). Valem estes números.
+- Decisões propostas pelo parecer, por regra (proposta; não é ativação):
+
+| Decisão proposta | Regras |
+|---|---|
+| Ativar como está | `civ-473` |
+| Ajustar a pergunta e ativar | `civ-412`, `civ-413`, `civ-421a`, `civ-422`, `civ-423`, `civ-424`, `civ-478`, `lgpd-7`, `lgpd-11`, `lgpd-18`, `lgpd-33`, `lgpd-37`, `lgpd-39`, `lgpd-41`, `lgpd-42`, `lgpd-46`, `lgpd-48` |
+| Manter inativa | `civ-598` (enquadramento de SaaS no regime típico de serviços), `pi-195-xi` |
+| Descartar | `pi-195-xii` (a tipificação legal subsiste sem previsão contratual) |
+
+- Escopo proposto: pacote `servicos_saas` prioritariamente B2B, com alerta de incidência do CDC em B2C; LGPD em B2B e B2C quando houver tratamento de dados pessoais; arts. 207 e 209 da Lei 9.279/1996 como fundamento civil complementar, sem exigência automática de cláusula; sem prazo universal de sigilo; foro fora do pacote de NDA.
+- Conferido pelo Claude nesta data: o art. 19 da LGPD (resposta simplificada imediata ou declaração completa em até 15 dias) consta do texto compilado já guardado em `tests/casos/regras_fontes/lgpd_compilado.md`. A Resolução CD/ANPD nº 15/2024 (24/04/2024) fixa 3 dias úteis para comunicar incidente, segundo fonte secundária (escritório de advocacia), não o texto oficial. Existência das Resoluções CD/ANPD nº 18/2024 (encarregado) e nº 19/2024 (transferência internacional) apareceu em resultados de busca; o texto oficial não foi aberto. A Resolução CD/ANPD nº 2/2022 não foi verificada.
+- O que bloqueia a ativação das 17 "ajustar e ativar": reescrever cada pergunta de revisão; decidir se o art. 19 e as resoluções da ANPD entram como fonte do pacote (ampliação de escopo que exige leitura da fonte oficial, data e hash); conferir o texto literal do Código Civil com `--fonte-cc tests/casos/verificacao_stj/fontes/cc_compilado.md` (o compilado **está** no repositório; a frase anterior desta entrada dizia o contrário, por erro, e foi corrigida em CL-TEXTO); limpar artefatos de conversão no texto literal de `lgpd-7` e `lgpd-11` (marcação de link e quebras de linha). Só `civ-473` está pronta para ativar sem alteração de pergunta.
+- Orientação do parecer preservada como diretriz, sem implementação: as regras devem sinalizar pontos de revisão, sem declarar nulidade ou ilegalidade pela mera ausência de cláusula.
+- Correções de documentação desta entrada: `docs/plano-principal.md` (revisão 15), `docs/uso-assistido.md`, `shared/dados.md` e `skills/br-revisar-contrato/SKILL.md` passam a dizer 21 regras inativas (19 de Código Civil/LGPD e 2 de NDA) e que o pacote NDA tem 2 regras-rascunho, em vez de "NDA vazio". Registros datados anteriores (por exemplo, `docs/validacao-fase5.md`) preservam a contagem da época e não foram alterados.
+- Verificação: ver o PR; a suíte integral não foi executada localmente.
+
+## CL-ATIVA-TODAS — ativação das regras de LGPD e NDA pelo revisor, 30/10/2026
+
+- Decisão do titular, em chat: "todas as regras estão ativas"; editou no JSON local as 12 regras restantes (10 da LGPD e 2 de NDA), reescrevendo as perguntas, as pendências de fonte e o registro de revisão. Revisor gravado em cada uma: José Bonifácio de Aguiar Santos Júnior, 2026-10-30, com observação própria de uso (cada uma delimita o que a regra não deve presumir). Uma primeira versão do registro trazia "Revisão assistida por IA" como revisor; o Claude recusou abrir PR assim, porque o `AGENTS.md` não admite modelo como revisor, e o titular corrigiu.
+- Claude: sincronizou as perguntas e as pendências em `scripts/regras.py` (fonte), incorporou os arquivos do titular em `rules/br/lgpd.json` e `rules/br/nda.json` e ajustou testes e documentos de estado. Única alteração de conteúdo do Claude: na pendência de fonte da LGPD, a frase de que as resoluções da ANPD não estavam incorporadas foi atualizada, porque as Res. 15, 18 e 19/2024 já constam de `rules/br/fontes/anpd.json`; a nota de que o JSON devia ser sincronizado com o gerador foi retirada, pois a sincronização foi feita aqui.
+- **`civ-598` continua inativa.** No arquivo do titular ela estava `ativa` sem revisor nem data (erro `ativa_sem_revisor`), e a nota anterior do titular era "manter inativa" até definir o enquadramento de SaaS. Ativá-la depende de nome, data e observação do revisor.
+- Estado: 20 ativas (8 CC, 10 LGPD, 2 NDA), 1 inativa. As observações de LGPD e NDA mantêm a ressalva de que a ativação não certifica revisão por profissional do Direito; o uso das regras é limitado a alertas, sem concluir infração ou crime.
+- Pendência de escopo mantida: aplicação do pacote a relações civis e empresariais, com alerta de possível incidência do CDC em contrato de consumo. Pendentes de fonte: Res. CD/ANPD 2/2022 e 32/2026; arts. 207 e 209 da Lei 9.279/1996 (via civil).
+- Testes: `test_contrato` e `test_reconciliacao_org` passam a esperar 20 ativas e `civ-598` inativa; os cenários de rascunho usam `civ-598`.
+
+## CL-AVISO-CDC — aviso de que o CDC pode incidir, 30/10/2026
+
+- Decisão do titular, em chat: o escopo de `servicos_saas` fica com o aviso de que o CDC pode incidir ("aviso de que o cdc pode incidir"), sem criar pacote de regras do CDC. Responsável: Claude; `scripts/contrato.py`, `scripts/regras.py` e `rules/br/servicos_saas.json` (só o texto da pendência de escopo), `tests/test_contrato.py`, `skills/br-revisar-contrato/SKILL.md`, `docs/plano-principal.md` e este registro.
+- Comportamento: em `contrato.validar_issues`, se ao menos um apontamento cita regra do pacote `servicos_saas`, a validação emite um único aviso `cdc_pode_incidir` ("as regras são do Código Civil (relações civis e empresariais); se o contrato for de consumo, o CDC pode incidir e a análise por elas não o esgota"). É aviso, não erro: não bloqueia a entrega, mas a auditoria documental marca o gate G14 como `alerta`, para o revisor verificar a natureza da relação.
+- Fora do escopo: regras do próprio CDC (arts. 6º, 47, 51, 52 e 54, entre outros). Se o revisor quiser cobrir o consumo, é um pacote novo, com texto literal, perguntas e ativação pelo revisor.
+
+## CL-CIV-598 — ativação da `civ-598` e orientações gerais de `servicos_saas`, 30/10/2026
+
+- Decisão do titular, em chat: atualizou `servicos_saas.json` no checkout local (as 8 regras ativas ganharam "Orientação geral" em `revisao.observacao`; a `civ-598` foi marcada `ativa` com ressalva de enquadramento) e pediu "corrija" quando o Claude apontou os problemas da `civ-598`. Responsável: Claude; só `rules/br/servicos_saas.json`, testes e documentos de estado, e este registro.
+- Correções do Claude na `civ-598`: `revisao.data` estava `null` (erro `ativa_sem_revisor`) e passou a 2026-10-30, a data da edição do titular; o nome do revisor perdeu um ponto final; a `nota` ("rascunho... não revisada") foi trocada pela mesma das demais ativas. A observação da ressalva de SaaS é do titular e não foi alterada.
+- As orientações gerais das 9 regras do pacote dizem que foram elaboradas com assistência de IA, sem análise de contrato específico; foram mantidas como o titular as gravou.
+- Estado: 21 ativas (9 CC, 10 LGPD, 2 NDA), nenhuma inativa. Pendência de escopo mantida: aplicação do pacote a relações civis e empresariais, com alerta de possível incidência do CDC em consumo.
+- Testes: não há mais regra inativa no repositório; os cenários de rascunho usam uma cópia de `rules/br` com a `civ-598` inativa; `test_reconciliacao_org` espera 21 ativas.
+
+## CL-ANPD-32 — Res. CD/ANPD 32/2026 como fonte complementar de `lgpd-33`, 30/10/2026
+
+- Decisão do titular, em chat: enviou o PDF da página 49 do DOU nº 18 (27/01/2026), que traz a Res. CD/ANPD 32/2026. Responsável: Claude; só `rules/br/fontes/anpd.json`, o recorte e a extração em `tests/casos/regras_fontes/anpd/`, `scripts/regras.py` e `rules/br/lgpd.json` (só o texto da pendência), `tests/test_contrato.py` e este registro.
+- A página traz atos de terceiros sem relação com o projeto (decisões sobre pedidos de naturalização, com nomes de particulares). O repositório guarda só um recorte da área da resolução; o PDF original completo não foi guardado e seu SHA-256 consta em `origem`. O recorte perde a assinatura digital da página. O texto extraído do recorte confere palavra por palavra com o da página original.
+- Registrados com texto literal os arts. 1º (com o parágrafo único, que autoriza a transferência com base no art. 33, I, da LGPD), 2º (exclusões: segurança pública, defesa nacional, segurança do Estado e persecução penal), 4º (monitoramento e reavaliação em quatro anos) e 5º (os demais mecanismos do art. 33 continuam disponíveis).
+- Ligada a `lgpd-33`; não sustenta apontamento, não ativa nem altera regra. Com isso, não resta resolução ANPD pendente.
+
+## CL-ANPD-2 — Res. CD/ANPD 2/2022 como fonte complementar de `lgpd-41` e `lgpd-48`, 30/10/2026
+
+- Decisão do titular, em chat: pediu que o Claude buscasse as resoluções pendentes em vez de aguardar PDFs. Responsável: Claude; só `rules/br/fontes/anpd.json`, o PDF e a extração em `tests/casos/regras_fontes/anpd/`, `scripts/regras.py` e `rules/br/lgpd.json` (só o texto da pendência), `tests/test_contrato.py` e este registro.
+- Origem: cópia em PDF da página do DOU (impressão de 28/01/2022, Edição 20, p. 6) hospedada no portal gov.br da Fundação Palmares. Não é a versão certificada do DOU; o PDF e a extração ficam guardados e o validador confere o hash. Registrados com texto literal os arts. 3º, 4º e 11 (condições do tratamento diferenciado, alto risco e dispensa de encarregado com canal de comunicação).
+- O art. 14, II, foi alterado pelo art. 2º da Res. CD/ANPD 15/2024 e não foi registrado na redação original de 2022.
+- Res. CD/ANPD 32/2026 (adequação da União Europeia): o texto em português só existe no DOU (`in.gov.br`), cujo acesso é recusado ao Claude; o gov.br/anpd traz apenas versões em inglês e espanhol, que não foram usadas. Não incorporada; depende de o titular fornecer o PDF e decidir se entra.
+- Não sustenta apontamento, não ativa nem altera regra.
+
+## CL-ANPD-19 — Res. CD/ANPD 19/2024 como fonte complementar de `lgpd-33`, 30/10/2026
+
+- Decisão do titular, em chat: enviou o PDF da Res. CD/ANPD 19/2024 (DOU, edição 163, seção 1, página 123, 23/08/2024), na sequência de CL-ANPD. Responsável: Claude; só `rules/br/fontes/anpd.json`, o PDF e a extração em `tests/casos/regras_fontes/anpd/`, `scripts/regras.py` (texto da pendência), `tests/test_contrato.py` e este registro.
+- Cobertura: ato completo (20 páginas), com a resolução, o Regulamento (arts. 1º a 34) e o Anexo II (cláusulas-padrão). Registrados com texto literal o art. 2º da resolução, com o prazo de 12 meses (contado de 23/08/2024) para incorporar as cláusulas-padrão, e os arts. 4º, 5º, 9º, 15, 16 e 17 do Regulamento (verificação do controlador, caracterização, hipótese legal e mecanismo válidos, adoção integral das cláusulas-padrão e transparência ao titular, com prazo de 15 dias). O texto do Anexo II fica no PDF guardado e não foi transcrito.
+- Ligada a `lgpd-33`; não sustenta apontamento, não ativa nem altera regra. As 10 da LGPD continuam inativas.
+- Ainda não incorporadas: Res. CD/ANPD 2/2022 (agentes de pequeno porte) e a Res. 32/2026 (decisão de adequação da União Europeia, citada em fonte secundária, não lida).
+
+## CL-ANPD — Res. CD/ANPD 15/2024 e 18/2024 como fontes complementares da LGPD, 30/10/2026
+
+- Decisão do titular, em chat: "sim para ANPD", com os PDFs do DOU anexados por ele (a página `in.gov.br` não pode ser lida pelo Claude; o robots do site recusa). Responsável: Claude; só `rules/br/fontes/anpd.json` (novo), `tests/casos/regras_fontes/anpd/` (os dois PDFs e a extração de texto), `scripts/regras.py`, `rules/br/lgpd.json` (só `pendencias_de_fonte`), `tests/test_contrato.py` e este registro.
+- Formato: as resoluções ficam em arquivo próprio, fora do campo `fonte` das regras. Elas complementam, não sustentam apontamento e não ativam nem alteram regra; a base de cada regra continua a lei. `aplica_a` liga cada fonte à regra: Res. 15/2024 → `lgpd-48`; Res. 18/2024 → `lgpd-41`. Cada fonte lista seus `arquivos` (PDF, hash e extração de texto). `regras.py listar --pacote lgpd` devolve `fontes_complementares`.
+- Cobertura real: os PDFs são páginas do DOU. Res. 15/2024: duas páginas (nº 81, 26/04/2024), com a resolução e o Regulamento completo (arts. 1º a 24); registrados com texto literal os arts. 4º, 5º, 6º, 9º e 10 (critérios de comunicação, prazo de três dias úteis à ANPD e ao titular, complementação em vinte dias úteis, dobro para agentes de pequeno porte, registro do incidente por no mínimo cinco anos). Res. 18/2024: uma página (nº 136, 17/07/2024), com a resolução e os arts. 1º a 21 do Regulamento; registrados os arts. 3º, 8º e 9º. Se o Regulamento da Res. 18 tem artigos além do 21, eles estão na página seguinte do DOU e não foram lidos.
+- O prazo de três dias úteis deixa de depender de fonte secundária: consta do art. 6º, caput, do texto oficial lido.
+- Validação nova: `validar` confere o hash do PDF guardado e se cada texto literal consta da extração dele (alteração do texto, hash errado ou `aplica_a` inexistente viram erro).
+- Ainda não incorporadas: Res. CD/ANPD 19/2024 (transferência internacional; `lgpd-33`) e 2/2022 (agentes de pequeno porte). Há também a Res. CD/ANPD 32/2026, mencionada em fonte secundária como relevante para `lgpd-33`, não lida. Decisão do revisor sobre quais artigos entram.
+- Nenhuma regra foi ativada ou alterada; as 10 da LGPD continuam inativas e sem revisor.
+
+## CL-ATIVA-CC — ativação de 8 regras do Código Civil pelo revisor, 30/10/2026
+
+- Decisão do titular, em chat: "eu já aprovei e quero ativar tudo. pode ativar"; ao escolher o alcance, optou por "8 do CC, sem civ-598" e pelo registro sugerido. Responsável pela edição: Claude, a pedido e sob a decisão do revisor; o ato de ativação é o merge do titular.
+- Ativadas: `civ-412`, `civ-413`, `civ-421a`, `civ-422`, `civ-423`, `civ-424`, `civ-473` e `civ-478`, com `revisao.revisor` = José Bonifácio de Aguiar Santos Júnior, `revisao.data` = 2026-10-30 e observação: "Pergunta conferida com o texto do dispositivo (Código Civil compilado do Planalto, lido em 18/10/2026); revisão do titular." A `nota` de rascunho dessas regras foi substituída por referência à revisão.
+- Continuam inativas, sem revisor: `civ-598` (o enquadramento de SaaS, licenciamento ou contrato misto no regime de prestação de serviços segue em aberto), as 10 da LGPD (pendências: art. 19 em `lgpd-18`, resoluções da ANPD) e as 2 de NDA (art. 195 é tipo penal; via civil e prazo do sigilo em aberto).
+- Pendência de escopo mantida: o pacote cobre relações civis e empresariais; em contrato de consumo, o CDC pode prevalecer sobre os arts. 412, 413, 423 e 424. Decisão do revisor.
+- Testes: `test_contrato`, `test_auditoria_documental` e `test_reconciliacao_org` passam a esperar 8 ativas e 13 inativas; os cenários de "regra de rascunho" usam `civ-598`. Documentos de estado atualizados (README, plano principal, uso assistido, governança, skill `br-revisar-contrato`); relatórios históricos de 19 regras inativas não foram alterados.
+- Esta ativação não torna entregável nenhum apontamento por si: a skill continua sujeita à auditoria e à conferência do contrato real.
+
+## CL-PERGUNTAS-SAAS — perguntas do pacote `servicos_saas` reescritas pelo titular, 30/10/2026
+
+- Autor das perguntas: o titular (revisor jurídico designado), que reescreveu no JSON local as 9 perguntas do Código Civil (`civ-412`, `413`, `421a`, `422`, `423`, `424`, `473`, `478`, `598`) e corrigiu a da `civ-473` ("a natureza e o vulto dos investimentos"). Responsável pela sincronização: Claude, só `scripts/regras.py` (fonte das perguntas) e `rules/br/servicos_saas.json`, que passa a ser reproduzido byte a byte pelo `gerar`.
+- Não houve ativação: as 9 regras continuam `inativa`, `revisao.revisor` e `revisao.data` nulos, `observacao` nula e a nota de rascunho do mantenedor mantida. Ativar é ato do revisor, em PR próprio, com nome completo, data e observação.
+- Texto legal, hash da fonte e data de leitura inalterados; `civ-598` mantém o alerta de que o enquadramento de SaaS, licenciamento ou contrato misto no regime de prestação de serviços não deve ser presumido.
+- Verificação: `validar` com as três fontes sem erros; testes dos módulos de regras aprovados (ver o PR).
+
+## CL-FECH — fechamento da reconciliação do repositório, 30/10/2026
+
+- Pedido autorizado pelo titular, passo a passo. Responsável: Claude; apenas Git/GitHub e este registro, sem alteração de código, de regras ou de skills. O worktree do Codex não foi tocado.
+- Integrado no `main`: PR #7 (pacote NDA, H-07 e correção da skill `br-preencher-minuta`; CI verde nos quatro jobs) e PR #9 (`pypdf` 6.19.0 → 6.21.2 em `requirements-dev.txt`, mesmo diff do PR #6 do Dependabot; CI verde). Os merges foram feitos pelo titular.
+- Causa do PR #9: o PR #6 do Dependabot havia entrado em `fix/fase2-correcoes`, que era a branch padrão do GitHub, e não chegou ao `main`.
+- Branch padrão do GitHub trocada para `main` pelo titular (Settings → Default branch). Depois disso o Dependabot passa a abrir PRs contra `main`.
+- `fix/fase2-correcoes`: obsoleta. Os 7 commits que existiam só no checkout local do Claude foram preservados e integrados nela pelo PR #8 (merge do titular, antes da troca da branch padrão); não passam para o `main` e conflitam com ele em 7 arquivos. As branches `arquivo/fase2-local-2026-10-29` e `claude/pypdf-6-21-2` foram apagadas pelo titular. Restam no GitHub, sem uso corrente: `fix/fase2-correcoes` e `claude/porte-sobre-main` (integrada pelo PR #7).
+- Documentos de plano e backlog do Claude de 29/10/2026 (`docs/plano-aprimoramentos-2026-10-29.md`, `docs/estado-backlog-2026-10-29.md`) e `tests/casos/README.md`: escritos sobre base obsoleta, **não** portados ao `main`; só existem em `fix/fase2-correcoes`. Se forem retomados, devem ser reescritos sobre o `main`.
+- Checkout local do titular alinhado ao `origin/main` (`5561813`), com árvore limpa. O checkout de origem foi atualizado por bundle, porque a VM da ponte não tem credenciais do GitHub.
+- Pendente do Codex: no worktree dele, a branch `codex/organizacao-colaboracao` tem o commit `785d4ce` ("feat: validar e renderizar análise estruturada") que não está no GitHub nem no `main`. Não foi verificado nem enviado pelo Claude. Cabe ao Codex abrir o PR ou dizer se ele ainda vale sobre o `main` atual.
+- Pendentes do titular, sem prazo técnico: revisão jurídica das 21 regras contratuais, todas **inativas** (nenhuma ativação ocorreu); o modo padrão de `auditar.py` foi decidido em 30/10/2026 (ver CL-MODO).
+- Verificação: `git status` limpo após o alinhamento; CI dos PRs #7 e #9 verde. Suíte integral não executada no ambiente do Claude.
+
+## CL-MODO — padrão de `auditar.py` passa a `fundamentada`, 30/10/2026
+
+- Decisão do titular, em chat: "em auditar.py para > fundamentada". Responsável: Claude; só `scripts/auditar.py` (padrão da CLI `--modo` e do parâmetro `modo` de `auditar()`), o hash desse arquivo em `tests/casos/org05/manifesto.json` (`produto_sha256`, normalização LF), a skill `br-auditar-entrega` e este registro.
+- Efeito: sem `--modo`, ausência de extração, de fontes lidas ou de teses centrais passa a reprovar, e não a alertar. A análise interna exploratória continua disponível com `--modo analise`, que os exemplos de `docs/uso-assistido.md` já passam de forma explícita. Entregas externas já reprovavam nos dois modos. `validate.py` e `cronologia.py` mantêm `analise` como padrão: a decisão do titular foi só sobre `auditar.py`.
+- O manifesto da ORG-05 guarda o hash do código avaliado; ele foi atualizado só para o novo `auditar.py`, sem tocar nos demais hashes, nos casos nem nas referências. A avaliação congelada (`docs/resultado-org05-congelado.json`) não foi alterada.
+- Verificação: suíte integral rodou no ambiente do Claude com 3 falhas que já existem em `main` e não vêm desta mudança (`test_contrato_inventario_pecas` ×2, `test_triagem::test_travar_marca_originais_como_somente_leitura`); as demais passaram, incluindo `test_avaliar_pecas`, `test_auditar*`, `test_rigor` e `test_gates_integridade`. O CI do PR é a referência final.
+
+## CL-NDA / H-07 — porte do trabalho do Claude sobre o `main`, 29/10/2026
+
+- Pedido autorizado pelo titular: “commit e push e pr”. Responsável: Claude, em cópia própria (clone novo de `main`, `3ab28e2`), branch `claude/porte-sobre-main`; o worktree do Codex e o checkout original do Claude não foram tocados. PR para `main`, sem merge.
+- Contexto: o checkout original do Claude estava em `fix/fase2-correcoes`, base `4e9989c`, e divergia do `main` em 16 commits (CX-01 a CX-04, R07/R10, peças, redline por issue). Do trabalho local foram portados somente os itens que o `main` ainda não tem; C-02 (redline por `issue_id`) e C-03 (localizador por sufixo em `preencher.py`) foram **descartados** por já existirem, de forma mais estrita, no `main`.
+- Portado: (1) pacote NDA com o art. 195 da Lei 9.279/1996 (texto literal da versão compilada lida em 2026-10-29, hash em `tests/casos/regras_fontes/registro.json`), duas regras **inativas** e sem revisor, `--fonte-lpi` em `regras.py`, com pendências do revisor mantidas (via civil, arts. 207 e 209; prazo do sigilo e foro); (2) H-07: a fixture `caso` de `tests/test_auditar.py` extrai o PDF uma vez por módulo, com cópia por teste; (3) `br-preencher-minuta`: o estado `informado` exige também `fala`.
+- Verificação: 207 testes aprovados e 2 falhas em `test_contrato_inventario_pecas.py` (`instante_invalido`, `instante_sem_fuso`), **idênticas no `main` limpo** neste ambiente por faltar `rfc3339-validator`; a suíte integral não foi executada. Antes da integração com o `main`, a mudança de H-07 reduziu a suíte de 483,6 s para 353,3 s no Windows do titular (mesmos 465 aprovados e 4 ignorados); o efeito sobre a base atual não foi medido.
+- Limites: as regras contratuais continuam inativas (21 no total, 2 delas novas); nenhuma ativação, revisão jurídica ou liberação. Conflitos antecipados com a branch antiga `fix/fase2-correcoes` (7 arquivos) tornam essa branch obsoleta para integração.
 ## EV-02-R — composição do reservado, 22/10/2026
 
 - Pedido do titular: “Prossiga com a composição dos 12 processos reservados da EV-02, usando fontes públicas e respeitando os estratos previstos”. Worktree Codex/origin/branch `codex/organizacao-colaboracao`, HEAD `785d4ce`, estado local, índice vazio e worktrees reconferidos. Alterações anteriores e Claude preservados; baseline externa nova.

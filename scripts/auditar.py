@@ -1,6 +1,6 @@
 """Gate final de uma entrega: checagem técnica (qc.json) e aprovação humana ligada a hashes.
 
-  auditar  --facts F.json --claims C.json --extracoes E.json [--modo analise|fundamentada]
+  auditar  --facts F.json --claims C.json --extracoes E.json [--modo fundamentada|analise]
            [--timeline T.json] [--matter M.json] [--tipo-entrega interna|cliente|peticao|contrato]
            [--issues I.json] [--campos C.json --modelo M.docx --minuta D.docx]
            [--regras DIR --pacote servicos_saas,lgpd]
@@ -83,7 +83,7 @@ def _baixar(url, destino):
     return fontes.baixar(url, destino)
 
 
-def auditar(facts, claims, extracoes, modo="analise", extras=(), base=Path("."), timeline=None,
+def auditar(facts, claims, extracoes, modo="fundamentada", extras=(), base=Path("."), timeline=None,
             matter=None, tipo_entrega="interna", reverificar=0, relatorios=(), sem_teses_centrais=False,
             issues=None, campos=None, modelo=None, minuta=None, regras_dir=None, pacote="servicos_saas,lgpd", *,
             pecas=(), pecas_anteriores=(), exigir_pecas=False) -> dict:
@@ -558,7 +558,7 @@ def main(argv=None) -> int:
     a.add_argument("--regras", help="diretório dos pacotes de regras; padrão rules/br do projeto")
     a.add_argument("--pacote", default="servicos_saas,lgpd", help="pacotes usados na validação contratual")
     a.add_argument("--extracoes", action="append", default=[])
-    a.add_argument("--modo", choices=("analise", "fundamentada"), default="analise")
+    a.add_argument("--modo", choices=("analise", "fundamentada"), default="fundamentada")
     a.add_argument("--artefato", action="append", default=[])
     a.add_argument("--timeline", help="timeline.json gerado por cronologia.py")
     a.add_argument("--matter", help="matter.json: confere conflitos de interesse e sigilo")

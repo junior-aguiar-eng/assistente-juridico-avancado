@@ -1,0 +1,233 @@
+Documento assinado digitalmente conforme MP nº 2.200-2 de 24/08/2001,
+que institui a Infraestrutura de Chaves Públicas Brasileira - ICP-Brasil.
+Este documento pode ser verificado no endereço eletrônico
+http://www.in.gov.br/autenticidade.html, pelo código 05152024042600114
+114
+Nº 81, sexta-feira, 26 de abril de 2024
+ISSN 1677-7042
+Seção 1
+Parágrafo único. Em relação a coletes balísticos, recomenda-se que também
+seja permitido seu acautelamento, mediante requisitos a serem determinados pelas
+corporações, especialmente diante de suspeitas ou indícios de atentados contra a vida ou
+integridade física do policial.
+Art.4º O regulamento de cada unidade federativa deverá prever procedimentos
+e requisitos para renovação do acautelamento, tais como:
+a) prazo de validade da decisão que concede o acautelamento;
+b) forma, requisitos e prazos para solicitação de renovação de acautelamento;
+c) regras para inspeção dos materiais acautelados;
+d) regras para elaboração de memorial sobre a utilização do material acautelado;
+e) regras para substituição de materiais acautelados;
+f) prazo máximo de duração do procedimento de acautelamento, entre a
+solicitação e a decisão administrativa;
+g) plano de capacitação continuada para utilização do armamento acautelado;
+h) regras para suspensão da cautela, notadamente, em caso de doença mental
+e decisões emanadas com base na Lei Nº 11.340, de 7 de agosto de 2006;
+i) atuação da Corregedoria própria para tratar desvios de finalidades no uso do
+armamento acautelado.
+Parágrafo Único. Nos casos de denúncia de violência doméstica, o acautelamento
+deve ser imediatamente suspenso, devendo ser revisto após decisão judicial.
+Art.5º Os entes federativos deverão regulamentar as causas de suspensão do
+acautelamento, provisórias ou definitivas, prazos e procedimentos para devolução do
+material, bem como requisitos para reabilitação, especialmente em situações que
+envolvam questões de saúde mental, cometimento de infrações penais com utilização do
+material acautelado e casos de desvinculação do cargo público.
+Art.6º Além dos trâmites já previstos em lei, especialmente na Lei nº
+10.826/2003, as unidades federativas farão registro próprio, da forma mais completa
+possível, de todas as ocorrências pertinentes aos materiais acautelados, tais como extravio,
+furto, roubo etc.
+Art.7º Em caso de indisponibilidade de armamento para fins de cautela de
+policiais penais fora das unidades prisionais e/ou fora de horário de serviço, deverá o ente
+federado apresentar plano para aquisição e distribuição dos armamentos em até 1 (um)
+ano, podendo, para tanto, solicitar e/ou utilizar, de acordo com a legislação em vigor,
+recursos próprios ou do Fundo Penitenciário Nacional.
+Art. 8º. Esta Resolução entra em vigor na data de sua publicação.
+DIEGO MANTOVANELI DO MONTE
+Relator
+DOUGLAS DE MELO MARTINS
+Presidente do Conselho
+AUTORIDADE NACIONAL DE PROTEÇÃO DE DADOS
+CONSELHO DIRETOR
+RESOLUÇÃO CD/ANPD Nº 15, DE 24 DE ABRIL DE 2024
+Aprova o Regulamento de Comunicação de Incidente
+de Segurança.
+O CONSELHO DIRETOR DA AUTORIDADE NACIONAL DE PROTEÇÃO DE DADOS
+(ANPD), no uso das competências que lhe são conferidas pelo art. 5º, I, do Regimento
+Interno da Autoridade Nacional de Proteção de Dados, aprovado pela Portaria nº 1, de 8
+de março de 2021, e considerando as competências previstas no art. 55-J, XIII, da Lei nº
+13.709, de 14 de agosto de 2018, no art. 2º, XIII, do Anexo I do Decreto nº 10.474, de 26
+de agosto de 2020, bem como a deliberação tomada nos autos do processo nº
+00261.000098/2021-67, resolve:
+Art. 1º Aprovar o Regulamento de Comunicação de Incidente de Segurança na
+forma do anexo desta Resolução.
+Art. 2º O inciso II do art. 14 do Regulamento de aplicação da Lei nº 13.709, de
+14 de agosto de 2018, Lei Geral de Proteção de Dados Pessoais (LGPD), para agentes de
+tratamento de pequeno porte, aprovado pela Resolução CD/ANPD nº 2, de 27 de janeiro
+de 2022, passa a vigorar com a seguinte redação:
+"Art. 14. ...................................................................................................................
+..................................................................................................................................
+II - no caso da comunicação, à ANPD e ao titular, da ocorrência de incidente
+de segurança que possa acarretar risco ou dano relevante aos titulares, nos termos do
+Regulamento de Comunicação de Incidente de Segurança, aprovado pela Resolução
+CD/ANPD nº 15, de 24 de abril de 2024;
+........................................................................................................................." (NR)
+Art. 3º Esta Resolução entra em vigor na data da sua publicação.
+WALDEMAR GONÇALVES ORTUNHO JUNIOR
+Diretor-Presidente
+ANEXO
+REGULAMENTO DE COMUNICAÇÃO DE INCIDENTE DE SEGURANÇA
+CAPÍTULO I
+DISPOSIÇÕES PRELIMINARES
+Art. 1º Este Regulamento tem por objetivo estabelecer os procedimentos para
+Comunicação de Incidente de Segurança, que possa acarretar risco ou dano relevante aos
+titulares, nos termos do art. 48 da Lei nº 13.709, de 14 de agosto de 2018 - Lei Geral de
+Proteção de Dados Pessoais (LGPD).
+Art. 2º São objetivos deste Regulamento:
+I - proteger os direitos dos titulares;
+II - assegurar a adoção das medidas necessárias para mitigar ou reverter os
+efeitos dos prejuízos gerados;
+III - assegurar a efetividade do princípio da responsabilização e da prestação de
+contas pelos agentes de tratamento;
+IV - promover a adoção de regras de boas práticas, de governança, de medidas
+de prevenção e segurança adequadas;
+V - estimular a promoção da cultura de proteção de dados pessoais;
+VI - garantir que os agentes de tratamento atuem de forma transparente e
+estabeleçam uma relação de confiança com o titular; e
+VII - fornecer subsídios para as atividades regulatória, fiscalizatória e
+sancionatória da Autoridade Nacional de Proteção de Dados (ANPD).
+CAPÍTULO II
+DAS DEFINIÇÕES
+Art. 3º Para efeitos deste Regulamento, são adotadas as seguintes
+definições:
+I - ampla divulgação do incidente em meios de comunicação: providência que
+pode ser determinada pela ANPD ao controlador, nos termos do art. 48, § 2º, I, da LGPD,
+no âmbito do processo de comunicação de incidente de segurança, como a publicação no
+sítio eletrônico, nas redes sociais do controlador ou em outros meios de comunicação;
+II - autenticidade: propriedade pela qual se assegura que a informação foi
+produzida, expedida, modificada ou destruída por uma determinada pessoa física,
+equipamento, sistema, órgão ou entidade;
+III - categoria de dados pessoais: classificação dos dados pessoais de acordo
+com o contexto de sua utilização, tais como dados de identificação pessoal, dados de
+autenticação em sistemas, dados financeiros;
+IV - comunicação de incidente de segurança: ato do controlador que comunica
+à ANPD e ao titular de dados a ocorrência de incidente de segurança que possa acarretar
+risco ou dano relevante aos titulares;
+V - confidencialidade: propriedade pela qual se assegura que o dado pessoal
+não esteja disponível ou não seja revelado a pessoas, empresas, sistemas, órgãos ou
+entidades não autorizados;
+VI - dado de autenticação em sistemas: qualquer dado pessoal utilizado como
+credencial para determinar o acesso a um sistema ou para confirmar a identificação de um
+usuário, como contas de login, tokens e senhas;
+VII - dado financeiro: dado pessoal relacionado às transações financeiras do
+titular, inclusive para contratação de serviços e aquisição de produtos;
+VIII - dado pessoal afetado: dado pessoal cuja confidencialidade, integridade,
+disponibilidade ou autenticidade tenha sido comprometida em um incidente de
+segurança;
+IX - dado protegido por sigilo legal ou judicial: dado pessoal cujo sigilo decorra
+de norma jurídica ou decisão judicial;
+X - dado protegido por sigilo profissional: dado pessoal cujo sigilo decorra do
+exercício de função, ministério, ofício ou profissão, e cuja revelação possa produzir dano
+a outrem;
+XI - disponibilidade: propriedade pela qual se assegura que o dado pessoal
+esteja acessível e utilizável, sob demanda, por uma pessoa natural ou determinado
+sistema, órgão ou entidade devidamente autorizados;
+XII - incidente de segurança: qualquer evento adverso confirmado, relacionado
+à violação das propriedades de confidencialidade, integridade, disponibilidade e
+autenticidade da segurança de dados pessoais;
+XIII - integridade: propriedade pela qual se assegura que o dado pessoal não
+foi modificado ou destruído de maneira não autorizada ou acidental;
+XIV- medidas de segurança: medidas técnicas e/ou administrativas adotadas
+para proteger os dados pessoais de acessos não autorizados e de situações acidentais ou
+ilícitas de destruição, perda, alteração, comunicação ou difusão;
+XV - natureza dos dados pessoais: classificação de dados pessoais em gerais ou
+sensíveis;
+XVI- procedimento de apuração de incidente de segurança: procedimento
+instaurado pela ANPD para apurar a ocorrência de incidente de segurança que não tenha
+sido comunicado pelo controlador;
+XVII - procedimento de comunicação de incidente de segurança: procedimento
+instaurado no âmbito da ANPD após o recebimento de comunicação de incidente de
+segurança;
+XVIII - processo de comunicação de incidente de segurança: processo
+administrativo instaurado no âmbito da ANPD que abrange o procedimento de apuração
+incidente de segurança e o procedimento de comunicação de incidente de segurança; e
+XIX - relatório de tratamento de incidente: documento fornecido pelo
+controlador que contém cópias, em meio físico ou digital, de dados e informações
+relevantes para descrever o incidente e as providências adotadas para reverter ou mitigar
+os seus efeitos.
+CAPÍTULO III
+DA COMUNICAÇÃO DE INCIDENTE DE SEGURANÇA
+Seção I
+Dos Critérios para Comunicação de Incidente de Segurança
+Art. 4º O controlador deverá comunicar à ANPD e ao titular a ocorrência de
+incidente de segurança que possa acarretar risco ou dano relevante aos titulares.
+Art. 5º O incidente de segurança pode acarretar risco ou dano relevante aos
+titulares quando puder afetar significativamente interesses e direitos fundamentais dos
+titulares e, cumulativamente, envolver, pelo menos, um dos seguintes critérios:
+I - dados pessoais sensíveis;
+II - dados de crianças, de adolescentes ou de idosos;
+III - dados financeiros;
+IV - dados de autenticação em sistemas;
+V - dados protegidos por sigilo legal, judicial ou profissional; ou
+VI - dados em larga escala.
+§ 1º O incidente de segurança que possa afetar significativamente interesses e
+direitos fundamentais será caracterizado, dentre outras situações, naquelas em que a
+atividade de tratamento puder impedir o exercício de direitos ou a utilização de um
+serviço, assim como ocasionar danos materiais ou morais aos titulares, tais como
+discriminação, violação à integridade física, ao direito à imagem e à reputação, fraudes
+financeiras ou roubo de identidade.
+§ 2º Considera-se incidente com dados em larga escala aquele que abranger
+número significativo de titulares, considerando, ainda, o volume de dados envolvidos, bem
+como a duração, a frequência e a extensão geográfica de localização dos titulares.
+§ 3º A ANPD poderá publicar orientações com o objetivo de auxiliar os agentes
+de tratamento na avaliação do incidente que possa acarretar risco ou dano relevante aos
+titulares.
+Seção II
+Da Comunicação de Incidente de Segurança à ANPD
+Art. 6º A comunicação de incidente de segurança à ANPD deverá ser realizada
+pelo controlador no prazo de três dias úteis, ressalvada a existência de prazo para
+comunicação previsto em legislação específica.
+§ 1º O prazo a que se refere o caput será contado do conhecimento pelo
+controlador de que o incidente afetou dados pessoais.
+§ 2º A comunicação de incidente de segurança deverá conter as seguintes
+informações:
+I - a descrição da natureza e da categoria de dados pessoais afetados;
+II - o número de titulares afetados, discriminando, quando aplicável, o número
+de crianças, de adolescentes ou de idosos;
+III - as medidas técnicas e de segurança utilizadas para a proteção dos dados
+pessoais, adotadas antes e após o incidente, observados os segredos comercial e
+industrial;
+IV - os riscos relacionados ao incidente com identificação dos possíveis
+impactos aos titulares;
+V - os motivos da demora, no caso de a comunicação não ter sido realizada no
+prazo previsto no caput deste artigo;
+VI - as medidas que foram ou que serão adotadas para reverter ou mitigar os
+efeitos do incidente sobre os titulares;
+VII - a data da ocorrência do incidente, quando possível determiná-la, e a de
+seu conhecimento pelo controlador;
+VIII - os dados do encarregado ou de quem represente o controlador;
+IX - a identificação do controlador e, se for o caso, declaração de que se trata
+de agente de tratamento de pequeno porte;
+X - a identificação do operador, quando aplicável;
+XI - a descrição do incidente, incluindo a causa principal, caso seja possível
+identificá-la; e
+XII - o total de titulares cujos dados são tratados nas atividades de tratamento
+afetadas pelo incidente.
+§ 3º As informações poderão ser complementadas, de maneira fundamentada,
+no prazo de vinte dias úteis, a contar da data da comunicação.
+§ 4º A comunicação de incidente de segurança deverá ocorrer por meio de
+formulário eletrônico disponibilizado pela ANPD.
+§ 5º A comunicação de incidente de segurança deverá ser realizada pelo
+controlador, por meio do encarregado, acompanhada de documento comprobatório de
+vínculo contratual, empregatício ou funcional, ou por meio de representante constituído,
+acompanhada de instrumento com poderes de representação junto à ANPD.
+§ 6º Os documentos de que trata o § 5º deverão ser apresentados juntamente
+com a comunicação do incidente de segurança, no prazo previsto no caput deste
+artigo.
+§ 7º No caso de descumprimento do previsto no § 6º, a ANPD poderá apurar
+a ocorrência do incidente de segurança por meio do procedimento de apuração de
+incidente de segurança.
+§ 8º Os prazos constantes no caput e no § 3º deste artigo são contados em
+dobro para os agentes de pequeno porte, nos termos do disposto no Regulamento de
+aplicação da Lei nº 13.709, de 14 de agosto de 2018, Lei Geral de Proteção de Dados
+Pessoais (LGPD), aos agentes de tratamento de pequeno porte, aprovado pela Resolução
+CD/ANPD nº 2, de 27 de janeiro de 2022.
+

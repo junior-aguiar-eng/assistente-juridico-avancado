@@ -24,16 +24,27 @@ def _cli(script, *args, cwd):
     return r.returncode, json.loads(r.stdout.decode("utf-8"))
 
 
-@pytest.fixture
-def caso(tmp_path, claims_stj_reconferiveis):
-    """Subconjunto reconferível para testar auditoria; não libera o caso histórico completo."""
-    pasta = tmp_path / "caso"
+@pytest.fixture(scope="module")
+def _caso_base(tmp_path_factory, claims_stj_reconferiveis):
+    """Subconjunto reconferível com a extração feita uma única vez por módulo.
+
+    A extração do PDF é o passo caro (dezenas de segundos); cada teste recebe uma cópia, então
+    o que um teste altera na pasta não vaza para os outros."""
+    pasta = tmp_path_factory.mktemp("caso_base") / "caso"
     shutil.copytree(VERIF / "fontes", pasta / "fontes")
     (pasta / "claims.json").write_text(json.dumps(claims_stj_reconferiveis), encoding="utf-8")
     shutil.copy(MAPA / "facts.json", pasta / "facts.json")
     cod, _ = _cli("extract.py", "fontes/stj_inteiro_teor.pdf", "fontes/cc_compilado.md", "--no-cache",
                   "--saida", "extracao.json", cwd=pasta)
     assert cod == 0
+    return pasta
+
+
+@pytest.fixture
+def caso(tmp_path, _caso_base):
+    """Cópia do caso já extraído (subconjunto reconferível; não libera o caso histórico completo)."""
+    pasta = tmp_path / "caso"
+    shutil.copytree(_caso_base, pasta)
     return pasta
 
 

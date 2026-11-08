@@ -13,6 +13,21 @@
       "sha256": "e68f6b890ec7224b5f95adcf553850a6eddb8830a71986caeb4728aad393ae91",
       "content_type": "text/markdown",
       "via": "fetch_oficial.py"
+    },
+    {
+      "url": "https://www.planalto.gov.br/ccivil_03/leis/l9279.htm",
+      "origem": "oficial",
+      "retrieved_at": "2026-10-30T02:31:00+00:00",
+      "avisos": [
+        "5 trechos tachados (revogados/substituídos) marcados com ~~; nenhum no art. 195"
+      ],
+      "status": "lida",
+      "source_id": "src-1b46d18844ce",
+      "local_file": "tests\\casos\\regras_fontes\\l9279_compilado.md",
+      "bytes": 116758,
+      "sha256": "1b46d18844ce118f93b078ebc4e50f7e0ed94fed74256ab30a71985bc64253d6",
+      "content_type": "text/markdown",
+      "via": "fetch_oficial.py"
     }
   ]
 }

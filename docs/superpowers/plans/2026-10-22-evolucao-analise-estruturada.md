@@ -1,6 +1,6 @@
 # Evolução da análise estruturada — plano de execução aprovado
 
-> **Autorização posterior:** “commit o EV-01 e prossiga com a EV-02”. EV-01 commitada localmente em `785d4ce`, sem push; executar EV-02 inline com revisão final somente leitura. Titular revisará gabaritos; escolheu Luna 6 High e Haiku 5.5, com US$ 5 total. Acesso será configurado depois, portanto preparação offline; baseline não executada. Sem commit EV-02 ou push. EV-03 a EV-06 não autorizadas.
+> **Autorização posterior:** “commit o EV-01 e prossiga com a EV-02”. EV-01 registrada em `785d4ce` e posteriormente publicada na branch Codex; executar EV-02 inline com revisão final somente leitura. Titular revisará gabaritos; escolheu Luna 6 High e Haiku 5.5, com US$ 5 total. Acesso será configurado depois, portanto preparação offline; baseline não executada. Sem commit EV-02 ou push. EV-03 a EV-06 não autorizadas.
 
 > **Autorização inicial de 22/10/2026:** “Aprovo o contrato e o plano. Prossiga com a EV-01”. Usar `superpowers:executing-plans` apenas nessa etapa, com revisão final somente leitura. EV-02 a EV-06, implementação delegada, APIs, modelos e novos serviços não foram iniciados nem autorizados por este pedido. Sem commit ou push.
 
@@ -16,7 +16,7 @@
 
 - Trabalhar somente no worktree Codex `C:/Users/Boni Jr/.codex/worktrees/assistente-juridico-codex/Skill Legal`; Claude permanece no checkout original, sem Git, instalação, testes ou escrita nele.
 - Reconfirmar remoto, branch, HEAD, estado, índice e worktrees antes da futura execução; este planejamento partiu de `codex/organizacao-colaboracao`, HEAD `3ab28e211641acb8fe75da5152fa0235e25fbd4d`, com alterações documentais preexistentes.
-- Preservar originais, alterações locais e evidências históricas; 19 regras continuam inativas, NDA vazio. Não presumir aprovação material/encerramento da fase 5.
+- Preservar originais, alterações locais e evidências históricas; as 21 regras foram posteriormente ativadas por decisão do revisor. Não presumir aprovação material/encerramento da fase 5.
 - Autorização atual: EV-01 e preparação/execução EV-02 conforme seus gates. Acesso às APIs será configurado depois; não iniciar chamadas agora, EV-03 a EV-06, dependências ou infraestrutura persistente.
 - Cada adoção futura de framework, API/serviço, modelo externo, persistência, instalação, commit, push e publicação depende de autorização própria.
 - Reaproveitar invariantes existentes e manter os modos legados. Política técnica experimental não ignora os bloqueios atuais nem registra eventos humanos.
@@ -191,7 +191,7 @@ Qualquer falha crítica reprova a variante para adoção no escopo afetado, mesm
 - [ ] Executar testes focados, suíte completa offline, revisão mecânica pertinente e revisão do diff. Atualizar documentação/avisos de terceiros para dependências realmente adotadas.
 - [ ] Pedir decisão separada sobre publicação/instalação e eventuais mudanças de gates humanos. Nenhuma regra contratual é ativada neste pacote.
 
-**Aceitação:** compatibilidade demonstrada; saída nova opt-in, limites visíveis, originais/histórico intactos e 19 regras inativas. Teste local não comprova CI, instalação, qualidade jurídica ou uso profissional aprovado.
+**Aceitação:** compatibilidade demonstrada; saída nova opt-in, limites visíveis, originais/histórico intactos e decisões posteriores do revisor sobre as regras preservadas. Teste local não comprova CI, instalação, qualidade jurídica ou uso profissional aprovado.
 
 ## 11. Verificação e pontos de parada
 

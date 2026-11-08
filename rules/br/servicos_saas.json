@@ -6,14 +6,14 @@
     {
       "id": "civ-412",
       "topico": "cláusula penal: teto",
-      "pergunta_de_revisao": "A cláusula penal ou multa ultrapassa o valor da obrigação principal?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Alguma cláusula penal, inclusive por inadimplemento ou rescisão antecipada conforme sua natureza jurídica, pode exceder o valor da obrigação principal concretamente identificada, sem presumir que ela corresponda à mensalidade ou ao valor integral do contrato?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Pergunta conferida com o texto do dispositivo (Código Civil compilado do Planalto, lido em 18/10/2026); revisão do titular. Orientação geral: identificar a obrigação principal pertinente e comparar seu valor com a cominação, considerando a natureza da cláusula penal; não presumir que a obrigação corresponda a uma mensalidade ou ao valor integral do contrato. Orientação geral elaborada com assistência de IA em 30/10/2026, sem análise de contrato específico."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Pergunta revisada pelo titular, revisor jurídico designado; ver revisao.observacao.",
       "fonte": {
         "norma_id": "cc",
         "norma": "Lei nº 10.406/2002 (Código Civil)",
@@ -30,14 +30,14 @@
     {
       "id": "civ-413",
       "topico": "cláusula penal: redução",
-      "pergunta_de_revisao": "O valor da multa é manifestamente excessivo para a natureza e a finalidade do negócio, ou há cumprimento parcial?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Há indícios de cumprimento parcial da obrigação principal ou de penalidade manifestamente excessiva, considerada a natureza e a finalidade do negócio, que justifiquem alertar para eventual redução equitativa judicial?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Pergunta conferida com o texto do dispositivo (Código Civil compilado do Planalto, lido em 18/10/2026); revisão do titular. Orientação geral: verificar cumprimento parcial da obrigação ou excesso manifesto da penalidade, considerando a natureza e a finalidade do negócio; eventual redução equitativa cabe ao juiz, sem cálculo automático. Orientação geral elaborada com assistência de IA em 30/10/2026, sem análise de contrato específico."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Pergunta revisada pelo titular, revisor jurídico designado; ver revisao.observacao.",
       "fonte": {
         "norma_id": "cc",
         "norma": "Lei nº 10.406/2002 (Código Civil)",
@@ -54,14 +54,14 @@
     {
       "id": "civ-421a",
       "topico": "paridade e alocação de riscos",
-      "pergunta_de_revisao": "A alocação de riscos e as regras de revisão foram previstas e respeitadas, ou há elemento concreto que afasta a presunção de paridade?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Em contrato civil ou empresarial, como foram alocados os riscos e existem elementos concretos que possam afastar a presunção de paridade e simetria, ressalvados os regimes especiais? Há possível relação de consumo a exigir análise do CDC, inclusive entre empresas?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Pergunta conferida com o texto do dispositivo (Código Civil compilado do Planalto, lido em 18/10/2026); revisão do titular. Orientação geral: examinar a alocação de riscos e os elementos concretos que possam afastar a presunção de paridade e simetria, observados regimes especiais; avaliar a possível incidência do CDC mesmo entre empresas. Orientação geral elaborada com assistência de IA em 30/10/2026, sem análise de contrato específico."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Pergunta revisada pelo titular, revisor jurídico designado; ver revisao.observacao.",
       "fonte": {
         "norma_id": "cc",
         "norma": "Lei nº 10.406/2002 (Código Civil)",
@@ -80,14 +80,14 @@
     {
       "id": "civ-422",
       "topico": "boa-fé",
-      "pergunta_de_revisao": "Alguma cláusula impede a conduta de boa-fé na conclusão ou na execução do contrato?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Há cláusula concretamente incompatível com os deveres de cooperação, lealdade e boa-fé objetiva na conclusão ou na execução do contrato?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Pergunta conferida com o texto do dispositivo (Código Civil compilado do Planalto, lido em 18/10/2026); revisão do titular. Orientação geral: identificar cláusulas e circunstâncias concretas que possam contrariar a probidade, a lealdade, a cooperação ou a boa-fé objetiva na conclusão e na execução. Orientação geral elaborada com assistência de IA em 30/10/2026, sem análise de contrato específico."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Pergunta revisada pelo titular, revisor jurídico designado; ver revisao.observacao.",
       "fonte": {
         "norma_id": "cc",
         "norma": "Lei nº 10.406/2002 (Código Civil)",
@@ -104,14 +104,14 @@
     {
       "id": "civ-423",
       "topico": "adesão: ambiguidade",
-      "pergunta_de_revisao": "O contrato é de adesão e tem cláusula ambígua ou contraditória a interpretar a favor do aderente?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Há cláusulas predispostas unilateralmente, sem possibilidade substancial de negociação, que indiquem contrato de adesão? Em caso afirmativo, há cláusulas ambíguas ou contraditórias cuja interpretação mais favorável ao aderente deva ser examinada?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Pergunta conferida com o texto do dispositivo (Código Civil compilado do Planalto, lido em 18/10/2026); revisão do titular. Orientação geral: avaliar se há contrato de adesão e identificar cláusulas ambíguas ou contraditórias; quando aplicável, examinar a interpretação mais favorável ao aderente. Orientação geral elaborada com assistência de IA em 30/10/2026, sem análise de contrato específico."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Pergunta revisada pelo titular, revisor jurídico designado; ver revisao.observacao.",
       "fonte": {
         "norma_id": "cc",
         "norma": "Lei nº 10.406/2002 (Código Civil)",
@@ -128,14 +128,14 @@
     {
       "id": "civ-424",
       "topico": "adesão: renúncia antecipada",
-      "pergunta_de_revisao": "O contrato é de adesão e a cláusula renuncia antecipadamente a direito resultante da natureza do negócio?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Em contrato de adesão, alguma cláusula estipula renúncia antecipada do aderente a direito resultante da natureza do negócio, indicando possível nulidade a ser examinada?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Pergunta conferida com o texto do dispositivo (Código Civil compilado do Planalto, lido em 18/10/2026); revisão do titular. Orientação geral: em contrato de adesão, identificar eventual renúncia antecipada do aderente a direito resultante da natureza do negócio e sinalizar possível nulidade para análise jurídica. Orientação geral elaborada com assistência de IA em 30/10/2026, sem análise de contrato específico."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Pergunta revisada pelo titular, revisor jurídico designado; ver revisao.observacao.",
       "fonte": {
         "norma_id": "cc",
         "norma": "Lei nº 10.406/2002 (Código Civil)",
@@ -152,14 +152,14 @@
     {
       "id": "civ-473",
       "topico": "resilição unilateral",
-      "pergunta_de_revisao": "A denúncia unilateral respeita o aviso e o investimento considerável feito pela outra parte?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Quando admitida a resilição unilateral, há previsão de denúncia notificada à outra parte e, havendo investimentos consideráveis para a execução, de prazo compatível com a natureza e o vulto dos investimentos?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Pergunta conferida com o texto do dispositivo (Código Civil compilado do Planalto, lido em 18/10/2026); revisão do titular. Orientação geral: quando a resilição unilateral for admitida, verificar a notificação à outra parte e, se houver investimentos consideráveis para a execução, a compatibilidade do prazo com sua natureza e seu vulto. Orientação geral elaborada com assistência de IA em 30/10/2026, sem análise de contrato específico."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Pergunta revisada pelo titular, revisor jurídico designado; ver revisao.observacao.",
       "fonte": {
         "norma_id": "cc",
         "norma": "Lei nº 10.406/2002 (Código Civil)",
@@ -176,14 +176,14 @@
     {
       "id": "civ-478",
       "topico": "onerosidade excessiva",
-      "pergunta_de_revisao": "Em contrato de execução continuada, há cláusula que afasta a resolução por onerosidade excessiva?",
-      "status": "inativa",
+      "pergunta_de_revisao": "Em contrato de execução continuada ou diferida, há cláusula que exclua a resolução por onerosidade excessiva? Se houver, quais são os requisitos legais, a alocação de riscos e as circunstâncias relevantes para avaliar sua validade, sem presumir sua invalidade?",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Pergunta conferida com o texto do dispositivo (Código Civil compilado do Planalto, lido em 18/10/2026); revisão do titular. Orientação geral: em execução continuada ou diferida, examinar os requisitos legais da onerosidade excessiva, a alocação de riscos e as circunstâncias relevantes; não presumir inválida a exclusão convencional da resolução. Orientação geral elaborada com assistência de IA em 30/10/2026, sem análise de contrato específico."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Pergunta revisada pelo titular, revisor jurídico designado; ver revisao.observacao.",
       "fonte": {
         "norma_id": "cc",
         "norma": "Lei nº 10.406/2002 (Código Civil)",
@@ -200,14 +200,14 @@
     {
       "id": "civ-598",
       "topico": "prestação de serviço: prazo máximo",
-      "pergunta_de_revisao": "O prazo de prestação de serviço regido pelo Código Civil passa de quatro anos?",
-      "status": "inativa",
+      "pergunta_de_revisao": "O contrato pode ser enquadrado no regime típico de prestação de serviços do Código Civil e, em caso afirmativo, prevê prazo superior a quatro anos? Não presumir esse enquadramento para contratos SaaS, de licenciamento ou mistos.",
+      "status": "ativa",
       "revisao": {
-        "revisor": null,
-        "data": null,
-        "observacao": null
+        "revisor": "José Bonifácio de Aguiar Santos Júnior",
+        "data": "2026-10-30",
+        "observacao": "Orientação geral e ressalva de enquadramento: o limite de quatro anos exige análise prévia de aplicação do regime típico de prestação de serviços do Código Civil; não aplicá-lo indistintamente a SaaS, licenciamento ou contratos mistos. A regra permanece ativa por determinação do titular; a resposta depende do enquadramento concreto. Orientação geral elaborada com assistência de IA em 30/10/2026, sem análise de contrato específico."
       },
-      "nota": "Rascunho do mantenedor técnico: pergunta de revisão não revisada por profissional do Direito.",
+      "nota": "Pergunta revisada pelo titular, revisor jurídico designado; ver revisao.observacao.",
       "fonte": {
         "norma_id": "cc",
         "norma": "Lei nº 10.406/2002 (Código Civil)",
@@ -222,5 +222,7 @@
       }
     }
   ],
-  "pendencias_de_fonte": []
+  "pendencias_de_fonte": [
+    "Escopo decidido pelo revisor em 30/10/2026, conforme parecer anexado: aplicação prioritária a contratos civis e empresariais, com aviso de que o CDC pode incidir em contrato de consumo (aviso `cdc_pode_incidir`, emitido quando um apontamento cita regra deste pacote). O pacote não tem regras do CDC; a análise de consumo pelo CDC não é coberta por ele"
+  ]
 }
