@@ -1,0 +1,1411 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:juris-skills-br:analise-1",
+  "title": "Análise estruturada — contrato aditivo, sem aprovação jurídica",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "analise-1"
+    },
+    "analysis_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "matter_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "previous_sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date"
+    },
+    "objective": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "acordao_isolado",
+            "conjunto_documental"
+          ]
+        },
+        "document_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "document_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]+$"
+              },
+              "reason": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            },
+            "required": [
+              "document_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "document_ids",
+        "exclusions",
+        "limitations"
+      ],
+      "additionalProperties": false
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/input"
+      },
+      "minItems": 3
+    },
+    "execution_ref": {
+      "$ref": "#/$defs/execution_ref"
+    },
+    "actors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/actor"
+      },
+      "minItems": 1
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/reference"
+      },
+      "minItems": 1
+    },
+    "overview": {
+      "type": "object",
+      "properties": {
+        "context": {
+          "$ref": "#/$defs/assertion"
+        },
+        "objective": {
+          "$ref": "#/$defs/assertion"
+        },
+        "posture": {
+          "$ref": "#/$defs/assertion"
+        },
+        "outcome": {
+          "$ref": "#/$defs/assertion"
+        },
+        "reach": {
+          "$ref": "#/$defs/assertion"
+        }
+      },
+      "required": [
+        "context",
+        "objective",
+        "posture",
+        "outcome",
+        "reach"
+      ],
+      "additionalProperties": false
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/issue"
+      },
+      "minItems": 1
+    },
+    "requests": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/request"
+      }
+    },
+    "coverage": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/coverage"
+      }
+    },
+    "research_tasks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/research"
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "professional_decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/decision"
+      }
+    },
+    "technical_result": {
+      "$ref": "#/$defs/technical"
+    }
+  },
+  "required": [
+    "schema_version",
+    "analysis_id",
+    "matter_id",
+    "revision",
+    "previous_sha256",
+    "run_id",
+    "created_at",
+    "as_of",
+    "objective",
+    "scope",
+    "inputs",
+    "execution_ref",
+    "actors",
+    "references",
+    "overview",
+    "issues",
+    "requests",
+    "coverage",
+    "research_tasks",
+    "findings",
+    "professional_decisions",
+    "technical_result"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "speaker": {
+      "type": "object",
+      "properties": {
+        "entity_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mode": {
+          "enum": [
+            "fala_propria",
+            "relato_terceiro",
+            "transcricao",
+            "nao_identificado"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "entity_ref",
+        "mode",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "entity_ref": {
+                "type": "null"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "assertion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "text": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "nature": {
+          "enum": [
+            "relato_documental",
+            "posicao_processual",
+            "inferencia_analitica",
+            "limite"
+          ]
+        },
+        "speaker": {
+          "$ref": "#/$defs/speaker"
+        },
+        "basis_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "uniqueItems": true
+        },
+        "qualification": {
+          "enum": [
+            "sustentada_no_escopo",
+            "parcial",
+            "inconclusiva"
+          ]
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "justification": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "missing_input": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "nature",
+        "speaker",
+        "basis_refs",
+        "qualification",
+        "limitations"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "nature": {
+                "enum": [
+                  "relato_documental",
+                  "posicao_processual",
+                  "inferencia_analitica"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "basis_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "nature": {
+                "const": "inferencia_analitica"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "justification"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "qualification": {
+                "enum": [
+                  "parcial",
+                  "inconclusiva"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "limitations": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "nature": {
+                "const": "limite"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "missing_input"
+            ],
+            "properties": {
+              "basis_refs": {
+                "maxItems": 0
+              },
+              "qualification": {
+                "enum": [
+                  "parcial",
+                  "inconclusiva"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "type": "object",
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "type": {
+          "enum": [
+            "matter",
+            "extracao",
+            "facts",
+            "claims",
+            "original",
+            "pecas",
+            "pecas_anterior",
+            "execucao",
+            "analise_anterior",
+            "fontes",
+            "qc"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "type",
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "execution_ref": {
+      "type": "object",
+      "properties": {
+        "input_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "input_id",
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "label": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "role": {
+          "enum": [
+            "parte",
+            "juizo",
+            "relator",
+            "colegiado",
+            "perito",
+            "testemunha",
+            "outro"
+          ]
+        },
+        "matter_input_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "reference_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "role"
+      ],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "matter_input_id"
+          ]
+        },
+        {
+          "required": [
+            "reference_id"
+          ]
+        }
+      ]
+    },
+    "reference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "input_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "collection": {
+          "enum": [
+            "facts",
+            "claims"
+          ]
+        },
+        "item_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        }
+      },
+      "required": [
+        "id",
+        "input_id",
+        "collection",
+        "item_id"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "reference_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "role": {
+          "enum": [
+            "favoravel",
+            "contraria",
+            "contextual"
+          ]
+        },
+        "origin": {
+          "enum": [
+            "primaria",
+            "relatada"
+          ]
+        },
+        "limitation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "reference_id",
+        "role",
+        "origin",
+        "limitation"
+      ],
+      "additionalProperties": false
+    },
+    "issue": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "question": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "importance": {
+          "enum": [
+            "central",
+            "material",
+            "contextual"
+          ]
+        },
+        "importance_reason": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "status": {
+          "enum": [
+            "analisada",
+            "inconclusiva",
+            "nao_examinada"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "next_action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assertion"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        },
+        "grounds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assertion"
+          }
+        },
+        "assessment": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "preliminary_conclusion": {
+          "$ref": "#/$defs/assertion"
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assertion"
+          }
+        },
+        "alternatives_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "related_requests": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "uniqueItems": true
+        },
+        "research_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "uniqueItems": true
+        },
+        "decision_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "uniqueItems": true
+        },
+        "empty_reasons": {
+          "type": "object",
+          "properties": {
+            "positions": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "evidence": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "grounds": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "related_requests": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "research_ids": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "decision_ids": {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "question",
+        "importance",
+        "importance_reason",
+        "status",
+        "reason",
+        "next_action",
+        "positions",
+        "evidence",
+        "grounds",
+        "assessment",
+        "preliminary_conclusion",
+        "alternatives",
+        "alternatives_reason",
+        "related_requests",
+        "research_ids",
+        "decision_ids",
+        "empty_reasons"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "inconclusiva",
+                  "nao_examinada"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "next_action": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "alternatives": {
+                "maxItems": 0
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "alternatives_reason": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "positions": {
+                "maxItems": 0
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "empty_reasons": {
+                "required": [
+                  "positions"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "evidence": {
+                "maxItems": 0
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "empty_reasons": {
+                "required": [
+                  "evidence"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "grounds": {
+                "maxItems": 0
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "empty_reasons": {
+                "required": [
+                  "grounds"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "related_requests": {
+                "maxItems": 0
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "empty_reasons": {
+                "required": [
+                  "related_requests"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "research_ids": {
+                "maxItems": 0
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "empty_reasons": {
+                "required": [
+                  "research_ids"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "decision_ids": {
+                "maxItems": 0
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "empty_reasons": {
+                "required": [
+                  "decision_ids"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "description": {
+          "$ref": "#/$defs/assertion"
+        },
+        "requester": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "issue_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "result": {
+          "enum": [
+            "acolhido",
+            "rejeitado",
+            "parcial",
+            "nao_examinado",
+            "nao_localizado"
+          ]
+        },
+        "answer": {
+          "$ref": "#/$defs/assertion"
+        },
+        "effect": {
+          "$ref": "#/$defs/assertion"
+        }
+      },
+      "required": [
+        "id",
+        "description",
+        "requester",
+        "issue_ids",
+        "result",
+        "answer",
+        "effect"
+      ],
+      "additionalProperties": false
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "input_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "document_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "block_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "treatment": {
+          "enum": [
+            "utilizado",
+            "contextual",
+            "excluido_com_motivo",
+            "ilegivel",
+            "nao_examinado"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "analysis_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "uniqueItems": true
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "inventario_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "piece_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "secao_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        }
+      },
+      "required": [
+        "input_id",
+        "document_id",
+        "block_id",
+        "treatment",
+        "reason",
+        "analysis_ids"
+      ],
+      "additionalProperties": false,
+      "dependentRequired": {
+        "start": [
+          "end"
+        ],
+        "end": [
+          "start"
+        ],
+        "piece_id": [
+          "inventario_id"
+        ],
+        "secao_id": [
+          "inventario_id",
+          "piece_id"
+        ]
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "treatment": {
+                "enum": [
+                  "excluido_com_motivo",
+                  "ilegivel",
+                  "nao_examinado"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "research": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "issue_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "question": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "reason": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "permitted_terms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "outcome": {
+                "type": "string",
+                "pattern": "\\S"
+              }
+            },
+            "required": [
+              "query",
+              "outcome"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "candidate_sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "examined_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "uniqueItems": true
+        },
+        "claim_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "uniqueItems": true
+        },
+        "counter_findings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "uniqueItems": true
+        },
+        "status": {
+          "enum": [
+            "planejada",
+            "executada",
+            "limitada",
+            "dispensada"
+          ]
+        },
+        "stop_reason": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "id",
+        "issue_id",
+        "question",
+        "reason",
+        "permitted_terms",
+        "queries",
+        "candidate_sources",
+        "examined_refs",
+        "claim_refs",
+        "counter_findings",
+        "status",
+        "stop_reason"
+      ],
+      "additionalProperties": false
+    },
+    "finding": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "category": {
+          "enum": [
+            "integridade",
+            "leitura",
+            "atribuicao",
+            "cobertura",
+            "fundamentacao"
+          ]
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "extent": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "impact": {
+          "enum": [
+            "critico",
+            "material",
+            "informativo"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "uniqueItems": true
+        },
+        "action": {
+          "enum": [
+            "registrar",
+            "reprocessar",
+            "restringir",
+            "decisao_profissional"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "method": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "version": {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "name",
+            "version"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "code",
+        "category",
+        "targets",
+        "extent",
+        "impact",
+        "evidence_refs",
+        "action",
+        "reason",
+        "method"
+      ],
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "issue_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "question": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "reason": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "minItems": 2
+        },
+        "recommendation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "basis_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "uniqueItems": true
+        },
+        "consequence": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "id",
+        "issue_id",
+        "question",
+        "reason",
+        "options",
+        "recommendation",
+        "basis_refs",
+        "consequence"
+      ],
+      "additionalProperties": false
+    },
+    "technical": {
+      "type": "object",
+      "properties": {
+        "integrity": {
+          "enum": [
+            "valida",
+            "invalida",
+            "nao_verificada"
+          ]
+        },
+        "review_readiness": {
+          "enum": [
+            "apta",
+            "com_restricoes",
+            "reprocessar",
+            "bloqueada"
+          ]
+        },
+        "blocking_findings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "uniqueItems": true
+        },
+        "restrictions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      },
+      "required": [
+        "integrity",
+        "review_readiness",
+        "blocking_findings",
+        "restrictions"
+      ],
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "code_version": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "prompt_version": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "configuration": {
+          "type": "object"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      },
+      "required": [
+        "run_id",
+        "code_version",
+        "prompt_version",
+        "model",
+        "configuration",
+        "tools"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

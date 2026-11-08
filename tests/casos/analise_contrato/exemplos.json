@@ -1,0 +1,828 @@
+{
+  "proveniencia": {
+    "tipo": "sintetico",
+    "descricao": "Sem processo, parte, autoridade, aprovação ou revisão jurídica reais. Estados de fontes e julgamentos são dados fictícios de teste."
+  },
+  "positivos": [
+    {
+      "id": "POS-01",
+      "analise": {
+        "schema_version": "analise-1",
+        "analysis_id": "analise-sintetica",
+        "matter_id": "caso-sintetico",
+        "revision": 1,
+        "previous_sha256": null,
+        "run_id": "run-sintetico",
+        "created_at": "2026-10-22T15:00:00-03:00",
+        "as_of": "2026-10-22",
+        "objective": "Analisar o alcance do julgamento sintético.",
+        "scope": {
+          "type": "acordao_isolado",
+          "document_ids": [
+            "doc-sintetico"
+          ],
+          "exclusions": [],
+          "limitations": [
+            "Exemplo integralmente sintético; não é análise de caso real."
+          ]
+        },
+        "inputs": [
+          {
+            "artifact_id": "triagem",
+            "type": "matter",
+            "path": "derived/triagem.json",
+            "sha256": "c59c13d32bfaee00853f939c6e716324d3ebcbee0e03f459006cf84cb85891ee"
+          },
+          {
+            "artifact_id": "extracao",
+            "type": "extracao",
+            "path": "derived/extracao.json",
+            "sha256": "9c7dc2483a4c698a4c7bb5602b5bb7436f65465ec1eee34b6c7ed890f628316f"
+          },
+          {
+            "artifact_id": "fatos",
+            "type": "facts",
+            "path": "derived/fatos.json",
+            "sha256": "8d22fb46b01de6741b4fc54c6247fb1f4fd7913438f547babb5cc70a8b44501a"
+          },
+          {
+            "artifact_id": "teses",
+            "type": "claims",
+            "path": "derived/teses.json",
+            "sha256": "7f61269c37fe7dcc9b78b7e352483b855f7da3afc3a04608251a5a6a85097693"
+          },
+          {
+            "artifact_id": "execucao",
+            "type": "execucao",
+            "path": "derived/execucao.json",
+            "sha256": "39c9accf11c6d125a6f10de655f2f3307c44b338f9716bc493333ff80a6b6f48"
+          }
+        ],
+        "execution_ref": {
+          "input_id": "execucao",
+          "path": "derived/execucao.json",
+          "sha256": "39c9accf11c6d125a6f10de655f2f3307c44b338f9716bc493333ff80a6b6f48"
+        },
+        "actors": [
+          {
+            "id": "ator-relator",
+            "label": "Relator sintético",
+            "role": "relator",
+            "matter_input_id": "triagem"
+          },
+          {
+            "id": "ator-parte",
+            "label": "Parte sintética",
+            "role": "parte",
+            "matter_input_id": "triagem"
+          }
+        ],
+        "references": [
+          {
+            "id": "ref-ato",
+            "input_id": "fatos",
+            "collection": "facts",
+            "item_id": "f001"
+          },
+          {
+            "id": "ref-relato",
+            "input_id": "fatos",
+            "collection": "facts",
+            "item_id": "f002"
+          },
+          {
+            "id": "ref-norma",
+            "input_id": "teses",
+            "collection": "claims",
+            "item_id": "c001"
+          }
+        ],
+        "overview": {
+          "context": {
+            "id": "a-contexto",
+            "text": "O acórdão sintético registra provimento parcial.",
+            "nature": "relato_documental",
+            "speaker": {
+              "entity_ref": "ator-relator",
+              "mode": "fala_propria",
+              "reason": null
+            },
+            "basis_refs": [
+              "ref-ato"
+            ],
+            "qualification": "sustentada_no_escopo",
+            "limitations": []
+          },
+          "objective": {
+            "id": "a-objetivo",
+            "text": "Delimitar o efeito processual registrado.",
+            "nature": "relato_documental",
+            "speaker": {
+              "entity_ref": "ator-relator",
+              "mode": "fala_propria",
+              "reason": null
+            },
+            "basis_refs": [
+              "ref-ato"
+            ],
+            "qualification": "sustentada_no_escopo",
+            "limitations": []
+          },
+          "posture": {
+            "id": "a-fase",
+            "text": "O ato analisado é o julgamento do recurso.",
+            "nature": "relato_documental",
+            "speaker": {
+              "entity_ref": "ator-relator",
+              "mode": "fala_propria",
+              "reason": null
+            },
+            "basis_refs": [
+              "ref-ato"
+            ],
+            "qualification": "sustentada_no_escopo",
+            "limitations": []
+          },
+          "outcome": {
+            "id": "a-resultado",
+            "text": "O colegiado dá parcial provimento apenas para delimitar o prosseguimento.",
+            "nature": "relato_documental",
+            "speaker": {
+              "entity_ref": "ator-relator",
+              "mode": "fala_propria",
+              "reason": null
+            },
+            "basis_refs": [
+              "ref-ato"
+            ],
+            "qualification": "sustentada_no_escopo",
+            "limitations": []
+          },
+          "reach": {
+            "id": "a-alcance",
+            "text": "Não se infere reforma integral.",
+            "nature": "inferencia_analitica",
+            "speaker": {
+              "entity_ref": "ator-relator",
+              "mode": "fala_propria",
+              "reason": null
+            },
+            "basis_refs": [
+              "ref-ato"
+            ],
+            "qualification": "sustentada_no_escopo",
+            "limitations": [],
+            "justification": "A conclusão fica limitada ao efeito que o dispositivo registra."
+          }
+        },
+        "issues": [
+          {
+            "id": "q-efeito",
+            "question": "Qual é o alcance do provimento?",
+            "importance": "central",
+            "importance_reason": "Define o efeito que pode ser atribuído ao julgamento.",
+            "status": "analisada",
+            "reason": null,
+            "next_action": null,
+            "positions": [
+              {
+                "id": "a-posicao",
+                "text": "A defesa sustenta a leitura restrita.",
+                "nature": "posicao_processual",
+                "speaker": {
+                  "entity_ref": "ator-parte",
+                  "mode": "relato_terceiro",
+                  "reason": null
+                },
+                "basis_refs": [
+                  "ref-relato"
+                ],
+                "qualification": "sustentada_no_escopo",
+                "limitations": []
+              }
+            ],
+            "evidence": [
+              {
+                "reference_id": "ref-relato",
+                "role": "contextual",
+                "origin": "relatada",
+                "limitation": "O laudo original não foi fornecido."
+              }
+            ],
+            "grounds": [
+              {
+                "id": "a-fundamento",
+                "text": "A norma sintética é utilizada apenas para testar o contrato.",
+                "nature": "relato_documental",
+                "speaker": {
+                  "entity_ref": "ator-relator",
+                  "mode": "fala_propria",
+                  "reason": null
+                },
+                "basis_refs": [
+                  "ref-norma"
+                ],
+                "qualification": "sustentada_no_escopo",
+                "limitations": []
+              }
+            ],
+            "assessment": "O dispositivo delimita o prosseguimento; o relato de perícia não amplia o que foi decidido.",
+            "preliminary_conclusion": {
+              "id": "a-conclusao",
+              "text": "O efeito fica limitado ao prosseguimento.",
+              "nature": "inferencia_analitica",
+              "speaker": {
+                "entity_ref": "ator-relator",
+                "mode": "fala_propria",
+                "reason": null
+              },
+              "basis_refs": [
+                "ref-ato"
+              ],
+              "qualification": "sustentada_no_escopo",
+              "limitations": [],
+              "justification": "A conclusão fica limitada ao efeito que o dispositivo registra."
+            },
+            "alternatives": [],
+            "alternatives_reason": "Nenhuma alternativa adicional é necessária neste exemplo fechado.",
+            "related_requests": [
+              "pedido-1"
+            ],
+            "research_ids": [],
+            "decision_ids": [],
+            "empty_reasons": {
+              "research_ids": "Não há pesquisa necessária para transcrever este efeito.",
+              "decision_ids": "Não há escolha profissional neste exemplo de contrato."
+            }
+          }
+        ],
+        "requests": [
+          {
+            "id": "pedido-1",
+            "description": {
+              "id": "a-pedido",
+              "text": "A parte pede delimitação do prosseguimento.",
+              "nature": "posicao_processual",
+              "speaker": {
+                "entity_ref": "ator-relator",
+                "mode": "relato_terceiro",
+                "reason": null
+              },
+              "basis_refs": [
+                "ref-relato"
+              ],
+              "qualification": "sustentada_no_escopo",
+              "limitations": []
+            },
+            "requester": "ator-parte",
+            "issue_ids": [
+              "q-efeito"
+            ],
+            "result": "parcial",
+            "answer": {
+              "id": "a-resposta",
+              "text": "O colegiado dá parcial provimento apenas para delimitar o prosseguimento.",
+              "nature": "relato_documental",
+              "speaker": {
+                "entity_ref": "ator-relator",
+                "mode": "fala_propria",
+                "reason": null
+              },
+              "basis_refs": [
+                "ref-ato"
+              ],
+              "qualification": "sustentada_no_escopo",
+              "limitations": []
+            },
+            "effect": {
+              "id": "a-efeito",
+              "text": "Prosseguimento nos limites registrados.",
+              "nature": "inferencia_analitica",
+              "speaker": {
+                "entity_ref": "ator-relator",
+                "mode": "fala_propria",
+                "reason": null
+              },
+              "basis_refs": [
+                "ref-ato"
+              ],
+              "qualification": "sustentada_no_escopo",
+              "limitations": [],
+              "justification": "A conclusão fica limitada ao efeito que o dispositivo registra."
+            }
+          }
+        ],
+        "coverage": [
+          {
+            "input_id": "extracao",
+            "document_id": "doc-sintetico",
+            "block_id": "b0001",
+            "treatment": "utilizado",
+            "reason": null,
+            "analysis_ids": [
+              "q-efeito"
+            ]
+          },
+          {
+            "input_id": "extracao",
+            "document_id": "doc-sintetico",
+            "block_id": "b0002",
+            "treatment": "utilizado",
+            "reason": null,
+            "analysis_ids": [
+              "q-efeito"
+            ]
+          },
+          {
+            "input_id": "extracao",
+            "document_id": "doc-sintetico",
+            "block_id": "b0003",
+            "treatment": "utilizado",
+            "reason": null,
+            "analysis_ids": [
+              "q-efeito"
+            ]
+          }
+        ],
+        "research_tasks": [],
+        "findings": [],
+        "professional_decisions": [],
+        "technical_result": {
+          "integrity": "valida",
+          "review_readiness": "apta",
+          "blocking_findings": [],
+          "restrictions": []
+        }
+      },
+      "entradas_utf8": {
+        "triagem": "{\"schema_version\":\"1\",\"matter\":{\"matter_id\":\"caso-sintetico\",\"objective\":\"Analisar o alcance do julgamento sintético.\",\"client_role\":\"interessado\",\"jurisdiction\":{\"ramo\":\"civel\"},\"as_of\":\"2026-10-22\",\"confidentiality\":{\"nivel\":\"publico\",\"privilegio\":\"nao_aplicavel\",\"segredo_de_justica\":false},\"conflicts\":{\"status\":\"nao_aplicavel\",\"motivo\":\"Fixture sintética sem partes reais.\"},\"partes\":[{\"nome\":\"Parte sintética\",\"papel\":\"autor\"}]}}",
+        "extracao": "{\"schema_version\":\"1\",\"documents\":[{\"document_id\":\"doc-sintetico\",\"path\":\"original-sintetico.pdf\",\"sha256\":\"94fc66d8a9439b16e00cd0f759d74f9deb3917acb0e002469b64d3aea0a5f4c2\",\"text_sha256\":\"e8e46e5823c8a5d736d133323b7c9a1c9239226692bd45dd6a3d1fe182dfbfec\",\"media_type\":\"application/pdf\",\"page_count\":1,\"status\":\"ok\",\"warnings\":[],\"blocks\":[{\"id\":\"b0001\",\"page\":1,\"locator\":\"p.1\",\"text\":\"O colegiado dá parcial provimento apenas para delimitar o prosseguimento.\",\"section\":\"voto\",\"is_quote\":false,\"tags\":[]},{\"id\":\"b0002\",\"page\":1,\"locator\":\"p.1\",\"text\":\"O relatório reproduz a alegação da parte sobre uma perícia, cujo original não integra este pacote.\",\"section\":\"voto\",\"is_quote\":false,\"tags\":[]},{\"id\":\"b0003\",\"page\":1,\"locator\":\"p.1\",\"text\":\"A norma sintética é utilizada apenas para testar o contrato.\",\"section\":\"voto\",\"is_quote\":false,\"tags\":[]}]}]}",
+        "fatos": "{\"schema_version\":\"1\",\"matter_id\":\"caso-sintetico\",\"facts\":[{\"id\":\"f001\",\"kind\":\"documentado\",\"text\":\"O colegiado dá parcial provimento apenas para delimitar o prosseguimento.\",\"source\":{\"document_id\":\"doc-sintetico\",\"block_id\":\"b0001\",\"locator\":\"p.1\",\"excerpt\":\"O colegiado dá parcial provimento apenas para delimitar o prosseguimento.\"}},{\"id\":\"f002\",\"kind\":\"alegacao\",\"text\":\"O relatório reproduz a alegação da parte sobre uma perícia, cujo original não integra este pacote.\",\"alleged_by\":\"parte sintética, relatada no acórdão\",\"source\":{\"document_id\":\"doc-sintetico\",\"block_id\":\"b0002\",\"locator\":\"p.1\",\"excerpt\":\"O relatório reproduz a alegação da parte sobre uma perícia, cujo original não integra este pacote.\"}}]}",
+        "teses": "{\"schema_version\":\"1\",\"claims\":[{\"id\":\"c001\",\"tipo\":\"norma\",\"proposition\":\"A norma sintética é utilizada apenas para testar o contrato.\",\"status\":\"supported\",\"existence\":\"confirmada\",\"quote_status\":\"conferida\",\"sources\":[{\"source_id\":\"sintetica\",\"origin\":\"oficial\",\"access\":\"lida\",\"url\":\"https://exemplo.invalid/norma-sintetica\",\"retrieved_at\":\"2026-10-22\",\"content_hash\":\"94fc66d8a9439b16e00cd0f759d74f9deb3917acb0e002469b64d3aea0a5f4c2\",\"text_scope\":\"texto_legal\",\"document_id\":\"doc-sintetico\",\"block_id\":\"b0003\",\"pinpoint\":{\"locator\":\"p.1\",\"excerpt\":\"A norma sintética é utilizada apenas para testar o contrato.\"},\"legal_time\":{\"as_of\":\"2026-10-22\",\"vigencia\":\"nao_verificada\"}}]}]}",
+        "execucao": "{\"run_id\":\"run-sintetico\",\"code_version\":\"fixture-EV01\",\"prompt_version\":\"sem-modelo\",\"model\":null,\"configuration\":{},\"tools\":[]}"
+      }
+    },
+    {
+      "id": "POS-02",
+      "analise": {
+        "schema_version": "analise-1",
+        "analysis_id": "analise-sintetica",
+        "matter_id": "caso-sintetico",
+        "revision": 1,
+        "previous_sha256": null,
+        "run_id": "run-sintetico",
+        "created_at": "2026-10-22T15:00:00-03:00",
+        "as_of": "2026-10-22",
+        "objective": "Analisar o alcance do julgamento sintético.",
+        "scope": {
+          "type": "acordao_isolado",
+          "document_ids": [
+            "doc-sintetico"
+          ],
+          "exclusions": [],
+          "limitations": [
+            "Exemplo integralmente sintético; não é análise de caso real."
+          ]
+        },
+        "inputs": [
+          {
+            "artifact_id": "triagem",
+            "type": "matter",
+            "path": "derived/triagem.json",
+            "sha256": "c59c13d32bfaee00853f939c6e716324d3ebcbee0e03f459006cf84cb85891ee"
+          },
+          {
+            "artifact_id": "extracao",
+            "type": "extracao",
+            "path": "derived/extracao.json",
+            "sha256": "9c7dc2483a4c698a4c7bb5602b5bb7436f65465ec1eee34b6c7ed890f628316f"
+          },
+          {
+            "artifact_id": "fatos",
+            "type": "facts",
+            "path": "derived/fatos.json",
+            "sha256": "8d22fb46b01de6741b4fc54c6247fb1f4fd7913438f547babb5cc70a8b44501a"
+          },
+          {
+            "artifact_id": "teses",
+            "type": "claims",
+            "path": "derived/teses.json",
+            "sha256": "7f61269c37fe7dcc9b78b7e352483b855f7da3afc3a04608251a5a6a85097693"
+          },
+          {
+            "artifact_id": "execucao",
+            "type": "execucao",
+            "path": "derived/execucao.json",
+            "sha256": "39c9accf11c6d125a6f10de655f2f3307c44b338f9716bc493333ff80a6b6f48"
+          }
+        ],
+        "execution_ref": {
+          "input_id": "execucao",
+          "path": "derived/execucao.json",
+          "sha256": "39c9accf11c6d125a6f10de655f2f3307c44b338f9716bc493333ff80a6b6f48"
+        },
+        "actors": [
+          {
+            "id": "ator-relator",
+            "label": "Relator sintético",
+            "role": "relator",
+            "matter_input_id": "triagem"
+          },
+          {
+            "id": "ator-parte",
+            "label": "Parte sintética",
+            "role": "parte",
+            "matter_input_id": "triagem"
+          }
+        ],
+        "references": [
+          {
+            "id": "ref-ato",
+            "input_id": "fatos",
+            "collection": "facts",
+            "item_id": "f001"
+          },
+          {
+            "id": "ref-relato",
+            "input_id": "fatos",
+            "collection": "facts",
+            "item_id": "f002"
+          },
+          {
+            "id": "ref-norma",
+            "input_id": "teses",
+            "collection": "claims",
+            "item_id": "c001"
+          }
+        ],
+        "overview": {
+          "context": {
+            "id": "a-contexto",
+            "text": "O acórdão sintético registra provimento parcial.",
+            "nature": "relato_documental",
+            "speaker": {
+              "entity_ref": "ator-relator",
+              "mode": "fala_propria",
+              "reason": null
+            },
+            "basis_refs": [
+              "ref-ato"
+            ],
+            "qualification": "sustentada_no_escopo",
+            "limitations": []
+          },
+          "objective": {
+            "id": "a-objetivo",
+            "text": "Delimitar o efeito processual registrado.",
+            "nature": "relato_documental",
+            "speaker": {
+              "entity_ref": "ator-relator",
+              "mode": "fala_propria",
+              "reason": null
+            },
+            "basis_refs": [
+              "ref-ato"
+            ],
+            "qualification": "sustentada_no_escopo",
+            "limitations": []
+          },
+          "posture": {
+            "id": "a-fase",
+            "text": "O ato analisado é o julgamento do recurso.",
+            "nature": "relato_documental",
+            "speaker": {
+              "entity_ref": "ator-relator",
+              "mode": "fala_propria",
+              "reason": null
+            },
+            "basis_refs": [
+              "ref-ato"
+            ],
+            "qualification": "sustentada_no_escopo",
+            "limitations": []
+          },
+          "outcome": {
+            "id": "a-resultado",
+            "text": "O colegiado dá parcial provimento apenas para delimitar o prosseguimento.",
+            "nature": "relato_documental",
+            "speaker": {
+              "entity_ref": "ator-relator",
+              "mode": "fala_propria",
+              "reason": null
+            },
+            "basis_refs": [
+              "ref-ato"
+            ],
+            "qualification": "sustentada_no_escopo",
+            "limitations": []
+          },
+          "reach": {
+            "id": "a-alcance",
+            "text": "Não se infere reforma integral.",
+            "nature": "inferencia_analitica",
+            "speaker": {
+              "entity_ref": "ator-relator",
+              "mode": "fala_propria",
+              "reason": null
+            },
+            "basis_refs": [
+              "ref-ato"
+            ],
+            "qualification": "sustentada_no_escopo",
+            "limitations": [],
+            "justification": "A conclusão fica limitada ao efeito que o dispositivo registra."
+          }
+        },
+        "issues": [
+          {
+            "id": "q-efeito",
+            "question": "Qual é o alcance do provimento?",
+            "importance": "central",
+            "importance_reason": "Define o efeito que pode ser atribuído ao julgamento.",
+            "status": "analisada",
+            "reason": null,
+            "next_action": null,
+            "positions": [
+              {
+                "id": "a-posicao",
+                "text": "A defesa sustenta a leitura restrita.",
+                "nature": "posicao_processual",
+                "speaker": {
+                  "entity_ref": "ator-parte",
+                  "mode": "relato_terceiro",
+                  "reason": null
+                },
+                "basis_refs": [
+                  "ref-relato"
+                ],
+                "qualification": "sustentada_no_escopo",
+                "limitations": []
+              }
+            ],
+            "evidence": [
+              {
+                "reference_id": "ref-relato",
+                "role": "contextual",
+                "origin": "relatada",
+                "limitation": "O laudo original não foi fornecido."
+              }
+            ],
+            "grounds": [
+              {
+                "id": "a-fundamento",
+                "text": "A norma sintética é utilizada apenas para testar o contrato.",
+                "nature": "relato_documental",
+                "speaker": {
+                  "entity_ref": "ator-relator",
+                  "mode": "fala_propria",
+                  "reason": null
+                },
+                "basis_refs": [
+                  "ref-norma"
+                ],
+                "qualification": "sustentada_no_escopo",
+                "limitations": []
+              }
+            ],
+            "assessment": "O dispositivo delimita o prosseguimento; o relato de perícia não amplia o que foi decidido.",
+            "preliminary_conclusion": {
+              "id": "a-conclusao",
+              "text": "O efeito fica limitado ao prosseguimento.",
+              "nature": "inferencia_analitica",
+              "speaker": {
+                "entity_ref": "ator-relator",
+                "mode": "fala_propria",
+                "reason": null
+              },
+              "basis_refs": [
+                "ref-ato"
+              ],
+              "qualification": "parcial",
+              "limitations": [
+                "A perícia original não integra o pacote sintético."
+              ],
+              "justification": "A conclusão fica limitada ao efeito que o dispositivo registra."
+            },
+            "alternatives": [
+              {
+                "id": "a-alternativa",
+                "text": "A alternativa mantém a restrição probatória.",
+                "nature": "inferencia_analitica",
+                "speaker": {
+                  "entity_ref": "ator-relator",
+                  "mode": "fala_propria",
+                  "reason": null
+                },
+                "basis_refs": [
+                  "ref-relato"
+                ],
+                "qualification": "parcial",
+                "limitations": [
+                  "A perícia original não integra o pacote sintético."
+                ],
+                "justification": "A conclusão fica limitada ao efeito que o dispositivo registra."
+              }
+            ],
+            "alternatives_reason": null,
+            "related_requests": [
+              "pedido-1"
+            ],
+            "research_ids": [
+              "pesquisa-prova"
+            ],
+            "decision_ids": [
+              "decisao-prova"
+            ],
+            "empty_reasons": {}
+          }
+        ],
+        "requests": [
+          {
+            "id": "pedido-1",
+            "description": {
+              "id": "a-pedido",
+              "text": "A parte pede delimitação do prosseguimento.",
+              "nature": "posicao_processual",
+              "speaker": {
+                "entity_ref": "ator-relator",
+                "mode": "relato_terceiro",
+                "reason": null
+              },
+              "basis_refs": [
+                "ref-relato"
+              ],
+              "qualification": "sustentada_no_escopo",
+              "limitations": []
+            },
+            "requester": "ator-parte",
+            "issue_ids": [
+              "q-efeito"
+            ],
+            "result": "parcial",
+            "answer": {
+              "id": "a-resposta",
+              "text": "O colegiado dá parcial provimento apenas para delimitar o prosseguimento.",
+              "nature": "relato_documental",
+              "speaker": {
+                "entity_ref": "ator-relator",
+                "mode": "fala_propria",
+                "reason": null
+              },
+              "basis_refs": [
+                "ref-ato"
+              ],
+              "qualification": "sustentada_no_escopo",
+              "limitations": []
+            },
+            "effect": {
+              "id": "a-efeito",
+              "text": "Prosseguimento nos limites registrados.",
+              "nature": "inferencia_analitica",
+              "speaker": {
+                "entity_ref": "ator-relator",
+                "mode": "fala_propria",
+                "reason": null
+              },
+              "basis_refs": [
+                "ref-ato"
+              ],
+              "qualification": "sustentada_no_escopo",
+              "limitations": [],
+              "justification": "A conclusão fica limitada ao efeito que o dispositivo registra."
+            }
+          }
+        ],
+        "coverage": [
+          {
+            "input_id": "extracao",
+            "document_id": "doc-sintetico",
+            "block_id": "b0001",
+            "treatment": "utilizado",
+            "reason": null,
+            "analysis_ids": [
+              "q-efeito"
+            ]
+          },
+          {
+            "input_id": "extracao",
+            "document_id": "doc-sintetico",
+            "block_id": "b0002",
+            "treatment": "utilizado",
+            "reason": null,
+            "analysis_ids": [
+              "q-efeito"
+            ]
+          },
+          {
+            "input_id": "extracao",
+            "document_id": "doc-sintetico",
+            "block_id": "b0003",
+            "treatment": "utilizado",
+            "reason": null,
+            "analysis_ids": [
+              "q-efeito"
+            ]
+          }
+        ],
+        "research_tasks": [
+          {
+            "id": "pesquisa-prova",
+            "issue_id": "q-efeito",
+            "question": "É possível obter a perícia primária?",
+            "reason": "Pesquisa depende de fonte primária.",
+            "permitted_terms": [
+              "perícia sintética"
+            ],
+            "queries": [],
+            "candidate_sources": [],
+            "examined_refs": [],
+            "claim_refs": [],
+            "counter_findings": [],
+            "status": "planejada",
+            "stop_reason": "Nenhuma consulta executada no exemplo."
+          }
+        ],
+        "findings": [
+          {
+            "id": "achado-prova",
+            "code": "prova_primaria_ausente",
+            "category": "fundamentacao",
+            "targets": [
+              "q-efeito"
+            ],
+            "extent": "Conclusões sobre a prova",
+            "impact": "material",
+            "evidence_refs": [
+              "ref-relato"
+            ],
+            "action": "restringir",
+            "reason": "A perícia original não integra o pacote sintético.",
+            "method": {
+              "name": "exemplo-contrato",
+              "version": "1"
+            }
+          }
+        ],
+        "professional_decisions": [
+          {
+            "id": "decisao-prova",
+            "issue_id": "q-efeito",
+            "question": "Obter o laudo ou limitar a análise?",
+            "reason": "A suficiência da prova precisa de avaliação profissional.",
+            "options": [
+              "Obter a fonte primária.",
+              "Manter a restrição."
+            ],
+            "recommendation": "Manter a restrição até obter o documento.",
+            "basis_refs": [
+              "ref-relato"
+            ],
+            "consequence": "A consequência limita o uso da prova relatada."
+          }
+        ],
+        "technical_result": {
+          "integrity": "valida",
+          "review_readiness": "com_restricoes",
+          "blocking_findings": [],
+          "restrictions": [
+            "A perícia original não integra o pacote sintético."
+          ]
+        }
+      },
+      "entradas_utf8": {
+        "triagem": "{\"schema_version\":\"1\",\"matter\":{\"matter_id\":\"caso-sintetico\",\"objective\":\"Analisar o alcance do julgamento sintético.\",\"client_role\":\"interessado\",\"jurisdiction\":{\"ramo\":\"civel\"},\"as_of\":\"2026-10-22\",\"confidentiality\":{\"nivel\":\"publico\",\"privilegio\":\"nao_aplicavel\",\"segredo_de_justica\":false},\"conflicts\":{\"status\":\"nao_aplicavel\",\"motivo\":\"Fixture sintética sem partes reais.\"},\"partes\":[{\"nome\":\"Parte sintética\",\"papel\":\"autor\"}]}}",
+        "extracao": "{\"schema_version\":\"1\",\"documents\":[{\"document_id\":\"doc-sintetico\",\"path\":\"original-sintetico.pdf\",\"sha256\":\"94fc66d8a9439b16e00cd0f759d74f9deb3917acb0e002469b64d3aea0a5f4c2\",\"text_sha256\":\"e8e46e5823c8a5d736d133323b7c9a1c9239226692bd45dd6a3d1fe182dfbfec\",\"media_type\":\"application/pdf\",\"page_count\":1,\"status\":\"ok\",\"warnings\":[],\"blocks\":[{\"id\":\"b0001\",\"page\":1,\"locator\":\"p.1\",\"text\":\"O colegiado dá parcial provimento apenas para delimitar o prosseguimento.\",\"section\":\"voto\",\"is_quote\":false,\"tags\":[]},{\"id\":\"b0002\",\"page\":1,\"locator\":\"p.1\",\"text\":\"O relatório reproduz a alegação da parte sobre uma perícia, cujo original não integra este pacote.\",\"section\":\"voto\",\"is_quote\":false,\"tags\":[]},{\"id\":\"b0003\",\"page\":1,\"locator\":\"p.1\",\"text\":\"A norma sintética é utilizada apenas para testar o contrato.\",\"section\":\"voto\",\"is_quote\":false,\"tags\":[]}]}]}",
+        "fatos": "{\"schema_version\":\"1\",\"matter_id\":\"caso-sintetico\",\"facts\":[{\"id\":\"f001\",\"kind\":\"documentado\",\"text\":\"O colegiado dá parcial provimento apenas para delimitar o prosseguimento.\",\"source\":{\"document_id\":\"doc-sintetico\",\"block_id\":\"b0001\",\"locator\":\"p.1\",\"excerpt\":\"O colegiado dá parcial provimento apenas para delimitar o prosseguimento.\"}},{\"id\":\"f002\",\"kind\":\"alegacao\",\"text\":\"O relatório reproduz a alegação da parte sobre uma perícia, cujo original não integra este pacote.\",\"alleged_by\":\"parte sintética, relatada no acórdão\",\"source\":{\"document_id\":\"doc-sintetico\",\"block_id\":\"b0002\",\"locator\":\"p.1\",\"excerpt\":\"O relatório reproduz a alegação da parte sobre uma perícia, cujo original não integra este pacote.\"}}]}",
+        "teses": "{\"schema_version\":\"1\",\"claims\":[{\"id\":\"c001\",\"tipo\":\"norma\",\"proposition\":\"A norma sintética é utilizada apenas para testar o contrato.\",\"status\":\"supported\",\"existence\":\"confirmada\",\"quote_status\":\"conferida\",\"sources\":[{\"source_id\":\"sintetica\",\"origin\":\"oficial\",\"access\":\"lida\",\"url\":\"https://exemplo.invalid/norma-sintetica\",\"retrieved_at\":\"2026-10-22\",\"content_hash\":\"94fc66d8a9439b16e00cd0f759d74f9deb3917acb0e002469b64d3aea0a5f4c2\",\"text_scope\":\"texto_legal\",\"document_id\":\"doc-sintetico\",\"block_id\":\"b0003\",\"pinpoint\":{\"locator\":\"p.1\",\"excerpt\":\"A norma sintética é utilizada apenas para testar o contrato.\"},\"legal_time\":{\"as_of\":\"2026-10-22\",\"vigencia\":\"nao_verificada\"}}]}]}",
+        "execucao": "{\"run_id\":\"run-sintetico\",\"code_version\":\"fixture-EV01\",\"prompt_version\":\"sem-modelo\",\"model\":null,\"configuration\":{},\"tools\":[]}"
+      }
+    }
+  ],
+  "contraexemplos": [
+    {
+      "id": "NEG-01",
+      "cenario": "hash_incompativel",
+      "teste": "test_referencia_incompativel_reprova"
+    },
+    {
+      "id": "NEG-02",
+      "cenario": "secundaria_supported",
+      "teste": "test_fonte_secundaria_nao_vira_supported"
+    },
+    {
+      "id": "NEG-03",
+      "cenario": "autoria_ambigua",
+      "teste": "test_atribuicao_ambigua_nao_e_aptidao_irrestrita"
+    },
+    {
+      "id": "NEG-04",
+      "cenario": "nao_examinado_apto",
+      "teste": "test_nao_examinado_nao_vira_analise_apta"
+    },
+    {
+      "id": "NEG-05",
+      "cenario": "documento_inventado",
+      "teste": "test_lacuna_nao_pode_inventar_documento_lido"
+    }
+  ]
+}
