@@ -1,6 +1,8 @@
 # Evolução da análise estruturada — plano de execução aprovado
 
-> **Autorização de 22/10/2026:** “Aprovo o contrato e o plano. Prossiga com a EV-01”. Usar `superpowers:executing-plans` apenas nessa etapa, com revisão final somente leitura. EV-02 a EV-06, implementação delegada, APIs, modelos e novos serviços não foram iniciados nem autorizados por este pedido. Sem commit ou push.
+> **Autorização posterior:** “commit o EV-01 e prossiga com a EV-02”. EV-01 commitada localmente em `785d4ce`, sem push; executar EV-02 inline com revisão final somente leitura. Titular revisará gabaritos; escolheu Luna 6 High e Haiku 5.5, com US$ 5 total. Acesso será configurado depois, portanto preparação offline; baseline não executada. Sem commit EV-02 ou push. EV-03 a EV-06 não autorizadas.
+
+> **Autorização inicial de 22/10/2026:** “Aprovo o contrato e o plano. Prossiga com a EV-01”. Usar `superpowers:executing-plans` apenas nessa etapa, com revisão final somente leitura. EV-02 a EV-06, implementação delegada, APIs, modelos e novos serviços não foram iniciados nem autorizados por este pedido. Sem commit ou push.
 
 **Goal:** entregar análise documental cível estruturada, mais profunda e verificável, reduzindo conferências técnicas triviais e reservando ao profissional decisões jurídicas relevantes.
 
@@ -8,14 +10,14 @@
 
 **Tech Stack:** Python >=3.12 e dependências fixadas atuais; ambiente de referência existente Windows/Python 3.14.6. SDK, modelos, persistência e ferramentas externas são candidatos, sem adoção neste plano.
 
-**Spec:** [contrato analise-1 aprovado](../specs/2026-10-22-analise-estruturada-design.md). **Andamento/prioridades:** exclusivamente [plano principal](../../plano-principal.md). Os pacotes abaixo descrevem a decomposição aprovada; somente EV-01 recebeu autorização de execução.
+**Spec:** [contrato analise-1 aprovado](../specs/2026-10-22-analise-estruturada-design.md). **Andamento/prioridades:** exclusivamente [plano principal](../../plano-principal.md). Os pacotes abaixo descrevem a decomposição aprovada; EV-01 e EV-02 receberam autorização de execução; estado no plano principal.
 
 ## 1. Restrições globais
 
 - Trabalhar somente no worktree Codex `C:/Users/Boni Jr/.codex/worktrees/assistente-juridico-codex/Skill Legal`; Claude permanece no checkout original, sem Git, instalação, testes ou escrita nele.
 - Reconfirmar remoto, branch, HEAD, estado, índice e worktrees antes da futura execução; este planejamento partiu de `codex/organizacao-colaboracao`, HEAD `3ab28e211641acb8fe75da5152fa0235e25fbd4d`, com alterações documentais preexistentes.
 - Preservar originais, alterações locais e evidências históricas; 19 regras continuam inativas, NDA vazio. Não presumir aprovação material/encerramento da fase 5.
-- Autorização atual: somente schema, contrato, validação/renderização e fixtures/testes da EV-01. Não iniciar os demais pacotes, chamadas de inferência, dependências, credenciais ou estado persistente.
+- Autorização atual: EV-01 e preparação/execução EV-02 conforme seus gates. Acesso às APIs será configurado depois; não iniciar chamadas agora, EV-03 a EV-06, dependências ou infraestrutura persistente.
 - Cada adoção futura de framework, API/serviço, modelo externo, persistência, instalação, commit, push e publicação depende de autorização própria.
 - Reaproveitar invariantes existentes e manter os modos legados. Política técnica experimental não ignora os bloqueios atuais nem registra eventos humanos.
 - Não duplicar cronograma: esta é decomposição técnica proposta; andamento, reserva e prioridade de execução ficam no plano principal.
@@ -40,7 +42,7 @@ Caminhos relativos ao worktree Codex. Confirmar responsabilidades antes de criar
 | Pacote | Arquivos previstos | Interface proposta / responsabilidade |
 |---|---|---|
 | EV-01 contrato executável, depois de aprovado | `docs/contratos/analise-v1.md`, `docs/contratos/analise-v1.schema.json`, `scripts/analise_estruturada.py`, `tests/test_analise_estruturada.py` | `validar_analise(obj: dict, entradas: dict[str, bytes]) -> dict`; `renderizar_analise(obj: dict) -> str`. Resultado com `valido`, `erros`, `avisos`; sem certificar mérito |
-| EV-02 corpus/avaliação | `scripts/avaliar_analise.py`, `tests/test_avaliar_analise.py`, `docs/avaliacao-analise-protocolo.md`; casos/gabaritos reais fora do Git | `avaliar_caso(predicao: dict, gabarito: dict, julgamento: dict) -> dict`; `agregar_resultados(resultados: list[dict]) -> dict` |
+| EV-02 corpus/avaliação | `scripts/avaliar_analise.py`, `tests/test_avaliar_analise.py`, `docs/avaliacao-analise-protocolo.md`; casos/gabaritos reais fora do Git | `avaliar_caso(predicao: dict, gabarito: dict, julgamento: dict) -> dict`; `agregar_resultados(resultados: list[dict]) -> list[dict]` |
 | EV-03 automação técnica | `scripts/extract.py`, `scripts/pecas_proposta.py` quando justificado; novo `scripts/politica_uso.py`; `tests/test_politica_uso.py`, `tests/test_atribuicao_contextual.py` | `avaliar_uso_tecnico(achados: list[dict], contexto: dict) -> dict`, produz ações/limites do contrato. `pecas_uso.py` permanece com o contrato atual durante o piloto |
 | EV-04 fluxo agêntico isolado | `scripts/fluxo_analise.py`, `tests/test_fluxo_analise.py`; configuração e resultados por caso fora do Git | `executar_fluxo(entradas: dict[str, bytes], configuracao: dict, ferramentas: dict) -> dict`; coordenar etapas limitadas, com adaptador do runtime escolhido |
 | EV-05 piloto comparativo | `docs/resultado-piloto-analise.md`; manifestos, saídas, avaliações cegas e logs externos | Tabela por caso/variante/repetição, métricas agregadas e decisão de adoção, inclusive rejeição |
@@ -98,7 +100,7 @@ Adapter de comparação só reorganiza campos existentes. Não cria argumentos, 
 
 ### 6.2 Repetições, cegamento e intervenção
 
-Proposta de execução principal: 12 casos reservados × 3 variantes × 2 repetições = **72 execuções por experimento**. Experimento semântico e ponta a ponta somam até 144 execuções; autorizar o teto de cada um separadamente, começando pelo semântico. Se o teto não permitir, revisar o desenho antes de executar, sem coletar parcialmente e selecionar só acertos.
+Proposta de execução principal: 12 casos reservados × 3 variantes × 2 repetições = **72 execuções por experimento e por modelo**. Experimento semântico e ponta a ponta somam até 144 execuções por modelo (288 para os dois modelos escolhidos); autorizar o teto de cada um separadamente, começando pelo semântico. Se o teto não permitir, revisar o desenho antes de executar, sem coletar parcialmente e selecionar só acertos.
 
 Randomizar ordem por caso, registrar versão/configuração e apresentar as saídas com rótulos cegos ao avaliador. Repetições não viram novos processos independentes. Relatar resultado por caso, pior repetição, distribuição e macro/microagregação; amostra pequena é exploratória, sem promessa de precisão populacional.
 
@@ -206,7 +208,7 @@ Cada pacote é unidade revisável, mas este documento não autoriza commit entre
 3. Autorizar quais pacotes poderão ser implementados. Para EV-04 em diante: autorizar separadamente runtime/persistência, modelo, ferramentas, dados transmitidos e tetos de gasto.
 4. Manter ou alterar expressamente os gates de uso material em incremento próprio; aprovação do plano não equivale a aprovação jurídica dos casos ou ativação das regras.
 
-**Autorização posterior à preparação:** contrato/plano aprovados e EV-01 autorizada. Coleta de novo corpus, implementação de EV-02 e execução do piloto continuam pendentes de autorização; ver estado canônico no plano principal.
+**Autorização posterior à preparação:** contrato/plano aprovados, EV-01 commitada e EV-02 autorizada. Coleta pública e preparação offline de EV-02 em andamento; baseline aguarda configuração local das APIs e gabaritos jurídicos conferidos pelo titular. Teto US$ 5 total, gasto zero; demais etapas não autorizadas. Ver estado canônico no plano principal.
 
 ## Referências de desenho
 

@@ -69,6 +69,14 @@ Esta matriz aplica os critérios existentes, sem reduzir o escopo por declaraç�
 
 A fase 5 **não está encerrada como liberação material**. A validação técnica local e a CI publicada não autorizam marcar o fluxo real como conferido por pessoa. A confirmação estrutural de P01/P02 não será solicitada novamente; a pendência é a conferência dos inventários/trechos realmente utilizados e a aprovação da entrega correspondente. A publicação/integração tem autorização própria registrada abaixo. Não criar aprovação pelo agente, ativar regras ou instalar para contornar esses gates.
 
+### Preparação material posterior — F5-R01
+
+Por solicitação posterior do titular, foi preparado um [pacote completo P01/P02 para conferência](revisao-material-p01-p02.md), com 28 afirmações, referências e trechos lado a lado, 21 grupos de atribuição, cronologias e as 30 páginas originais renderizadas. Novos artefatos corrigem propostas de tipo, marcas contextuais de transcrição e o registro da leitura parcial do P02, preservando integralmente texto, snapshots e avisos históricos; os scripts e o detector do produto não foram alterados. A aceitação mecânica acima permanece como evidência histórica, sem reescrever seus resultados.
+
+Ambos os novos casos estão prontos para revisão interna em modo análise. O uso fundamentado continua bloqueado por conferências humanas pendentes de limites, tipo e seções; `liberado_para_uso=false`. Não foram criados eventos humanos ou aprovação de entrega. A preparação não encerra os dois critérios humanos da seção 7.
+
+Verificações F5-R01: 14 testes do pacote, 16 passos CLI, oito skills PRONTA e suíte integral offline no ambiente isolado com **1019 aprovados/5 ignorados, zero falhas/erros em 846,08 s**, saída zero/JUnit conferidos. Revisão independente sem P1/P2/P3. A primeira execução em Python global inadequado falhou e fica discriminada no relatório da rodada. Originais, evidências anteriores, checkout Claude, índice e 19 regras inativas preservados; sem commit ou push nesta preparação.
+
 ## Suíte integral e preservação
 
 Rodada completa `integral`: **1019 aprovados, 5 ignorados, zero falhas/erros em 766,98 s** (770,20 s do runner). Código de saída zero e 1024 casos no JUnit XML conferidos. Ignorados: dois testes de rede desativados por `JURIS_REDE=0`, Docling Parse opcional ausente no ambiente principal e os dois originais privados ORG-R07/ORG-R10 ausentes. Os 12 casos locais de regressão, os controles positivos/negativos de inventário e a compatibilidade legada foram exercitados; isso não confere juridicamente os gabaritos. A configuração efetiva de pytest é `pytest.ini`, com `--basetemp` externo explícito nesta execução.
